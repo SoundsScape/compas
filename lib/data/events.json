@@ -1,0 +1,494 @@
+{
+    "events": [
+        {
+            "year": -35000,
+            "events": [
+                {
+                    "name": "Cuevas de Hohle Fels",
+                    "lat": 48.3797,
+                    "lng": 9.7597,
+                    "description": "Se fabrican las primeras flautas de hueso en Europa",
+                    "category": "Prehistoria",
+                    "type": "Invención de Instrumentos",
+                    "region": "Europa"
+                }
+            ]
+        },
+        {
+            "year": -5000,
+            "events": [
+                {
+                    "name": "África y Asia",
+                    "lat": 0.2827,
+                    "lng": 23.6425,
+                    "description": "Primeras evidencias de tambores en culturas africanas y asiáticas",
+                    "category": "Prehistoria",
+                    "type": "Invención de Instrumentos",
+                    "region": "África"
+                }
+            ]
+        },
+        {
+            "year": -3000,
+            "events": [
+                {
+                    "name": "Antiguo Egipto",
+                    "lat": 26.8206,
+                    "lng": 30.8025,
+                    "description": "Uso del sistro como parte de rituales religiosos",
+                    "category": "Antigüedad",
+                    "type": "Invención de Instrumentos",
+                    "region": "África"
+                }
+            ]
+        },
+        {
+            "year": -2000,
+            "events": [
+                {
+                    "name": "Mesopotamia",
+                    "lat": 33.2232,
+                    "lng": 43.6793,
+                    "description": "Aparición del laúd",
+                    "category": "Antigüedad",
+                    "type": "Invención de Instrumentos",
+                    "region": "Medio Oriente"
+                }
+            ]
+        },
+        {
+            "year": -1500,
+            "events": [
+                {
+                    "name": "India",
+                    "lat": 20.5937,
+                    "lng": 78.9629,
+                    "description": "Desarrollo de la música védica, base de la música clásica india",
+                    "category": "Antigüedad",
+                    "type": "Desarrollo Musical",
+                    "region": "Asia"
+                }
+            ]
+        },
+        {
+            "year": -1400,
+            "events": [
+                {
+                    "name": "Ugarit",
+                    "lat": 35.5988,
+                    "lng": 35.776,
+                    "description": "Composición del Himno Hurriano, considerada la pieza musical escrita más antigua",
+                    "category": "Antigüedad",
+                    "type": "Composición",
+                    "region": "Medio Oriente"
+                }
+            ]
+        },
+        {
+            "year": -776,
+            "events": [
+                {
+                    "name": "Grecia",
+                    "lat": 37.9838,
+                    "lng": 23.7275,
+                    "description": "Los Juegos Olímpicos incluyen competiciones musicales y de poesía",
+                    "category": "Antigüedad",
+                    "type": "Evento",
+                    "region": "Europa"
+                }
+            ]
+        },
+        {
+            "year": 590,
+            "events": [
+                {
+                    "name": "Roma",
+                    "lat": 41.9028,
+                    "lng": 12.4964,
+                    "description": "Nace el Canto Gregoriano bajo el Papa Gregorio I",
+                    "category": "Edad Media",
+                    "type": "Desarrollo Musical",
+                    "region": "Europa"
+                }
+            ]
+        },
+        {
+            "year": 1025,
+            "events": [
+                {
+                    "name": "Italia",
+                    "lat": 43.7696,
+                    "lng": 11.2558,
+                    "description": "Guido de Arezzo introduce el sistema de notación musical moderna",
+                    "category": "Edad Media",
+                    "type": "Innovación Musical",
+                    "region": "Europa"
+                }
+            ]
+        },
+        {
+            "year": 1619,
+            "events": [
+                {
+                    "name": "Publicación de Syntagma Musicum",
+                    "lat": 51.1657,
+                    "lng": 10.4515,
+                    "description": "Michael Praetorius publica uno de los tratados musicales más importantes de la época",
+                    "category": "Barroco",
+                    "type": "Publicación",
+                    "region": "Europa"
+                }
+            ]
+        },
+        {
+            "year": 1709,
+            "events": [
+                {
+                    "name": "Invención del piano",
+                    "lat": 45.4064,
+                    "lng": 11.8768,
+                    "description": "Bartolomeo Cristofori inventa el piano en Padua",
+                    "category": "Barroco",
+                    "type": "Invención de Instrumentos",
+                    "region": "Europa"
+                }
+            ]
+        },
+        {
+            "year": 1813,
+            "events": [
+                {
+                    "name": "Nacimiento de Richard Wagner",
+                    "lat": 51.3397,
+                    "lng": 12.3731,
+                    "description": "Nace uno de los compositores más influyentes del Romanticismo",
+                    "category": "Romanticismo",
+                    "type": "Nacimiento",
+                    "region": "Europa"
+                }
+            ]
+        },
+        {
+            "year": 1956,
+            "events": [
+                {
+                    "name": "Elvis Presley y el Rock and Roll",
+                    "lat": 35.1495,
+                    "lng": -90.049,
+                    "description": "Elvis Presley lanza 'Heartbreak Hotel' y lleva el rock and roll al estrellato",
+                    "category": "Siglo XX",
+                    "type": "Hito Cultural",
+                    "region": "América del Norte"
+                }
+            ]
+        },
+        {
+            "year": 1969,
+            "events": [
+                {
+                    "name": "Festival de Woodstock",
+                    "lat": 41.7015,
+                    "lng": -74.9378,
+                    "description": "Un evento icónico de la contracultura y la música",
+                    "category": "Siglo XX",
+                    "type": "Festival",
+                    "region": "América del Norte"
+                }
+            ]
+        },
+        {
+            "year": 1973,
+            "events": [
+                {
+                    "name": "Lanzamiento de The Dark Side of the Moon",
+                    "lat": 51.5074,
+                    "lng": -0.1278,
+                    "description": "Pink Floyd lanza uno de los álbumes más icónicos del rock progresivo",
+                    "category": "Siglo XX",
+                    "type": "Lanzamiento de Álbum",
+                    "region": "Europa"
+                }
+            ]
+        },
+        {
+            "year": 1982,
+            "events": [
+                {
+                    "name": "Thriller de Michael Jackson",
+                    "lat": 34.0522,
+                    "lng": -118.2437,
+                    "description": "Michael Jackson lanza Thriller, el álbum más vendido de la historia",
+                    "category": "Siglo XX",
+                    "type": "Lanzamiento de Álbum",
+                    "region": "América del Norte"
+                }
+            ]
+        },
+        {
+            "year": 1985,
+            "events": [
+                {
+                    "name": "Concierto Live Aid",
+                    "lat": 51.5074,
+                    "lng": -0.1278,
+                    "description": "Evento benéfico global celebrado en Londres y Filadelfia",
+                    "category": "Siglo XX",
+                    "type": "Concierto",
+                    "region": "Europa y América del Norte"
+                }
+            ]
+        },
+        {
+            "year": 1991,
+            "events": [
+                {
+                    "name": "Lanzamiento de Nevermind",
+                    "lat": 47.6062,
+                    "lng": -122.3321,
+                    "description": "Nirvana lanza Nevermind, marcando el inicio del movimiento grunge",
+                    "category": "Siglo XX",
+                    "type": "Lanzamiento de Álbum",
+                    "region": "América del Norte"
+                }
+            ]
+        },
+        {
+            "year": 1999,
+            "events": [
+                {
+                    "name": "Creación de Napster",
+                    "lat": 37.7749,
+                    "lng": -122.4194,
+                    "description": "Napster revoluciona la distribución digital de música",
+                    "category": "Siglo XX",
+                    "type": "Innovación Tecnológica",
+                    "region": "América del Norte"
+                }
+            ]
+        },
+        {
+            "year": 2001,
+            "events": [
+                {
+                    "name": "Lanzamiento de iTunes",
+                    "lat": 37.3348,
+                    "lng": -122.009,
+                    "description": "Apple lanza iTunes Store, revolucionando la compra de música digital",
+                    "category": "Siglo XXI",
+                    "type": "Innovación Tecnológica",
+                    "region": "América del Norte"
+                }
+            ]
+        },
+        {
+            "year": 2008,
+            "events": [
+                {
+                    "name": "Lanzamiento de Spotify",
+                    "lat": 59.3293,
+                    "lng": 18.0686,
+                    "description": "Spotify revoluciona la industria musical con el streaming",
+                    "category": "Siglo XXI",
+                    "type": "Innovación Tecnológica",
+                    "region": "Europa"
+                }
+            ]
+        },
+        {
+            "year": 2022,
+            "events": [
+                {
+                    "name": "Lanzamiento de Motomami",
+                    "lat": 41.3851,
+                    "lng": 2.1734,
+                    "description": "Rosalía lanza Motomami, destacándose por su innovación musical",
+                    "category": "Siglo XXI",
+                    "type": "Lanzamiento de Álbum",
+                    "region": "Europa"
+                }
+            ]
+        },
+        {
+            "year": 1973,
+            "events": [
+                {
+                    "name": "Nacimiento del Hip Hop",
+                    "lat": 40.8448,
+                    "lng": -73.8648,
+                    "description": "DJ Kool Herc organiza la primera fiesta de hip hop en el Bronx",
+                    "category": "Siglo XX",
+                    "type": "Desarrollo Musical",
+                    "region": "América del Norte"
+                }
+            ]
+        },
+        {
+            "year": 1981,
+            "events": [
+                {
+                    "name": "Lanzamiento de MTV",
+                    "lat": 40.7128,
+                    "lng": -74.006,
+                    "description": "MTV emite su primer videoclip 'Video Killed the Radio Star', revolucionando la industria musical",
+                    "category": "Siglo XX",
+                    "type": "Innovación Tecnológica",
+                    "region": "América del Norte"
+                }
+            ]
+        },
+        {
+            "year": 2012,
+            "events": [
+                {
+                    "name": "Gangnam Style",
+                    "lat": 37.5665,
+                    "lng": 126.978,
+                    "description": "PSY lanza 'Gangnam Style', primer video en alcanzar mil millones de vistas en YouTube y catapulta el K-Pop globalmente",
+                    "category": "Siglo XXI",
+                    "type": "Hito Cultural",
+                    "region": "Asia"
+                }
+            ]
+        },
+        {
+            "year": 1917,
+            "events": [
+                {
+                    "name": "Primer Tango Grabado",
+                    "lat": -34.6037,
+                    "lng": -58.3816,
+                    "description": "Carlos Gardel graba 'Mi Noche Triste', considerado el primer tango canción de la historia",
+                    "category": "Siglo XX",
+                    "type": "Desarrollo Musical",
+                    "region": "América del Sur"
+                }
+            ]
+        },
+        {
+            "year": 1958,
+            "events": [
+                {
+                    "name": "Nacimiento de la Bossa Nova",
+                    "lat": -22.9068,
+                    "lng": -43.1729,
+                    "description": "João Gilberto y Antonio Carlos Jobim desarrollan la Bossa Nova en Rio de Janeiro",
+                    "category": "Siglo XX",
+                    "type": "Desarrollo Musical",
+                    "region": "América del Sur"
+                }
+            ]
+        },
+        {
+            "year": 1960,
+            "events": [
+                {
+                    "name": "Primera edición del Festival de Viña del Mar",
+                    "lat": -33.0153,
+                    "lng": -71.55,
+                    "description": "Comienza el festival de música más importante de Latinoamérica en Chile",
+                    "category": "Siglo XX",
+                    "type": "Festival",
+                    "region": "América del Sur"
+                }
+            ]
+        },
+        {
+            "year": 1967,
+            "events": [
+                {
+                    "name": "Movimiento Tropicalista",
+                    "lat": -12.9714,
+                    "lng": -38.5014,
+                    "description": "Caetano Veloso y Gilberto Gil fundan el Tropicalismo, fusionando música tradicional brasileña con rock psicodélico",
+                    "category": "Siglo XX",
+                    "type": "Movimiento Cultural",
+                    "region": "América del Sur"
+                }
+            ]
+        },
+        {
+            "year": 1969,
+            "events": [
+                {
+                    "name": "Nueva Canción Chilena",
+                    "lat": -33.4489,
+                    "lng": -70.6693,
+                    "description": "Violeta Parra y Víctor Jara consolidan el movimiento de la Nueva Canción Chilena, fusionando folklore con mensajes políticos",
+                    "category": "Siglo XX",
+                    "type": "Movimiento Cultural",
+                    "region": "América del Sur"
+                }
+            ]
+        },
+        {
+            "year": 1977,
+            "events": [
+                {
+                    "name": "Surgimiento de la Cumbia Villera",
+                    "lat": -34.6083,
+                    "lng": -58.3712,
+                    "description": "Nace en los barrios marginales de Buenos Aires la cumbia villera, con letras que reflejan la realidad social",
+                    "category": "Siglo XX",
+                    "type": "Desarrollo Musical",
+                    "region": "América del Sur"
+                }
+            ]
+        },
+        {
+            "year": 1983,
+            "events": [
+                {
+                    "name": "Boom del Rock Latinoamericano",
+                    "lat": -34.6037,
+                    "lng": -58.3816,
+                    "description": "Soda Stereo, Charly García y otros artistas impulsan el rock en español desde Argentina hacia toda Latinoamérica",
+                    "category": "Siglo XX",
+                    "type": "Desarrollo Musical",
+                    "region": "América del Sur"
+                }
+            ]
+        },
+        {
+            "year": 1995,
+            "events": [
+                {
+                    "name": "Surgimiento del Nuevo Folklore Andino",
+                    "lat": -16.409,
+                    "lng": -71.5375,
+                    "description": "Grupos como Alborada y Los Kjarkas popularizan internacionalmente la música andina con nuevas fusiones",
+                    "category": "Siglo XX",
+                    "type": "Desarrollo Musical",
+                    "region": "América del Sur"
+                }
+            ]
+        },
+        {
+            "year": 2001,
+            "events": [
+                {
+                    "name": "Explosión del Reggaetón Sudamericano",
+                    "lat": -4.0383,
+                    "lng": -79.2,
+                    "description": "El reggaetón se adapta y desarrolla características propias en Colombia y otros países suramericanos",
+                    "category": "Siglo XXI",
+                    "type": "Desarrollo Musical",
+                    "region": "América del Sur"
+                }
+            ]
+        },
+        {
+            "year": 2017,
+            "events": [
+                {
+                    "name": "Despacito: Fenómeno Global",
+                    "lat": -3.7319,
+                    "lng": -38.5267,
+                    "description": "Luis Fonsi y Daddy Yankee lanzan 'Despacito', llevando la música latina a niveles de popularidad global sin precedentes",
+                    "category": "Siglo XXI",
+                    "type": "Hito Cultural",
+                    "region": "América del Sur"
+                }
+            ]
+        }
+    ]
+}

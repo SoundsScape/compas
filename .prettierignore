@@ -5,6 +5,7 @@ build
 dist
 *.lock
 package-lock.json
+pnpm-lock.yaml
 public
 .turbo
 components.json

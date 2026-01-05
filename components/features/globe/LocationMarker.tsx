@@ -25,7 +25,6 @@ function LocationMarkerBase({
     description,
     onHover,
     category,
-    region,
     year,
     tags = [],
     autor,

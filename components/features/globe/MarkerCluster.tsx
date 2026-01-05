@@ -30,7 +30,7 @@ export function MarkerCluster({
         null
     );
     const sphereRef = useRef<THREE.Mesh>(null);
-    const [popupPosition, setPopupPosition] = useState<'top' | 'bottom'>(
+    const [popupPosition] = useState<'top' | 'bottom'>(
         position[1] > 0 ? 'bottom' : 'top'
     );
     const popupRef = useRef<HTMLDivElement>(null);

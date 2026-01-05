@@ -25,7 +25,6 @@ interface FiltersProps {
             regions: string[];
         }>
     >;
-    // eslint-disable-next-line no-unused-vars
     setSelectedYearRange: (range: [number, number]) => void;
     minYear: number;
     maxYear: number;

@@ -36,7 +36,6 @@ interface GlobeMainProps {
 }
 
 export default function GlobeMain({
-    selectedYearRange,
     filters,
     isPaused,
     setIsPaused,
@@ -162,7 +161,6 @@ export default function GlobeMain({
                     maxPolarAngle={Math.PI - 0.1}
                 />
                 <Globe
-                    selectedYearRange={selectedYearRange}
                     filters={filters}
                     isPaused={isPaused}
                     settings={settings}

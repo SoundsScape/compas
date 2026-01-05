@@ -1,4 +1,4 @@
-import { parseSafeDate, formatYear } from '../../../lib/utils/dateUtils';
+import { formatYear } from '../../../lib/utils/dateUtils';
 
 interface TimelineProps {
     selectedYearRange: [number, number];

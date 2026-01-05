@@ -12,7 +12,6 @@ import { FiltersPanel } from '@/components/sections/home/FiltersPanel';
 
 // Importaciones de componentes
 // Al desactivar el SSR, se preveen fallos con librerías pesadas de mapas y 3D.
-
 const GlobeMain = dynamic(
     () => import('@/components/features/globe/GlobeMain'),
     { ssr: false }
@@ -23,9 +22,7 @@ const HomeMap = dynamic(() => import('@/components/features/globe/map'), {
 const Timeline = dynamic(() => import('@/components/sections/home/Timeline'), {
     ssr: false,
 });
-const Filters = dynamic(() => import('@/components/sections/home/Filters'), {
-    ssr: false,
-});
+
 const SettingsModal = dynamic(
     () =>
         import('@/components/sections/home/SettingsModal').then(

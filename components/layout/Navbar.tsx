@@ -1,6 +1,6 @@
 'use client';
 import { useState, useEffect, useRef } from 'react';
-import { Home, BookOpen, Music2, User, LayoutDashboard } from 'lucide-react';
+import { Home, BookOpen, User, LayoutDashboard } from 'lucide-react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
@@ -75,7 +75,7 @@ export function Navbar() {
                         className="w-13 drop-shadow-[0px_0px_10px_rgba(0,0,0,0.9)] transition-all duration-500 hover:cursor-pointer hover:drop-shadow-[0px_0px_10px_rgba(255,255,255,0.9)]"
                     />
                 </Link>
-                <div className="flex h-16 flex-grow items-center justify-center space-x-8">
+                <div className="flex h-16 grow items-center justify-center space-x-8">
                     <Link
                         href="/home"
                         className="flex items-center gap-2 transition-all duration-500 hover:drop-shadow-[0px_0px_10px_rgba(255,255,255,0.9)]"

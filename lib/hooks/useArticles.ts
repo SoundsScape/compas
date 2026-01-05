@@ -120,5 +120,10 @@ export function useArticles(filters: any, dynamicClusterThreshold: number) {
         setClusterGroups(groups);
     }, [filteredEvents, dynamicClusterThreshold]);
 
-    return { clusterGroups, setClusterGroups, loading };
+    return {
+        clusterGroups,
+        setClusterGroups,
+        loading,
+        articles: filteredEvents, // Exportamos los eventos filtrados para el Mapa 2D
+    };
 }

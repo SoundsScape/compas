@@ -44,3 +44,13 @@ export interface MarkersLayerProps {
     onHover: (isHovered: boolean) => void;
     cameraDistance: number;
 }
+
+export interface HomeMapProps {
+    filters: {
+        search: string;
+        yearRange: [number, number];
+        categories: string[];
+        eventTypes: string[];
+        regions: string[];
+    };
+}

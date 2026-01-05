@@ -16,7 +16,7 @@ const GlobeMain = dynamic(
     () => import('@/components/features/globe/GlobeMain'),
     { ssr: false }
 );
-const HomeMap = dynamic(() => import('@/components/features/globe/map'), {
+const HomeMap = dynamic(() => import('@/components/features/globe/HomeMap'), {
     ssr: false,
 });
 const Timeline = dynamic(() => import('@/components/sections/home/Timeline'), {

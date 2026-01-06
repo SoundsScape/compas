@@ -105,3 +105,11 @@ export interface GlobeMainProps {
         maxDistance: number;
     } | null>;
 }
+
+export interface GlobeControlsProps {
+    onZoomIn: () => void;
+    onZoomOut: () => void;
+    onReset: () => void;
+    isPaused: boolean;
+    setIsPaused: (val: boolean) => void;
+}

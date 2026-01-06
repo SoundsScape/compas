@@ -2,9 +2,7 @@ import { Canvas } from '@react-three/fiber';
 import { OrbitControls } from '@react-three/drei';
 import { Globe } from './Globe';
 import { Play, Pause, Plus, Minus, RotateCcw } from 'lucide-react';
-import { Settings } from '../../sections/home/SettingsModal';
-import { RefObject } from 'react';
-import * as THREE from 'three';
+import { GlobeMainProps } from '@/lib/interfaces/globe.interface';
 
 // Configuración de cámara por defecto
 const DEFAULT_CAMERA = {
@@ -12,28 +10,6 @@ const DEFAULT_CAMERA = {
     maxDistance: 5,
     initialDistance: 3.5,
 };
-
-interface GlobeMainProps {
-    selectedYearRange: [number, number];
-    filters: {
-        search: string;
-        yearRange: [number, number];
-        categories: string[];
-        eventTypes: string[];
-        regions: string[];
-    };
-    isPaused: boolean;
-    setIsPaused: (paused: boolean) => void;
-    settings: Settings;
-    orbitControlsRef: RefObject<{
-        target: THREE.Vector3;
-        object: THREE.Camera;
-        getDistance: () => number;
-        reset: () => void;
-        minDistance: number;
-        maxDistance: number;
-    } | null>;
-}
 
 export default function GlobeMain({
     filters,

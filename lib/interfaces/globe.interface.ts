@@ -1,6 +1,8 @@
 import { DisplaySettings } from '@/components/sections/home/SettingsModal';
 import * as THREE from 'three';
 import { Article } from './article.interface';
+import { Settings } from '@/components/sections/home/SettingsModal';
+import { RefObject } from 'react';
 
 export interface GlobeControls {
     target: THREE.Vector3;
@@ -53,4 +55,53 @@ export interface HomeMapProps {
         eventTypes: string[];
         regions: string[];
     };
+}
+
+export interface LocationMarkerProps {
+    position: [number, number, number];
+    name: string;
+    description: string;
+    onHover: (isHovered: boolean) => void;
+    category: string;
+    region: string;
+    year: number;
+    tags?: { id: number; name: string; pivot: any }[];
+    autor: string;
+    apellidos: string;
+    cameraDistance?: number;
+    id: number;
+}
+
+export interface MarkerInfo {
+    article: Article;
+    position: [number, number, number];
+}
+
+export interface MarkerClusterProps {
+    position: [number, number, number];
+    markers: MarkerInfo[];
+    onHover: (isHovered: boolean) => void;
+    cameraDistance?: number;
+}
+
+export interface GlobeMainProps {
+    selectedYearRange: [number, number];
+    filters: {
+        search: string;
+        yearRange: [number, number];
+        categories: string[];
+        eventTypes: string[];
+        regions: string[];
+    };
+    isPaused: boolean;
+    setIsPaused: (paused: boolean) => void;
+    settings: Settings;
+    orbitControlsRef: RefObject<{
+        target: THREE.Vector3;
+        object: THREE.Camera;
+        getDistance: () => number;
+        reset: () => void;
+        minDistance: number;
+        maxDistance: number;
+    } | null>;
 }

@@ -2,15 +2,9 @@ import { useState, useRef, useEffect, useCallback, memo } from 'react';
 import { Html } from '@react-three/drei';
 import * as THREE from 'three';
 import { ThreeEvent } from '@react-three/fiber';
-import { Article } from '@/lib/interfaces/article.interface';
-import { limitWords } from '@/lib/utils/textUtils';
-import { formatYear } from '@/lib/utils/dateUtils';
-import { ArrowLeft, X } from 'lucide-react';
 import { useMarkerSize } from '@/lib/hooks/useMarkerSize';
-import { ArticlePopup } from './ArticlePopup';
+import { ClusterPopup } from './ClusterPopup';
 import { MarkerClusterProps } from '@/lib/interfaces/globe.interface';
-
-
 
 function MarkerClusterBase({
     position,
@@ -20,12 +14,8 @@ function MarkerClusterBase({
 }: MarkerClusterProps) {
     const [hovered, setHovered] = useState(false);
     const [clicked, setClicked] = useState(false);
-    const [activeMarkerIndex, setActiveMarkerIndex] = useState<number | null>(
-        null
-    );
     const sphereRef = useRef<THREE.Mesh>(null);
     const [popupPosition, setPopupPosition] = useState<'top' | 'bottom'>('top');
-    const popupRef = useRef<HTMLDivElement>(null);
 
     // Usar hook para tamaño. Escalamos un poco más los clusters (1.3x)
     const markerSize = useMarkerSize(cameraDistance, 0.018, 1.3);
@@ -36,17 +26,13 @@ function MarkerClusterBase({
         setPopupPosition(position[1] > 0 ? 'bottom' : 'top');
     }, [position]);
 
-    const closeModal = useCallback(() => {
-        setActiveMarkerIndex(null);
-        setClicked(false);
-        setHovered(false);
-        onHover(false);
-    }, [onHover]);
-
+    // Cerrar al hacer clic fuera (si está abierto)
     useEffect(() => {
         const handleClickOutside = () => {
             if (clicked) {
-                closeModal();
+                setClicked(false);
+                setHovered(false);
+                onHover(false);
             }
         };
         if (clicked) {
@@ -58,7 +44,7 @@ function MarkerClusterBase({
         return () => {
             document.removeEventListener('click', handleClickOutside);
         };
-    }, [clicked, closeModal]);
+    }, [clicked, onHover]);
 
     const handlePointerOver = useCallback(
         (e: ThreeEvent<MouseEvent>) => {
@@ -94,18 +80,6 @@ function MarkerClusterBase({
         },
         [clicked, onHover]
     );
-
-    const selectMarker = (index: number) => {
-        setActiveMarkerIndex(index);
-    };
-
-    const backToList = () => {
-        setActiveMarkerIndex(null);
-    };
-
-    const handleWheel = (e: React.WheelEvent) => {
-        e.stopPropagation();
-    };
 
     return (
         <group position={position}>
@@ -160,82 +134,15 @@ function MarkerClusterBase({
                                 : 'translateY(-93%)',
                     }}
                 >
-                    {activeMarkerIndex === null ? (
-                        <div
-                            ref={popupRef}
-                            className="w-full -translate-x-1/4 transform rounded-lg bg-white/90 p-4 shadow-lg backdrop-blur-md select-none"
-                            onClick={e => {
-                                e.stopPropagation();
-                            }}
-                            onPointerOver={e => {
-                                e.stopPropagation();
-                                onHover(true);
-                            }}
-                            onWheel={handleWheel}
-                        >
-                            <div className="mb-3 flex items-center justify-between border-b border-gray-200 pb-2">
-                                <div className="w-5"></div>
-                                <button
-                                    className="ml-auto cursor-pointer text-gray-500 select-none hover:text-gray-800"
-                                    onClick={closeModal}
-                                >
-                                    <X className="h-5 w-5" />
-                                </button>
-                            </div>
-                            <h3 className="mb-3 text-lg font-bold text-gray-900 select-none">
-                                Grupo de {markers.length} ubicaciones
-                            </h3>
-                            <div
-                                className="max-h-64 overflow-y-auto select-none"
-                                onWheel={handleWheel}
-                            >
-                                {markers.map((marker, idx) => (
-                                    <div
-                                        key={idx}
-                                        className="mb-2 cursor-pointer rounded border border-gray-200 p-2 select-none hover:bg-gray-100"
-                                        onClick={() => selectMarker(idx)}
-                                    >
-                                        <div className="flex items-start justify-between text-black select-none">
-                                            <span className="text-sm font-medium">
-                                                {marker.article.titulo}
-                                            </span>
-                                            <span className="text-xs">
-                                                {formatYear(
-                                                    marker.article.fecha
-                                                )}
-                                            </span>
-                                        </div>
-                                        <span className="mt-1 block text-xs text-gray-600 select-none">
-                                            {limitWords(
-                                                marker.article.templates?.[0]
-                                                    ?.text_areas?.[0]
-                                                    ?.content || '',
-                                                10
-                                            )}
-                                        </span>
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-                    ) : (
-                        // VISTA DE DETALLE (USANDO ArticlePopup)
-                        <div className="relative">
-                            <ArticlePopup
-                                article={markers[activeMarkerIndex].article}
-                                onClose={closeModal}
-                            />
-                            {/* Botón flotante para volver atrás */}
-                            <button
-                                className="absolute top-4 -left-14 z-20 cursor-pointer text-gray-500 hover:text-gray-800"
-                                onClick={e => {
-                                    e.stopPropagation();
-                                    backToList();
-                                }}
-                            >
-                                <ArrowLeft className="h-5 w-5" />
-                            </button>
-                        </div>
-                    )}
+                    <ClusterPopup
+                        markers={markers}
+                        onClose={() => {
+                            setClicked(false);
+                            setHovered(false);
+                            onHover(false);
+                        }}
+                        onHover={onHover}
+                    />
                 </Html>
             )}
         </group>

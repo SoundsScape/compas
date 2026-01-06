@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-    title: 'Sonorama',
+    title: 'Compas',
     description: 'Made by Monlau Group',
 };
 

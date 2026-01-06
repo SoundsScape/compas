@@ -1,0 +1,112 @@
+REGISTRO DE MEJORAS Y OPTIMIZACIONES - PROYECTO COMPAS
+======================================================
+
+Este documento detalla los cambios realizados para mejorar la arquitectura, 
+rendimiento y mantenimiento del proyecto original (Sonorama).
+
+1. MIGRACIÓN A NEXT.JS 16 (APP ROUTER)
+--------------------------------------
+- Se ha trasladado la lógica de una estructura tradicional a Next.js 16.
+- Uso de App Router para una mejor gestión de rutas y layouts.
+
+2. REORGANIZACIÓN DE CARPETAS (SEPARACIÓN DE CONOCIMIENTO)
+----------------------------------------------------------
+- Se ha pasado de una estructura plana a una organizada por responsabilidades:
+    * app/: Rutas y páginas de Next.js.
+    * components/layout/: Componentes globales (Navbar).
+    * components/sections/: Secciones específicas de UI (Timeline, Filtros).
+    * components/features/: Componentes con lógica compleja (Globe, Map).
+    * components/shared/: Componentes transversales reutilizables.
+    * lib/: Núcleo de la app (Servicios, Interfaces, Hooks, Utilidades).
+
+3. ARQUITECTURA DE INTERFAZ (HUD & LAYERS)
+------------------------------------------
+- Reorganización del 'return' en la Home para seguir un sistema de capas:
+    * Capa 0 (Mundo): Renderizado del Globo 3D o Mapa 2D.
+    * Capa 1 (HUD): Interfaz flotante transparente (Navbar, Filtros, Controles, Timeline).
+    * Capa 2 (Modales): Ventanas emergentes que bloquean la interacción.
+- Modularización de componentes de UI:
+    * FiltersPanel.tsx: Encapsula la lógica de apertura/cierre y el panel de filtros.
+    * RightControls.tsx: Agrupa los botones de configuración y el selector de mapa.
+- Optimización UX: Uso de 'pointer-events-none' en el HUD para permitir interactuar con el globo a través de los huecos vacíos.
+
+4. REFACTORIZACIÓN DE LÓGICA (MODULARIZACIÓN)
+---------------------------------------------
+- Extracción de estados complejos en 'app/home/page.tsx' hacia Hooks personalisados:
+    * useSettings.ts: Maneja la persistencia y carga de configuración en localStorage.
+    * useFilters.ts: Centraliza la lógica de filtrado y sincronización de rangos temporales.
+- Resultado: Reducción de ~80 líneas de código en el componente principal, mejorando la legibilidad.
+
+5. OPTIMIZACIÓN DE RENDIMIENTO
+------------------------------
+- Implementación de 'Next Dynamic Imports' con { ssr: false }:
+    * Se evita la carga pesada de Three.js y Leaflet en el servidor.
+    * Se solucionan errores de hidratación y "window is not defined".
+    * Mejora el tiempo de carga percibido (LCP).
+
+6. ARQUITECTURA DE CÓDIGO Y MANTENIMIENTO
+-----------------------------------------
+- Implementación de alias de rutas (@/):
+    * Se han sustituido los imports relativos infinitos (../../../../) por rutas absolutas.
+    * Facilita el movimiento de archivos en el futuro.
+- Centralización de API_CONFIG:
+    * Se eliminó el uso de JSONs estáticos (dominio.json) por una configuración centralizada y tipada.
+
+7. SISTEMA DE DISEÑO (LOOK & FEEL)
+----------------------------------
+- Integración total con Tailwind CSS 4:
+    * Uso de variables CSS nativas (--primary, --accent, etc.).
+    * Los componentes ahora responden a un tema global en lugar de tener colores "hardcoded" (fijos).
+- Refactorización de estilos en Navbar, Timeline y Filtros para usar la nueva paleta de colores.
+
+8. REFACTORIZACIÓN DE GLOBE.TSX (ARQUITECTURA MODULAR)
+------------------------------------------------------
+- Extracción de Lógica (Hooks):
+    * useArticles.ts: Centraliza fetching, filtrado y clustering dinámico de eventos.
+    * useGlobeTextures.ts: Carga estable y memoizada de texturas (soluciona el flasheo visual).
+- Sub-componentes Visuales:
+    * Earth.tsx: Renderizado de la esfera base y texturas del planeta.
+    * Clouds.tsx: Capa de nubes animada con soporte para rotación independiente.
+    * MarkersLayer.tsx: Desacoplamiento de la lógica de renderizado de puntos y clusters 3D.
+- Utilidades Matemáticas:
+    * threeUtils.ts: Funciones puras para cálculos de puntos en esfera, distancias y visibilidad de cámara.
+
+9. CALIDAD DE CÓDIGO Y ESTANDARIZACIÓN
+--------------------------------------
+- Centralización de tipos en 'lib/interfaces/globe.interface.ts' para evitar dependencias circulares.
+- Optimización de ESLint: Configuración de 'eslint.config.mjs' para soportar el prefijo '_' en parámetros no usados, mejorando la compatibilidad con TypeScript.
+- Reducción masiva de tamaño en Globe.tsx (de ~450 a ~150 líneas), facilitando el mantenimiento.
+
+10. REFACTORIZACIÓN DE MAPA 2D (HOMEMAP)
+---------------------------------------
+- Estandarización: Renombrado de 'map.tsx' a 'HomeMap.tsx' para consistencia.
+- Reutilización de Lógica: Integración con `useArticles` para compartir la misma fuente de datos y filtrado que el Globo, eliminando código duplicado.
+- Extracción de Componentes: Creación de `MapMarker.tsx` para aislar la lógica visual de los marcadores y popups.
+- Centralización total de Interfaces en `globe.interface.ts`.
+
+11. OPTIMIZACIÓN DE COMPONENTES
+-------------------------------
+- **`useMarkerSize.ts`**: Hook matemático creado para unificar el cálculo de escala de marcadores en función del zoom.
+- **`ArticlePopup.tsx`**: Componente visual compartido que reemplaza ~150 líneas de código duplicado en `LocationMarker` y `MarkerCluster`.
+- **Limpieza**: `LocationMarker` y `MarkerCluster` ahora son componentes ligeros que delegan en hooks y sub-componentes.
+
+12. REFACTORIZACIÓN (LOGICA DE VISIBILIDAD)
+-------------------------------------------
+- Extracción de Lógica Compleja:
+    * useClustering.ts: Se ha creado un nuevo hook para encapsular toda la lógica de agrupación espacial y cálculo de distancia.
+    * Esto desacopla el algoritmo de "clustering" del componente de vista (`Globe.tsx`), mejorando la separación de responsabilidades.
+- Optimización de Ciclo de Vida:
+    * El nuevo hook permite calcular la visibilidad inicial de manera síncrona, asegurando una renderización correcta desde el primer frame.
+- Limpieza de Código:
+    * `Globe.tsx` se reduce aún más, delegando la gestión de estado de grupos al hook personalizado.
+
+13. MODULARIZACIÓN DE UI EN GLOBO 3D Y MAPA
+-------------------------------------------
+- Controles de Cámara (`GlobeMain.tsx`):
+    * useCameraControls.ts: Hook que abstrae la matemática de zoom y reset.
+    * GlobeControls.tsx: Componente de UI limpio para los botones de control.
+- Consistencia Visual (`ArticlePopup` y `MapMarker`):
+    * ArticleCardInfo.tsx: Componente compartido que unifica la presentación de la información del artículo (título, fecha, tags, autor).
+    * Se elimina código duplicado en el popup del globo 3D y el popup de Leaflet.
+- Refactorización de `MarkerCluster.tsx`:
+    * Se extrajo `ClusterPopup.tsx` para separar la lógica 3D de la interfaz de lista.

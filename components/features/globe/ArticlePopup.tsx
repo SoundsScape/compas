@@ -1,9 +1,7 @@
-import { ExternalLink, X } from 'lucide-react';
+import { X } from 'lucide-react';
 import { Article } from '@/lib/interfaces/article.interface';
-import { getHistoricalPeriod } from '@/lib/utils/historicalPeriods';
-import { limitWords } from '@/lib/utils/textUtils';
-import { formatYear } from '@/lib/utils/dateUtils';
 import { useRef } from 'react';
+import { ArticleCardInfo } from './ArticleCardInfo';
 
 interface ArticlePopupProps {
     article: Article;
@@ -40,56 +38,8 @@ export function ArticlePopup({
                 </button>
             </div>
 
-            <h3 className="mb-2 text-xl font-bold text-gray-900 select-none">
-                {article.titulo}
-            </h3>
-
-            <div className="mb-2 text-sm font-medium text-gray-800 select-none">
-                {formatYear(article.fecha)}
-            </div>
-
             <div className="max-h-64 overflow-y-auto select-none">
-                <p className="mb-3 text-sm text-gray-600 select-none">
-                    {limitWords(
-                        article.templates?.[0]?.text_areas?.[0]?.content || '',
-                        20
-                    )}
-                </p>
-
-                <div className="mb-3 flex flex-wrap gap-1 select-none">
-                    <span className="rounded-full bg-purple-100 px-2 py-0.5 text-xs text-purple-800 select-none">
-                        {getHistoricalPeriod(article.fecha)}
-                    </span>
-                    {article.tags && article.tags.length > 0 ? (
-                        article.tags.map((tag, idx) => (
-                            <span
-                                key={idx}
-                                className="rounded-full bg-blue-100 px-2 py-0.5 text-xs text-blue-800 select-none"
-                            >
-                                {tag.name}
-                            </span>
-                        ))
-                    ) : (
-                        <span className="rounded-full bg-blue-100 px-2 py-0.5 text-xs text-blue-800 select-none">
-                            Sin etiquetas
-                        </span>
-                    )}
-                </div>
-
-                <div className="mb-3 select-none">
-                    <span className="rounded-full bg-green-100 px-2 py-0.5 text-xs text-green-800 select-none">
-                        Autor: {article.nombre_autor} {article.apellidos_autor}
-                    </span>
-                </div>
-
-                <a
-                    href={`/articles/view/${article.id}`}
-                    target="_blank"
-                    className="inline-flex cursor-pointer items-center gap-1 text-sm text-blue-600 select-none hover:text-blue-800"
-                    onClick={e => e.stopPropagation()}
-                >
-                    Ver más <ExternalLink className="h-4 w-4" />
-                </a>
+                <ArticleCardInfo article={article} descriptionLimit={20} />
             </div>
         </div>
     );

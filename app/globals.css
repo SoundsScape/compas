@@ -160,7 +160,7 @@ leaflet-popup-close-button {
     height: 50px !important;
     margin-left: -25px !important;
 }
-.leaflet-container a.leaflet-popup-close-button  {
+.leaflet-container a.leaflet-popup-close-button {
     font-size: 26px !important;
     transform: translateX(-20px) translateY(20px) !important;
 }

@@ -11,20 +11,35 @@ export function GlobeControls({
 }: GlobeControlsProps) {
     return (
         <div className="absolute right-4 bottom-1/2 z-20 mt-24 flex translate-y-2/3 flex-col gap-3">
-            <Button onClick={() => setIsPaused(!isPaused)} className="size-11 hover:text-accent">
-                    {isPaused ? (
-                        <Play className="size-5" />
-                    ) : (
-                        <Pause className="size-5" />
-                    )}
-                </Button>
-            <Button onClick={onZoomIn} className="size-11 hover:text-accent" aria-label="Acercar">
+            <Button
+                onClick={() => setIsPaused(!isPaused)}
+                className="hover:text-accent size-11"
+            >
+                {isPaused ? (
+                    <Play className="size-5" />
+                ) : (
+                    <Pause className="size-5" />
+                )}
+            </Button>
+            <Button
+                onClick={onZoomIn}
+                className="hover:text-accent size-11"
+                aria-label="Acercar"
+            >
                 <Plus className="size-5" />
             </Button>
-            <Button onClick={onZoomOut} className="size-11 hover:text-accent" aria-label="Alejar">
+            <Button
+                onClick={onZoomOut}
+                className="hover:text-accent size-11"
+                aria-label="Alejar"
+            >
                 <Minus className="size-5" />
             </Button>
-            <Button onClick={onReset} className="size-11 hover:text-accent" aria-label="Reiniciar cámara">
+            <Button
+                onClick={onReset}
+                className="hover:text-accent size-11"
+                aria-label="Reiniciar cámara"
+            >
                 <RotateCcw className="size-5" />
             </Button>
         </div>

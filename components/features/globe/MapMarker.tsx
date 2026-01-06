@@ -19,7 +19,7 @@ export function MapMarker({ article }: { article: Article }) {
             ]}
         >
             <Popup>
-                <div className="w-64 mt-13 pt-3 border-t border-gray-200">
+                <div className="mt-13 w-64 border-t border-gray-200 pt-3">
                     <ArticleCardInfo article={article} descriptionLimit={10} />
                 </div>
             </Popup>

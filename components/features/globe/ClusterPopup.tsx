@@ -12,7 +12,9 @@ interface ClusterPopupProps {
 }
 
 export function ClusterPopup({ markers, onClose, onHover }: ClusterPopupProps) {
-    const [activeMarkerIndex, setActiveMarkerIndex] = useState<number | null>(null);
+    const [activeMarkerIndex, setActiveMarkerIndex] = useState<number | null>(
+        null
+    );
     const scrollRef = useRef<HTMLDivElement>(null);
 
     const handleWheel = (e: React.WheelEvent) => {
@@ -65,8 +67,7 @@ export function ClusterPopup({ markers, onClose, onHover }: ClusterPopupProps) {
                                 <span className="mt-1 block text-xs text-gray-600 select-none">
                                     {limitWords(
                                         marker.article.templates?.[0]
-                                            ?.text_areas?.[0]
-                                            ?.content || '',
+                                            ?.text_areas?.[0]?.content || '',
                                         10
                                     )}
                                 </span>

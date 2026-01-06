@@ -1,24 +1,18 @@
-import { useState, useRef, useEffect, useMemo } from 'react';
+import { useState, useRef, useEffect, useCallback, memo } from 'react';
 import { Html } from '@react-three/drei';
 import * as THREE from 'three';
-import { Article } from '../../../lib/interfaces/article.interface';
-import { getHistoricalPeriod } from '../../../lib/utils/historicalPeriods';
-import { limitWords } from '../../../lib/utils/textUtils';
-import { ExternalLink, ArrowLeft, X } from 'lucide-react';
+import { ThreeEvent } from '@react-three/fiber';
+import { Article } from '@/lib/interfaces/article.interface';
+import { limitWords } from '@/lib/utils/textUtils';
+import { formatYear } from '@/lib/utils/dateUtils';
+import { ArrowLeft, X } from 'lucide-react';
+import { useMarkerSize } from '@/lib/hooks/useMarkerSize';
+import { ArticlePopup } from './ArticlePopup';
+import { MarkerClusterProps } from '@/lib/interfaces/globe.interface';
 
-interface MarkerInfo {
-    article: Article;
-    position: [number, number, number];
-}
 
-interface MarkerClusterProps {
-    position: [number, number, number];
-    markers: MarkerInfo[];
-    onHover: (isHovered: boolean) => void;
-    cameraDistance?: number;
-}
 
-export function MarkerCluster({
+function MarkerClusterBase({
     position,
     markers,
     onHover,
@@ -30,99 +24,76 @@ export function MarkerCluster({
         null
     );
     const sphereRef = useRef<THREE.Mesh>(null);
-    const [popupPosition] = useState<'top' | 'bottom'>(
-        position[1] > 0 ? 'bottom' : 'top'
-    );
+    const [popupPosition, setPopupPosition] = useState<'top' | 'bottom'>('top');
     const popupRef = useRef<HTMLDivElement>(null);
 
-    const markerSize = useMemo(() => {
-        const minDistance = 1.4;
-        const maxDistance = 5;
-
-        const baseSize = 0.018;
-
-        const zoomFactor = Math.min(
-            Math.max(
-                (cameraDistance - minDistance) / (maxDistance - minDistance),
-                0
-            ),
-            1
-        );
-
-        return baseSize * (0.3 + zoomFactor * 1.3);
-    }, [cameraDistance]);
-
-    const informativeMarkerSize = useMemo(() => {
-        const minDistance = 1.4;
-        const maxDistance = 5;
-
-        const baseSize = 0.018;
-
-        const zoomFactor = Math.min(
-            Math.max(
-                (cameraDistance - minDistance) / (maxDistance - minDistance),
-                0
-            ),
-            1
-        );
-
-        return baseSize * (0.3 + zoomFactor * 1.3);
-    }, [cameraDistance]);
+    // Usar hook para tamaño. Escalamos un poco más los clusters (1.3x)
+    const markerSize = useMarkerSize(cameraDistance, 0.018, 1.3);
+    // Tamaño para el badge de número, un poco más pequeño
+    const informativeMarkerSize = useMarkerSize(cameraDistance, 0.018, 1.3);
 
     useEffect(() => {
-        const handleClickOutside = (event: MouseEvent) => {
-            if (
-                clicked &&
-                popupRef.current &&
-                !popupRef.current.contains(event.target as Node)
-            ) {
-                setClicked(false);
-                setHovered(false);
-                onHover(false);
+        setPopupPosition(position[1] > 0 ? 'bottom' : 'top');
+    }, [position]);
+
+    const closeModal = useCallback(() => {
+        setActiveMarkerIndex(null);
+        setClicked(false);
+        setHovered(false);
+        onHover(false);
+    }, [onHover]);
+
+    useEffect(() => {
+        const handleClickOutside = () => {
+            if (clicked) {
+                closeModal();
             }
         };
-
         if (clicked) {
-            document.addEventListener('click', handleClickOutside);
+            setTimeout(
+                () => document.addEventListener('click', handleClickOutside),
+                0
+            );
         }
-
         return () => {
             document.removeEventListener('click', handleClickOutside);
         };
-    }, [clicked, onHover]);
+    }, [clicked, closeModal]);
 
-    interface ThreeEvent extends THREE.Event {
-        stopPropagation?: () => void;
-    }
+    const handlePointerOver = useCallback(
+        (e: ThreeEvent<MouseEvent>) => {
+            e.stopPropagation();
+            document.body.style.cursor = 'pointer';
 
-    const handlePointerOver = (e: ThreeEvent) => {
-        e.stopPropagation?.();
-        // Cambiar el cursor a pointer
-        document.body.style.cursor = 'pointer';
+            if (!clicked) {
+                setHovered(true);
+                onHover(true);
+            }
+        },
+        [clicked, onHover]
+    );
 
-        if (!clicked) {
+    const handlePointerOut = useCallback(
+        (e: ThreeEvent<MouseEvent>) => {
+            e.stopPropagation();
+            document.body.style.cursor = 'auto';
+            if (!clicked) {
+                setHovered(false);
+                onHover(false);
+            }
+        },
+        [clicked, onHover]
+    );
+
+    const handleClick = useCallback(
+        (e: ThreeEvent<MouseEvent>) => {
+            e.stopPropagation();
+            setClicked(!clicked);
             setHovered(true);
             onHover(true);
-        }
-    };
-
-    const handlePointerOut = (e: ThreeEvent) => {
-        e.stopPropagation?.();
-        // Restaurar el cursor predeterminado
-        document.body.style.cursor = 'auto';
-
-        if (!clicked) {
-            setHovered(false);
-            onHover(false);
-        }
-    };
-
-    const handleClick = (e: ThreeEvent) => {
-        e.stopPropagation?.();
-        setClicked(!clicked);
-        setHovered(true);
-        onHover(true);
-    };
+        },
+        [clicked, onHover]
+    );
 
     const selectMarker = (index: number) => {
         setActiveMarkerIndex(index);
@@ -130,20 +101,6 @@ export function MarkerCluster({
 
     const backToList = () => {
         setActiveMarkerIndex(null);
-    };
-
-    const closeModal = () => {
-        setActiveMarkerIndex(null);
-        setClicked(false);
-        setHovered(false);
-        onHover(false);
-    };
-
-    const formatYear = (year: number) => {
-        if (year < 0) {
-            return `${Math.abs(year)} a.C.`;
-        }
-        return `${year} d.C.`;
     };
 
     const handleWheel = (e: React.WheelEvent) => {
@@ -164,7 +121,7 @@ export function MarkerCluster({
                 />
             </mesh>
 
-            {/* Número de puntos sobre el marcador */}
+            {/* Indicador de número de items */}
             <Html
                 position={[0, informativeMarkerSize * 1.5, 0]}
                 center
@@ -193,168 +150,95 @@ export function MarkerCluster({
                             : markerSize * 2.5,
                         0,
                     ]}
-                    className={`pointer-events-auto ${popupPosition === 'bottom' ? 'origin-top' : 'origin-bottom'}`}
                     center
                     style={{
-                        pointerEvents: 'auto',
-                        transform: `translate(10%, ${popupPosition === 'bottom' ? '5%' : '-93%'})`,
                         zIndex: 10,
                         width: '325px',
-                        transformOrigin: 'center center',
-                        scale: '1.15',
+                        transform:
+                            popupPosition === 'bottom'
+                                ? 'translateY(5%)'
+                                : 'translateY(-93%)',
                     }}
-                    zIndexRange={[10, 100]}
                 >
-                    <div
-                        ref={popupRef}
-                        className="w-full -translate-x-1/4 transform rounded-lg bg-white/90 p-4 shadow-lg backdrop-blur-md select-none"
-                        onClick={e => {
-                            e.stopPropagation();
-                        }}
-                        onPointerOver={e => {
-                            e.stopPropagation();
-                            onHover(true);
-                        }}
-                        onWheel={handleWheel}
-                    >
-                        {activeMarkerIndex === null ? (
-                            <>
-                                <div className="mb-3 flex items-center justify-between border-b border-gray-200 pb-2">
-                                    <div className="w-5"></div>
-                                    <button
-                                        className="ml-auto cursor-pointer text-gray-500 select-none hover:text-gray-800"
-                                        onClick={closeModal}
-                                    >
-                                        <X className="h-5 w-5" />
-                                    </button>
-                                </div>
-                                <h3 className="mb-3 text-lg font-bold text-gray-900 select-none">
-                                    Grupo de {markers.length} ubicaciones
-                                </h3>
-                                <div
-                                    className="max-h-64 overflow-y-auto select-none"
-                                    onWheel={handleWheel}
+                    {activeMarkerIndex === null ? (
+                        <div
+                            ref={popupRef}
+                            className="w-full -translate-x-1/4 transform rounded-lg bg-white/90 p-4 shadow-lg backdrop-blur-md select-none"
+                            onClick={e => {
+                                e.stopPropagation();
+                            }}
+                            onPointerOver={e => {
+                                e.stopPropagation();
+                                onHover(true);
+                            }}
+                            onWheel={handleWheel}
+                        >
+                            <div className="mb-3 flex items-center justify-between border-b border-gray-200 pb-2">
+                                <div className="w-5"></div>
+                                <button
+                                    className="ml-auto cursor-pointer text-gray-500 select-none hover:text-gray-800"
+                                    onClick={closeModal}
                                 >
-                                    {markers.map((marker, idx) => (
-                                        <div
-                                            key={idx}
-                                            className="mb-2 cursor-pointer rounded border border-gray-200 p-2 select-none hover:bg-gray-100"
-                                            onClick={() => selectMarker(idx)}
-                                        >
-                                            <div className="flex items-start justify-between text-black select-none">
-                                                <span className="text-sm font-medium">
-                                                    {marker.article.titulo}
-                                                </span>
-                                                <span className="text-xs">
-                                                    {formatYear(
-                                                        marker.article.fecha
-                                                    )}
-                                                </span>
-                                            </div>
-                                            <span className="mt-1 block text-xs text-gray-600 select-none">
-                                                {limitWords(
-                                                    marker.article
-                                                        .templates?.[0]
-                                                        ?.text_areas?.[0]
-                                                        ?.content || '',
-                                                    10
+                                    <X className="h-5 w-5" />
+                                </button>
+                            </div>
+                            <h3 className="mb-3 text-lg font-bold text-gray-900 select-none">
+                                Grupo de {markers.length} ubicaciones
+                            </h3>
+                            <div
+                                className="max-h-64 overflow-y-auto select-none"
+                                onWheel={handleWheel}
+                            >
+                                {markers.map((marker, idx) => (
+                                    <div
+                                        key={idx}
+                                        className="mb-2 cursor-pointer rounded border border-gray-200 p-2 select-none hover:bg-gray-100"
+                                        onClick={() => selectMarker(idx)}
+                                    >
+                                        <div className="flex items-start justify-between text-black select-none">
+                                            <span className="text-sm font-medium">
+                                                {marker.article.titulo}
+                                            </span>
+                                            <span className="text-xs">
+                                                {formatYear(
+                                                    marker.article.fecha
                                                 )}
                                             </span>
                                         </div>
-                                    ))}
-                                </div>
-                            </>
-                        ) : (
-                            <>
-                                <div className="mb-3 flex items-center justify-between border-b border-gray-200 pb-2">
-                                    <button
-                                        className="cursor-pointer text-gray-500 select-none hover:text-gray-800"
-                                        onClick={backToList}
-                                    >
-                                        <ArrowLeft className="h-5 w-5" />
-                                    </button>
-                                    <button
-                                        className="cursor-pointer text-gray-500 select-none hover:text-gray-800"
-                                        onClick={closeModal}
-                                    >
-                                        <X className="h-5 w-5" />
-                                    </button>
-                                </div>
-                                <h3 className="mb-2 text-lg font-bold text-gray-900 select-none">
-                                    {markers[activeMarkerIndex].article.titulo}
-                                </h3>
-                                <div className="mb-2 text-sm font-medium text-gray-800 select-none">
-                                    {formatYear(
-                                        markers[activeMarkerIndex].article.fecha
-                                    )}
-                                </div>
-                                <div
-                                    className="max-h-64 overflow-y-auto select-none"
-                                    onWheel={handleWheel}
-                                >
-                                    <p className="mb-3 text-sm text-gray-600 select-none">
-                                        {limitWords(
-                                            markers[activeMarkerIndex].article
-                                                .templates?.[0]?.text_areas?.[0]
-                                                ?.content || ''
-                                        )}
-                                    </p>
-                                    <div className="mb-3 flex flex-wrap gap-1 select-none">
-                                        <span className="rounded-full bg-purple-100 px-2 py-0.5 text-xs text-purple-800 select-none">
-                                            {getHistoricalPeriod(
-                                                markers[activeMarkerIndex]
-                                                    .article.fecha
+                                        <span className="mt-1 block text-xs text-gray-600 select-none">
+                                            {limitWords(
+                                                marker.article.templates?.[0]
+                                                    ?.text_areas?.[0]
+                                                    ?.content || '',
+                                                10
                                             )}
                                         </span>
-                                        {markers[activeMarkerIndex].article
-                                            .tags &&
-                                        markers[activeMarkerIndex].article.tags
-                                            .length > 0 ? (
-                                            markers[
-                                                activeMarkerIndex
-                                            ].article.tags.map((tag, idx) => (
-                                                <span
-                                                    key={idx}
-                                                    className="rounded-full bg-blue-100 px-2 py-0.5 text-xs text-blue-800 select-none"
-                                                >
-                                                    {tag.name}
-                                                </span>
-                                            ))
-                                        ) : (
-                                            <span className="rounded-full bg-blue-100 px-2 py-0.5 text-xs text-blue-800 select-none">
-                                                Sin etiquetas
-                                            </span>
-                                        )}
                                     </div>
-                                </div>
-                                <div className="mb-3 select-none">
-                                    <span className="rounded-full bg-green-100 px-2 py-0.5 text-xs text-green-800 select-none">
-                                        Autor de artículo:{' '}
-                                        {
-                                            markers[activeMarkerIndex].article
-                                                .nombre_autor
-                                        }{' '}
-                                        {
-                                            markers[activeMarkerIndex].article
-                                                .apellidos_autor
-                                        }
-                                    </span>
-                                </div>
-                                <a
-                                    href={`/articles/view/${markers[activeMarkerIndex].article.id}`}
-                                    className="inline-flex cursor-pointer items-center gap-1 text-sm text-blue-600 select-none hover:text-blue-800"
-                                    onClick={() => {
-                                        closeModal();
-                                    }}
-                                    target="_blank"
-                                >
-                                    Ver más <ExternalLink className="h-4 w-4" />
-                                </a>
-                            </>
-                        )}
-                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    ) : (
+                        // VISTA DE DETALLE (USANDO ArticlePopup)
+                        <div className="relative">
+                            <ArticlePopup
+                                article={markers[activeMarkerIndex].article}
+                                onClose={closeModal}
+                            />
+                            {/* Botón flotante para volver atrás */}
+                            <button
+                                className="absolute top-4 -left-14 z-20 cursor-pointer text-gray-500 hover:text-gray-800"
+                                onClick={e => {
+                                    e.stopPropagation();
+                                    backToList();
+                                }}
+                            >
+                                <ArrowLeft className="h-5 w-5" />
+                            </button>
+                        </div>
+                    )}
                 </Html>
             )}
         </group>
     );
 }
+export const MarkerCluster = memo(MarkerClusterBase);

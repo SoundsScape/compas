@@ -2,13 +2,10 @@ import { useState, useEffect, useMemo } from 'react';
 import { getArticles } from '@/lib/services/articleService';
 import { Article } from '@/lib/interfaces/article.interface';
 import { getHistoricalPeriod } from '@/lib/utils/historicalPeriods';
-import { latLngToVector3, calculateDistance } from '@/lib/utils/threeUtils';
-import { ClusterGroup } from '../interfaces/globe.interface';
 
-export function useArticles(filters: any, dynamicClusterThreshold: number) {
+export function useArticles(filters: any) {
     const [articles, setArticles] = useState<Article[]>([]);
     const [loading, setLoading] = useState(true);
-    const [clusterGroups, setClusterGroups] = useState<ClusterGroup[]>([]);
 
     // 1. Cargar artículos
     useEffect(() => {
@@ -82,48 +79,8 @@ export function useArticles(filters: any, dynamicClusterThreshold: number) {
         });
     }, [articles, filters]);
 
-    // 3. Agrupar en Clusters
-    useEffect(() => {
-        const eventPositions = filteredEvents.map(article => ({
-            article,
-            position: latLngToVector3(
-                parseFloat(article.latitud),
-                parseFloat(article.longitud)
-            ),
-        }));
-
-        const groups: ClusterGroup[] = [];
-        const processed = new Set<number>();
-
-        eventPositions.forEach((event, idx) => {
-            if (processed.has(idx)) return;
-            const group: ClusterGroup = {
-                center: event.position,
-                markers: [event],
-                isVisible: true,
-            };
-            processed.add(idx);
-
-            eventPositions.forEach((otherEvent, otherIdx) => {
-                if (idx === otherIdx || processed.has(otherIdx)) return;
-                if (
-                    calculateDistance(event.position, otherEvent.position) <
-                    dynamicClusterThreshold
-                ) {
-                    group.markers.push(otherEvent);
-                    processed.add(otherIdx);
-                }
-            });
-            groups.push(group);
-        });
-
-        setClusterGroups(groups);
-    }, [filteredEvents, dynamicClusterThreshold]);
-
     return {
-        clusterGroups,
-        setClusterGroups,
+        articles: filteredEvents,
         loading,
-        articles: filteredEvents, // Exportamos los eventos filtrados para el Mapa 2D
     };
 }

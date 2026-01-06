@@ -7,6 +7,7 @@ import * as THREE from 'three';
 import { isPointVisible } from '@/lib/utils/threeUtils';
 import { useArticles } from '@/lib/hooks/useArticles';
 import { useGlobeTextures } from '@/lib/hooks/useGlobeTextures';
+import { useClustering } from '@/lib/hooks/useClustering';
 import { Earth } from './Earth';
 import { Clouds } from './Clouds';
 import { MarkersLayer } from './MarkersLayer';
@@ -28,9 +29,7 @@ export function Globe({ filters, isPaused, settings }: GlobeProps) {
         const baseThreshold = settings.visual.clusterThreshold || 0.05;
         const minDistance = 1.4;
         const maxDistance = 5;
-        // Cuando la cámara está cerca (zoom máximo), queremos el umbral más bajo (menos agrupamiento)
-        // Cuando la cámara está lejos (zoom mínimo), queremos el umbral más alto (más agrupamiento)
-        // Calcular factor de escala basado en la distancia (0 cuando está al máximo zoom, 1 cuando está al mínimo)
+
         const zoomFactor = Math.min(
             Math.max(
                 (cameraDistance - minDistance) / (maxDistance - minDistance),
@@ -38,24 +37,29 @@ export function Globe({ filters, isPaused, settings }: GlobeProps) {
             ),
             1
         );
-        // Aplicar el factor a nuestro umbral, pero establecer un mínimo para que puntos muy cercanos
-        // siempre se agrupen, incluso cuando estamos al máximo zoom
         const minThreshold = 0.009; // Umbral mínimo para agrupación
         return Math.max(minThreshold, baseThreshold * zoomFactor);
     }, [cameraDistance, settings.visual.clusterThreshold]);
+
     // 2. Hooks de Datos y Texturas
-    const {
-        clusterGroups,
-        setClusterGroups,
-        loading: articlesLoading,
-    } = useArticles(filters, dynamicClusterThreshold);
+    const { articles: filteredEvents, loading: articlesLoading } =
+        useArticles(filters);
     const { earthTexture, cloudsTexture, texturesLoaded } = useGlobeTextures();
-    // 3. Efectos de Rotación
+
+    // 3. Hook de Clustering y Visibilidad Inicial
+    const { clusterGroups, setClusterGroups } = useClustering(
+        filteredEvents,
+        globeRef as React.RefObject<THREE.Group>,
+        dynamicClusterThreshold
+    );
+
+    // 4. Efectos de Rotación
     useEffect(() => {
         targetSpeedRef.current =
             isHovered || isPaused ? 0 : settings.visual.rotationSpeed;
     }, [isHovered, isPaused, settings.visual.rotationSpeed]);
-    // 4. Bucle de Animación
+
+    // 5. Bucle de Animación
     useFrame(() => {
         if (!globeRef.current) return;
 
@@ -63,10 +67,12 @@ export function Globe({ filters, isPaused, settings }: GlobeProps) {
         rotationSpeedRef.current +=
             (targetSpeedRef.current - rotationSpeedRef.current) * 0.05;
         globeRef.current.rotation.y += rotationSpeedRef.current;
+
         // Tracking de cámara
         const newDist = camera.position.length();
         if (Math.abs(newDist - cameraDistance) > 0.01)
             setCameraDistance(newDist);
+
         // Actualización de visibilidad cada 100ms
         const currentTime = performance.now();
         if (currentTime - lastUpdateTimeRef.current > (isPaused ? 300 : 100)) {
@@ -85,7 +91,8 @@ export function Globe({ filters, isPaused, settings }: GlobeProps) {
         }
         if (cloudsRef.current) cloudsRef.current.rotation.y += 0.0001;
     });
-    // 5. Gestión del Loading
+
+    // 6. Gestión del Loading
     useEffect(() => {
         if (texturesLoaded && !articlesLoading) setLoading(false);
     }, [texturesLoaded, articlesLoading]);

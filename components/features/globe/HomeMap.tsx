@@ -38,7 +38,7 @@ export default function HomeMap({ filters }: HomeMapProps) {
     const [mapReady, setMapReady] = useState(false);
     // Inyectamos los mismos datos que el Globo
     // Pasamos 0 como umbral de cluster porque el mapa 2D no los usa (por ahora)
-    const { articles, loading } = useArticles(filters, 0);
+    const { articles, loading } = useArticles(filters);
 
     // Detectar cuando el mapa está listo
     useEffect(() => {

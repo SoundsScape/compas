@@ -61,10 +61,7 @@ export default function Home() {
         <ProtectedRoute>
             <div className="from-primary to-background relative h-screen w-full bg-radial from-5%">
                 {showMap ? (
-                    <HomeMap
-                        selectedYearRange={selectedYearRange}
-                        filters={filters}
-                    />
+                    <HomeMap filters={filters} />
                 ) : (
                     <GlobeMain
                         selectedYearRange={selectedYearRange}

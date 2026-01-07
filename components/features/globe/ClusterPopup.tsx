@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef } from 'react';
 import { X, ArrowLeft } from 'lucide-react';
 import { formatYear } from '@/lib/utils/dateUtils';
 import { limitWords } from '@/lib/utils/textUtils';

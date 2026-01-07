@@ -1,12 +1,18 @@
-// Importaciones de React y useState
-import React, { useState, useEffect } from 'react';
-// Importaciones de iconos
+import React, { useState, useEffect, useCallback } from 'react';
 import { Search, Filter, X } from 'lucide-react';
-// Importación del servicio de tags y la interfaz
 import { getTags } from '../../../lib/services/tagService';
 import { Tag } from '../../../lib/interfaces/tag.interface';
-// Importar períodos históricos
 import { getAllHistoricalPeriodNames } from '../../../lib/utils/historicalPeriods';
+import { Input } from '@/components/ui/input';
+import { Slider } from '@/components/ui/slider';
+import { Button } from '@/components/ui/button';
+import { formatYear } from '@/lib/utils/dateUtils';
+import {
+    Accordion,
+    AccordionContent,
+    AccordionItem,
+    AccordionTrigger,
+} from '@/components/ui/accordion';
 
 interface FiltersProps {
     filters: {
@@ -30,10 +36,8 @@ interface FiltersProps {
     maxYear: number;
 }
 
-// Etapas históricas obtenidas de historicalPeriods.tsx
 const categories = getAllHistoricalPeriodNames();
 
-// Regiones geográficas
 const regions = [
     'Europa',
     'Asia',
@@ -53,12 +57,11 @@ export default function Filters({
 }: FiltersProps) {
     const [startYear, setStartYear] = useState(filters.yearRange[0].toString());
     const [endYear, setEndYear] = useState(filters.yearRange[1].toString());
-    // Estado para almacenar los tags obtenidos de la base de datos
     const [tags, setTags] = useState<Tag[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const [sliderValue, setSliderValue] = useState<[number, number]>([0, 100]);
 
-    // Effect para cargar los tags cuando el componente se monta
     useEffect(() => {
         const fetchTags = async () => {
             try {
@@ -72,209 +75,109 @@ export default function Filters({
                 console.error(err);
             }
         };
-
         fetchTags();
     }, []);
 
-    // Usa formatYear de utils/dateUtils para formatear años y fechas
-    // Ejemplo de uso: formatYear(year, 'AC/DC')
-
-    // Funciones para transformación logarítmica
-    const toLogarithmic = (year: number): number => {
-        // Ajustamos para manejar años negativos y positivos
+    // Funciones logarítmicas (Sincronizadas con Timeline.tsx)
+    const toLogarithmic = useCallback((year: number): number => {
         const sign = year >= 0 ? 1 : -1;
         const absYear = Math.abs(year);
-
-        // Usamos logaritmo para comprimir los años antiguos y expandir los recientes
-        // Añadimos 1 para evitar log(0)
         return (
             ((sign * Math.log(absYear + 1)) / Math.log(Math.abs(maxYear) + 1)) *
             Math.abs(maxYear)
         );
-    };
+    }, [maxYear]);
 
-    const fromLogarithmic = (logValue: number): number => {
-        // Calcular los límites logarítmicos
+    const fromLogarithmic = useCallback((logValue: number): number => {
         const calcLogMaxYear = toLogarithmic(maxYear);
         const calcLogMinYear = toLogarithmic(minYear);
+        const tolerance = Math.abs(calcLogMaxYear - calcLogMinYear) * 0.01;
 
-        // Si estamos en los extremos con mayor tolerancia, devolver exactamente el min o max
-        const tolerance = Math.abs(calcLogMaxYear - calcLogMinYear) * 0.01; // 1% del rango
+        if (Math.abs(logValue - calcLogMaxYear) <= tolerance) return maxYear;
+        if (Math.abs(logValue - calcLogMinYear) <= tolerance) return minYear;
 
-        if (Math.abs(logValue - calcLogMaxYear) <= tolerance) {
-            console.log('Devolviendo maxYear:', maxYear);
-            return maxYear;
-        }
-        if (Math.abs(logValue - calcLogMinYear) <= tolerance) {
-            console.log('Devolviendo minYear:', minYear);
-            return minYear;
-        }
-
-        // Convertimos de valor logarítmico a año real
         const sign = logValue >= 0 ? 1 : -1;
         const absLogValue = Math.abs(logValue);
 
-        // Transformación inversa
         const year = Math.round(
             Math.exp(
                 (absLogValue * Math.log(Math.abs(maxYear) + 1)) /
-                    Math.abs(maxYear)
+                Math.abs(maxYear)
             ) - 1
         );
 
-        // Asegurar que no excede los límites
-        const clampedYear = Math.max(minYear, Math.min(maxYear, sign * year));
-        console.log(
-            'logValue:',
-            logValue,
-            'year calculado:',
-            year,
-            'clamped:',
-            clampedYear
-        );
-        return clampedYear;
-    };
+        return Math.max(minYear, Math.min(maxYear, sign * year));
+    }, [maxYear, minYear, toLogarithmic]);
 
-    // Convertimos los valores del rango a escala logarítmica para visualización
-    // Memoizamos estos valores para evitar recalculos innecesarios
+    // Calcular valores logarítmicos
     const logMinYear = toLogarithmic(minYear);
     const logMaxYear = toLogarithmic(maxYear);
-    const logSelectedStart = toLogarithmic(filters.yearRange[0]);
-    const logSelectedEnd = toLogarithmic(filters.yearRange[1]);
 
-    // Log para debug
+    // Sincronizar slider y inputs cuando cambian los filtros
     useEffect(() => {
-        console.log('MIN_YEAR:', minYear, 'MAX_YEAR:', maxYear);
-        console.log('logMinYear:', logMinYear, 'logMaxYear:', logMaxYear);
-    }, [minYear, maxYear, logMinYear, logMaxYear]);
-
-    useEffect(() => {
+        const logStart = toLogarithmic(filters.yearRange[0]);
+        const logEnd = toLogarithmic(filters.yearRange[1]);
+        setSliderValue([logStart, logEnd]);
         setStartYear(filters.yearRange[0].toString());
         setEndYear(filters.yearRange[1].toString());
-    }, [filters.yearRange]);
+    }, [filters.yearRange, toLogarithmic]);
 
+    // Manejo del Slider
+    const handleSliderChange = (value: number[]) => {
+        const [newLogStart, newLogEnd] = value;
+        const newStart = fromLogarithmic(newLogStart);
+        const newEnd = fromLogarithmic(newLogEnd);
+
+        setSliderValue([newLogStart, newLogEnd]);
+        setStartYear(newStart.toString());
+        setEndYear(newEnd.toString());
+    };
+
+    const handleSliderCommit = (value: number[]) => {
+        const [newLogStart, newLogEnd] = value;
+        const newStart = fromLogarithmic(newLogStart);
+        const newEnd = fromLogarithmic(newLogEnd);
+
+        const newRange: [number, number] = [newStart, newEnd];
+        setSelectedYearRange(newRange);
+        setFilters(prev => ({ ...prev, yearRange: newRange }));
+    };
+
+    // Manejo de Inputs Manuales
     const handleYearInput = (value: string, isStart: boolean) => {
-        if (isStart) {
-            setStartYear(value);
-        } else {
-            setEndYear(value);
-        }
-
-        // Intentar actualizar inmediatamente si el valor es válido
-        const year = parseInt(value);
-        if (!isNaN(year)) {
-            if (isStart && year <= filters.yearRange[1]) {
-                const newRange: [number, number] = [year, filters.yearRange[1]];
-                setSelectedYearRange(newRange);
-                setFilters(prev => ({
-                    ...prev,
-                    yearRange: newRange,
-                }));
-            } else if (!isStart && year >= filters.yearRange[0]) {
-                const newRange: [number, number] = [filters.yearRange[0], year];
-                setSelectedYearRange(newRange);
-                setFilters(prev => ({
-                    ...prev,
-                    yearRange: newRange,
-                }));
-            }
-        }
+        if (isStart) setStartYear(value);
+        else setEndYear(value);
     };
 
-    const handleYearSubmit = (
-        e:
-            | React.KeyboardEvent<HTMLInputElement>
-            | React.FocusEvent<HTMLInputElement>,
-        isStart: boolean
-    ) => {
-        if ('key' in e && e.key !== 'Enter') {
+    const handleYearCommit = (isStart: boolean) => {
+        let val = parseInt(isStart ? startYear : endYear);
+        if (isNaN(val)) {
+            // Revertir si no es número
+            if (isStart) setStartYear(filters.yearRange[0].toString());
+            else setEndYear(filters.yearRange[1].toString());
             return;
         }
 
-        const value = isStart ? startYear : endYear;
-        let year = parseInt(value);
-
-        if (isNaN(year)) {
-            if (isStart) {
-                setStartYear(filters.yearRange[0].toString());
-            } else {
-                setEndYear(filters.yearRange[1].toString());
-            }
-            return;
-        }
-
-        // Validar rango
         if (isStart) {
-            year = Math.max(minYear, Math.min(year, filters.yearRange[1]));
-            setStartYear(year.toString());
-            const newRange: [number, number] = [year, filters.yearRange[1]];
+            val = Math.max(minYear, Math.min(val, filters.yearRange[1]));
+            const newRange: [number, number] = [val, filters.yearRange[1]];
             setSelectedYearRange(newRange);
-            setFilters(prev => ({
-                ...prev,
-                yearRange: newRange,
-            }));
+            setFilters(prev => ({ ...prev, yearRange: newRange }));
+            setStartYear(val.toString());
         } else {
-            year = Math.max(filters.yearRange[0], Math.min(year, maxYear));
-            setEndYear(year.toString());
-            const newRange: [number, number] = [filters.yearRange[0], year];
+            val = Math.max(filters.yearRange[0], Math.min(val, maxYear));
+            const newRange: [number, number] = [filters.yearRange[0], val];
             setSelectedYearRange(newRange);
-            setFilters(prev => ({
-                ...prev,
-                yearRange: newRange,
-            }));
+            setFilters(prev => ({ ...prev, yearRange: newRange }));
+            setEndYear(val.toString());
         }
     };
 
-    const handleRangeChange = (logValue: number, isStart: boolean) => {
-        // Calcular los límites con el mismo método que en fromLogarithmic
-        const calcLogMaxYear = toLogarithmic(maxYear);
-        const calcLogMinYear = toLogarithmic(minYear);
-        const tolerance = Math.abs(calcLogMaxYear - calcLogMinYear) * 0.02; // 2% del rango para el slider
-
-        let realYear: number;
-
-        // Detectar si estamos muy cerca de los extremos
-        if (Math.abs(logValue - calcLogMaxYear) <= tolerance) {
-            realYear = maxYear;
-            console.log('Slider en máximo, asignando:', maxYear);
-        } else if (Math.abs(logValue - calcLogMinYear) <= tolerance) {
-            realYear = minYear;
-            console.log('Slider en mínimo, asignando:', minYear);
-        } else {
-            // Convertimos el valor logarítmico de vuelta a año real
-            realYear = fromLogarithmic(logValue);
-        }
-
-        if (isStart) {
-            if (realYear <= filters.yearRange[1]) {
-                const newRange: [number, number] = [
-                    realYear,
-                    filters.yearRange[1],
-                ];
-                setStartYear(realYear.toString());
-                setSelectedYearRange(newRange);
-                setFilters(prev => ({
-                    ...prev,
-                    yearRange: newRange,
-                }));
-            }
-        } else {
-            if (realYear >= filters.yearRange[0]) {
-                const newRange: [number, number] = [
-                    filters.yearRange[0],
-                    realYear,
-                ];
-                setEndYear(realYear.toString());
-                setSelectedYearRange(newRange);
-                setFilters(prev => ({
-                    ...prev,
-                    yearRange: newRange,
-                }));
-            }
-        }
+    const handleKeyDown = (e: React.KeyboardEvent, isStart: boolean) => {
+        if (e.key === 'Enter') handleYearCommit(isStart);
     };
 
-    // Función para alternar filtros
+    // Alternar filtros
     const toggleFilter = (
         type: 'categories' | 'eventTypes' | 'regions',
         value: string
@@ -287,234 +190,203 @@ export default function Filters({
         }));
     };
 
+    const clearFilters = () => {
+        setFilters({
+            search: '',
+            yearRange: [minYear, maxYear],
+            categories: [],
+            eventTypes: [],
+            regions: [],
+        });
+        setSelectedYearRange([minYear, maxYear]);
+    };
+
     return (
-        <div
-            className="z-20 flex h-[calc(100vh-120px)] w-[280px] flex-col overflow-hidden rounded-md text-white backdrop-blur-md"
-            style={{ pointerEvents: 'auto' }}
-        >
-            <div className="bg-primary mx-auto flex h-[calc(100vh-120px)] w-[280px] flex-col overflow-hidden p-4 px-4 text-white backdrop-blur-sm dark:bg-black">
-                {/* Encabezado */}
-                <div className="mb-4 flex flex-none items-center justify-between">
-                    <div className="flex items-center gap-2">
-                        <Filter className="h-5 w-5" />
-                        <h2 className="text-lg font-semibold">Filtros</h2>
-                    </div>
-                    <button
-                        onClick={() => {
-                            setFilters({
-                                search: '',
-                                yearRange: [minYear, maxYear],
-                                categories: [],
-                                eventTypes: [],
-                                regions: [],
-                            });
-                            setSelectedYearRange([minYear, maxYear]);
-                        }}
-                        className="cursor-pointer text-xs transition-colors hover:text-gray-300"
-                    >
-                        Limpiar filtros
-                    </button>
+        <div className="overflow-y-auto bg-background/80 shadow-lg border border-border/50 backdrop-blur-md rounded-md 2xl:overflow-hidden h-[calc(100vh-120px)] w-[280px] lg:w-xs 2xl:w-sm flex flex-col pointer-events-auto">
+            {/* Header */}
+            <div className="flex items-center justify-between px-4 py-2 bg-primary/90 border-b border-border/10 shrink-0">
+                <div className="flex items-center gap-2 text-primary-foreground">
+                    <Filter className="h-4 w-4" />
+                    <span className="text-lg font-semibold tracking-wider">Filtros</span>
                 </div>
+                <Button
+                    variant="link"
+                    size="sm"
+                    onClick={clearFilters}
+                    className="h-6 px-2 text-xs text-primary-foreground/90 hover:text-white hover:underline cursor-pointer"
+                >
+                    Limpiar filtros
+                </Button>
+            </div>
 
-                {/* Buscador de eventos por nombre */}
-                <div className="relative mb-6">
-                    <input
-                        type="text"
-                        placeholder="Buscar articulos..."
-                        value={filters.search}
-                        onChange={e =>
-                            setFilters(prev => ({
-                                ...prev,
-                                search: e.target.value,
-                            }))
-                        }
-                        className="w-full cursor-text rounded-lg bg-white/5 px-4 py-2 pl-10 text-white placeholder-gray-400 focus:ring-2 focus:ring-white/20 focus:outline-none"
-                    />
-                    <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 transform text-gray-400" />
-                </div>
-
-                {/* Rango de años desde un año hasta un año */}
-                <h3 className="mb-2 text-sm font-medium">Rango de Años</h3>
-                <div className="mb-2 flex gap-4">
-                    <div className="flex-1">
-                        <label className="mb-1 block text-xs text-gray-400">
-                            Desde
-                        </label>
-                        <input
+            {/* Main Content Area - Flex Column */}
+            <div className="flex-1 flex flex-col min-h-0 p-4 gap-3 bg-primary/30">
+                {/* Fixed Top Section: Search & Date Range */}
+                <div className="space-y-4 shrink-0 border-b border-border/10">
+                    {/* Buscador */}
+                    <div className="relative">
+                        <Input
                             type="text"
-                            value={startYear}
-                            onChange={e =>
-                                handleYearInput(e.target.value, true)
-                            }
-                            onKeyDown={e => handleYearSubmit(e, true)}
-                            onBlur={e => handleYearSubmit(e, true)}
-                            className="w-full rounded bg-white/5 px-2 py-1 text-sm focus:ring-2 focus:ring-white/20 focus:outline-none"
+                            placeholder="Buscar..."
+                            value={filters.search}
+                            onChange={e => setFilters(prev => ({ ...prev, search: e.target.value }))}
+                            className="pl-9 h-9 bg-background/50 border-input/50"
                         />
+                        <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                     </div>
-                    <div className="flex-1">
-                        <label className="mb-1 block text-xs text-gray-400">
-                            Hasta
-                        </label>
-                        <input
-                            type="text"
-                            value={endYear}
-                            onChange={e =>
-                                handleYearInput(e.target.value, false)
-                            }
-                            onKeyDown={e => handleYearSubmit(e, false)}
-                            onBlur={e => handleYearSubmit(e, false)}
-                            className="w-full rounded bg-white/5 px-2 py-1 text-sm focus:ring-2 focus:ring-white/20 focus:outline-none"
-                        />
-                    </div>
-                </div>
-                <div className="mb-2 flex gap-4">
-                    <input
-                        type="range"
-                        min={logMinYear}
-                        max={logMaxYear}
-                        value={logSelectedStart}
-                        onChange={e =>
-                            handleRangeChange(Number(e.target.value), true)
-                        }
-                        className="w-full cursor-pointer"
-                        step="1"
-                    />
-                    <input
-                        type="range"
-                        min={logMinYear}
-                        max={logMaxYear}
-                        value={logSelectedEnd}
-                        onChange={e =>
-                            handleRangeChange(Number(e.target.value), false)
-                        }
-                        className="w-full cursor-pointer"
-                        step="1"
-                    />
-                </div>
 
-                {/* Filtros activos */}
-                {(filters.categories.length > 0 ||
-                    filters.eventTypes.length > 0 ||
-                    filters.regions.length > 0) && (
-                    <div className="mb-4 flex-none">
-                        <h3 className="mb-2 text-sm font-medium">
-                            Filtros Activos
-                        </h3>
-                        <div className="max-h-[120px] overflow-y-auto rounded-lg bg-white/5 p-3 pr-2">
-                            <div className="flex flex-wrap gap-2">
-                                {[
-                                    ...filters.categories,
-                                    ...filters.eventTypes,
-                                    ...filters.regions,
-                                ].map(filter => (
-                                    <span
-                                        key={filter}
-                                        className="flex items-center gap-1 rounded-full bg-white/20 px-3 py-1 text-xs whitespace-nowrap text-white"
-                                    >
-                                        {filter}
-                                        <button
-                                            onClick={() => {
-                                                setFilters(prev => ({
-                                                    ...prev,
-                                                    categories:
-                                                        prev.categories.filter(
-                                                            c => c !== filter
-                                                        ),
-                                                    eventTypes:
-                                                        prev.eventTypes.filter(
-                                                            t => t !== filter
-                                                        ),
-                                                    regions:
-                                                        prev.regions.filter(
-                                                            r => r !== filter
-                                                        ),
-                                                }));
-                                            }}
-                                            className="${filters.categories.includes(filter) ? 'bg-purple-600 text-white' : 'bg-white/5 hover:bg-white/10'} m-0.5 cursor-pointer rounded-full border border-transparent px-2 py-1 text-xs text-gray-300"
-                                        >
-                                            <X className="h-3 w-3 transition-colors hover:text-red-400" />
-                                        </button>
-                                    </span>
-                                ))}
+                    {/* Rango de Años */}
+                    <div className="space-y-2">
+                        <h3 className="text-xs font-semibold uppercase tracking-wider">Rango Temporal</h3>
+
+                        <div className="flex gap-2">
+                            <div className="flex-1 space-y-1">
+                                <label className="text-xs text-muted-foreground">Desde</label>
+                                <Input
+                                    value={startYear}
+                                    onChange={e => handleYearInput(e.target.value, true)}
+                                    onBlur={() => handleYearCommit(true)}
+                                    onKeyDown={e => handleKeyDown(e, true)}
+                                    className="h-7 text-xs bg-background/50 mt-1"
+                                />
+                            </div>
+                            <div className="flex-1 space-y-1">
+                                <label className="text-xs text-muted-foreground">Hasta</label>
+                                <Input
+                                    value={endYear}
+                                    onChange={e => handleYearInput(e.target.value, false)}
+                                    onBlur={() => handleYearCommit(false)}
+                                    onKeyDown={e => handleKeyDown(e, false)}
+                                    className="h-7 text-xs bg-background/50 mt-1"
+                                />
+                            </div>
+                        </div>
+
+                        <div className="px-1 mt-4">
+                            <Slider
+                                defaultValue={[logMinYear, logMaxYear]}
+                                value={sliderValue}
+                                min={logMinYear}
+                                max={logMaxYear}
+                                step={1}
+                                onValueChange={handleSliderChange}
+                                onValueCommit={handleSliderCommit}
+                                className="cursor-pointer"
+                            />
+                            <div className="flex justify-between mt-4">
+                                <span className="text-xs text-muted-foreground">{formatYear(parseInt(startYear) || minYear)}</span>
+                                <span className="text-xs text-muted-foreground">{formatYear(parseInt(endYear) || maxYear)}</span>
                             </div>
                         </div>
                     </div>
-                )}
+                </div>
 
-                {/* Categorías */}
-                <div className="flex-1 space-y-4 overflow-y-auto pr-2">
-                    <div className="rounded-lg bg-white/5 p-3">
-                        <h3 className="mb-2 text-sm font-medium">
-                            Etapas históricas
-                        </h3>
-                        <div className="flex flex-wrap gap-2">
-                            {categories.map(category => (
-                                <button
-                                    key={category}
-                                    onClick={() =>
-                                        toggleFilter('categories', category)
-                                    }
-                                    className={`cursor-pointer rounded-full px-3 py-1 text-xs transition-colors ${
-                                        filters.categories.includes(category)
-                                            ? 'bg-white/20 text-white'
-                                            : 'bg-white/5 text-gray-300 hover:bg-white/10'
-                                    }`}
-                                >
-                                    {category}
-                                </button>
+                {/* Filtros Activos - Independent Scroll Area */}
+                {(filters.categories.length > 0 || filters.eventTypes.length > 0 || filters.regions.length > 0) && (
+                    <div className="relative shrink-0 max-h-[100px] lg:max-h-[140px] overflow-y-auto bg-background/50 rounded-sm custom-scrollbar">
+                        <h3 className="sticky top-0 left-0 right-0 bg-primary px-3 py-2 text-xs font-semibold uppercase tracking-wider">Activos</h3>
+                        <div className="flex flex-wrap gap-1.5 p-3">
+                            {[...filters.categories, ...filters.eventTypes, ...filters.regions].map(filter => (
+                                <span key={filter} className="inline-flex items-center gap-1.5 px-1.5 py-1 rounded-sm text-xs bg-secondary/70 text-primary-foreground border border-secondary">
+                                    {filter}
+                                    <button
+                                        onClick={() => {
+                                            setFilters(prev => ({
+                                                ...prev,
+                                                categories: prev.categories.filter(c => c !== filter),
+                                                eventTypes: prev.eventTypes.filter(t => t !== filter),
+                                                regions: prev.regions.filter(r => r !== filter),
+                                            }));
+                                        }}
+                                        className="hover:text-destructive hover:bg-destructive/20 transition-colors cursor-pointer p-0.5 rounded-sm"
+                                    >
+                                        <X className="size-3.5" />
+                                    </button>
+                                </span>
                             ))}
                         </div>
                     </div>
 
-                    <div className="rounded-lg bg-white/5 p-3">
-                        <h3 className="mb-2 text-sm font-medium">
-                            Tipos de Eventos
-                        </h3>
-                        {isLoading ? (
-                            <p className="text-xs text-gray-400">
-                                Cargando tags...
-                            </p>
-                        ) : error ? (
-                            <p className="text-xs text-red-400">{error}</p>
-                        ) : (
-                            <div className="flex flex-wrap gap-2">
-                                {tags.map(tag => (
-                                    <button
-                                        key={tag.id}
-                                        onClick={() =>
-                                            toggleFilter('eventTypes', tag.name)
-                                        }
-                                        className={`cursor-pointer rounded-full px-3 py-1 text-xs transition-colors ${
-                                            filters.eventTypes.includes(
-                                                tag.name
-                                            )
-                                                ? 'bg-white/20 text-white'
-                                                : 'bg-white/5 text-gray-300 hover:bg-white/10'
-                                        }`}
-                                    >
-                                        {tag.name}
-                                    </button>
-                                ))}
-                            </div>
-                        )}
-                    </div>
+                )}
 
-                    <h3 className="mb-2 text-sm font-medium">Regiones</h3>
-                    <div className="flex flex-wrap gap-2">
-                        {regions.map(region => (
-                            <button
-                                key={region}
-                                onClick={() => toggleFilter('regions', region)}
-                                className={`cursor-pointer rounded-full px-3 py-1 text-xs transition-colors ${
-                                    filters.regions.includes(region)
-                                        ? 'bg-white/20 text-white'
-                                        : 'bg-white/5 text-gray-300 hover:bg-white/10'
-                                }`}
-                            >
-                                {region}
-                            </button>
-                        ))}
-                    </div>
+                {/* Rest of Filters - Accordion */}
+                <div className="flex-1 overflow-y-auto custom-scrollbar">
+                    <Accordion type="multiple" defaultValue={["etapas", "eventos", "regiones"]} className="space-y-3">
+                        {/* Categorías (Etapas) */}
+                        <AccordionItem value="etapas" className="bg-background/50 rounded-sm border-none">
+                            <AccordionTrigger className="px-3 py-2 hover:no-underline bg-primary hover:bg-primary/60 rounded-sm">
+                                <h3 className="text-xs font-semibold uppercase tracking-wider">Etapas Históricas</h3>
+                            </AccordionTrigger>
+                            <AccordionContent className="p-3">
+                                <div className="flex flex-wrap gap-1.5">
+                                    {categories.map(category => (
+                                        <button
+                                            key={category}
+                                            onClick={() => toggleFilter('categories', category)}
+                                            className={`px-2 py-1 rounded-sm text-xs transition-all hover:bg-primary/80 border cursor-pointer ${filters.categories.includes(category)
+                                                ? 'bg-muted border-secondary/70 text-muted-foreground shadow-sm'
+                                                : 'bg-secondary/70 border-secondary text-secondary-foreground hover:text-foreground'
+                                                }`}
+                                        >
+                                            {category}
+                                        </button>
+                                    ))}
+                                </div>
+                            </AccordionContent>
+                        </AccordionItem>
+
+                        {/* Tipos de Eventos */}
+                        <AccordionItem value="eventos" className="bg-background/50 rounded-sm border-none">
+                            <AccordionTrigger className="px-3 py-2 hover:no-underline bg-primary hover:bg-primary/60 rounded-sm">
+                                <h3 className="text-xs font-semibold uppercase tracking-wider">Tipos de Eventos</h3>
+                            </AccordionTrigger>
+                            <AccordionContent className="p-3">
+                                {isLoading ? (
+                                    <p className="text-xs text-muted-foreground animate-pulse">Cargando...</p>
+                                ) : error ? (
+                                    <p className="text-xs text-destructive">{error}</p>
+                                ) : (
+                                    <div className="flex flex-wrap gap-1.5">
+                                        {tags.map(tag => (
+                                            <button
+                                                key={tag.id}
+                                                onClick={() => toggleFilter('eventTypes', tag.name)}
+                                                className={`px-2 py-1 rounded-sm text-xs transition-all hover:bg-primary/80 border cursor-pointer ${filters.eventTypes.includes(tag.name)
+                                                    ? 'bg-muted border-secondary/70 text-muted-foreground shadow-sm'
+                                                    : 'bg-secondary/70 border-secondary text-secondary-foreground hover:text-foreground'
+                                                    }`}
+                                            >
+                                                {tag.name}
+                                            </button>
+                                        ))}
+                                    </div>
+                                )}
+                            </AccordionContent>
+                        </AccordionItem>
+
+                        {/* Regiones */}
+                        <AccordionItem value="regiones" className="bg-background/50 rounded-sm border-none">
+                            <AccordionTrigger className="px-3 py-2 hover:no-underline bg-primary hover:bg-primary/60 rounded-sm">
+                                <h3 className="text-xs font-semibold uppercase tracking-wider">Regiones</h3>
+                            </AccordionTrigger>
+                            <AccordionContent className="p-3">
+                                <div className="flex flex-wrap gap-1.5">
+                                    {regions.map(region => (
+                                        <button
+                                            key={region}
+                                            onClick={() => toggleFilter('regions', region)}
+                                            className={`px-2 py-1 rounded-sm text-xs transition-all hover:bg-primary/80 border cursor-pointer ${filters.regions.includes(region)
+                                                ? 'bg-muted border-secondary/70 text-muted-foreground shadow-sm'
+                                                : 'bg-secondary/70 border-secondary text-secondary-foreground hover:text-foreground'
+                                                }`}
+                                        >
+                                            {region}
+                                        </button>
+                                    ))}
+                                </div>
+                            </AccordionContent>
+                        </AccordionItem>
+                    </Accordion>
                 </div>
             </div>
         </div>

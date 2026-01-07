@@ -56,7 +56,7 @@
     --secondary: #0f4285;
     --secondary-foreground: #ffffff;
     --muted: #1e293b;
-    --muted-foreground: #999999;
+    --muted-foreground: #b3b2b2;
     --accent: #ffed00;
     --accent-foreground: #081a31;
     --destructive: #ff6b6b;
@@ -123,7 +123,7 @@
     --secondary: #0f4285;
     --secondary-foreground: #ffffff;
     --muted: #1e293b;
-    --muted-foreground: #999999;
+    --muted-foreground: #dbdbdb;
     --accent: #ffed00;
     --accent-foreground: #081a31;
     --destructive: #ff6b6b;
@@ -160,7 +160,34 @@ leaflet-popup-close-button {
     height: 50px !important;
     margin-left: -25px !important;
 }
+
 .leaflet-container a.leaflet-popup-close-button {
     font-size: 26px !important;
     transform: translateX(-20px) translateY(20px) !important;
+}
+
+/* Scrollbar personalizada */
+.custom-scrollbar::-webkit-scrollbar {
+    width: 8px !important;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent !important;
+    border-radius: 10px !important;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+    background: var(--color-primary) !important;
+    border-radius: 10px !important;
+    transition: background 0.2s !important;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: var(--color-primary) !important;
+}
+
+/* Para Firefox */
+.custom-scrollbar {
+    scrollbar-width: thin !important;
+    scrollbar-color: var(--color-secondary) var(--color-primary) !important;
 }

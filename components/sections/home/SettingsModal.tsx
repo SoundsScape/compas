@@ -1,31 +1,5 @@
+import { SettingsModalProps } from '@/lib/interfaces/rightPanel.interface';
 import { X } from 'lucide-react';
-
-export interface VisualSettings {
-    rotationSpeed: number;
-    showEffects: boolean;
-    clusterThreshold?: number;
-}
-
-export interface DisplaySettings {
-    dateFormat: 'AC/DC' | 'BCE/CE';
-    showNavbar: boolean;
-    showFilters: boolean;
-    showTimeline: boolean;
-    showCameraButtons: boolean;
-}
-
-export interface Settings {
-    visual: VisualSettings;
-    display: DisplaySettings;
-}
-
-interface SettingsModalProps {
-    isOpen: boolean;
-    onClose: () => void;
-    settings: Settings;
-    onSettingsChange: (newSettings: Settings) => void;
-    buttonPosition: { x: number; y: number };
-}
 
 export function SettingsModal({
     isOpen,

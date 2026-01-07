@@ -1,11 +1,6 @@
 import { Button } from '@/components/ui/button';
+import { RightControlsProps } from '@/lib/interfaces/rightPanel.interface';
 import { Settings } from 'lucide-react';
-
-interface RightControlsProps {
-    showMap: boolean;
-    setShowMap: (val: boolean) => void;
-    handleSettingsClick: (e: React.MouseEvent) => void;
-}
 
 export function RightControls({
     showMap,

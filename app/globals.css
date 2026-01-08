@@ -51,12 +51,12 @@
     --card-foreground: #ffffff;
     --popover: #081a31;
     --popover-foreground: #ffffff;
-    --primary: #081a31;
+    --primary: #011939;
     --primary-foreground: #ffffff;
     --secondary: #0f4285;
     --secondary-foreground: #ffffff;
     --muted: #1e293b;
-    --muted-foreground: #b3b2b2;
+    --muted-foreground: rgb(179, 178, 178);
     --accent: #ffed00;
     --accent-foreground: #081a31;
     --destructive: #ff6b6b;
@@ -189,5 +189,5 @@ leaflet-popup-close-button {
 /* Para Firefox */
 .custom-scrollbar {
     scrollbar-width: thin !important;
-    scrollbar-color: var(--color-secondary) var(--color-primary) !important;
+    scrollbar-color: var(--color-muted-foreground) var(--color-primary) !important;
 }

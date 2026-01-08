@@ -59,7 +59,7 @@ export default function Home() {
 
     return (
         <ProtectedRoute>
-            <div className="from-primary to-background relative h-screen w-full bg-radial from-5%">
+            <div className="from-primary to-background relative h-screen w-full bg-radial to-65%">
                 {showMap ? (
                     <HomeMap filters={filters} />
                 ) : (
@@ -104,7 +104,6 @@ export default function Home() {
                             setSelectedYearRange={setSelectedYearRange}
                             minYear={MIN_YEAR}
                             maxYear={MAX_YEAR}
-                            dateFormat={settings.display.dateFormat}
                         />
                     )}
                 </div>

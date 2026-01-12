@@ -11,6 +11,7 @@ function MarkerClusterBase({
     markers,
     onHover,
     cameraDistance = 3.5,
+    setIsModalOpen,
 }: MarkerClusterProps) {
     const [hovered, setHovered] = useState(false);
     const [clicked, setClicked] = useState(false);
@@ -142,6 +143,7 @@ function MarkerClusterBase({
                             onHover(false);
                         }}
                         onHover={onHover}
+                        setIsModalOpen={setIsModalOpen}
                     />
                 </Html>
             )}

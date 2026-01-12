@@ -1,9 +1,11 @@
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls } from '@react-three/drei';
+import { useState } from 'react';
 import { Globe } from './Globe';
 import { GlobeMainProps } from '@/lib/interfaces/globe.interface';
 import { useCameraControls } from '@/lib/hooks/useCameraControls';
 import { GlobeControls } from './GlobeControls';
+import ArticleModal from '@/components/shared/articles/ArticleModal';
 
 export default function GlobeMain({
     filters,
@@ -15,6 +17,7 @@ export default function GlobeMain({
     const { zoomIn, zoomOut, resetCamera, DEFAULT_CAMERA } = useCameraControls(
         orbitControlsRef as any
     );
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
     return (
         <>
@@ -48,8 +51,13 @@ export default function GlobeMain({
                     filters={filters}
                     isPaused={isPaused}
                     settings={settings}
+                    setIsModalOpen={(value: boolean) => setIsModalOpen(value)}
                 />
             </Canvas>
+            <ArticleModal
+                isModalOpen={isModalOpen}
+                setIsModalOpen={setIsModalOpen}
+            />
         </>
     );
 }

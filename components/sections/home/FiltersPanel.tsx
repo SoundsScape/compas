@@ -14,7 +14,7 @@ export function FiltersPanel({
 }: FiltersPanelProps) {
     return (
         <div
-            className={`pointer-events-auto fixed top-20 left-4 z-10 flex items-start gap-1 transition-all duration-300 ${showFilters ? '-translate-x-[290px] lg:-translate-x-[370px] 2xl:-translate-x-[440px]' : 'translate-x-0'}`}
+            className={`pointer-events-auto fixed top-20 left-4 z-10 flex items-start gap-1 transition-all duration-300 print:hidden ${showFilters ? '-translate-x-[290px] lg:-translate-x-[370px] 2xl:-translate-x-[440px]' : 'translate-x-0'}`}
         >
             <div
                 className={`transition-all duration-400 ${showFilters ? 'opacity-0' : 'opacity-100'}`}

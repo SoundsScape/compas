@@ -76,8 +76,15 @@ export default function HomeMap({ filters }: HomeMapProps) {
                     whenReady={() => setMapReady(true)}
                 >
                     <TileLayer
-                        url="https://tile.openstreetmap.de/{z}/{x}/{y}.png"
-                        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                        // url="https://tile.openstreetmap.de/{z}/{x}/{y}.png"
+                        // attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                        // Satellite (Esri World Imagery)
+                        url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
+                        attribution="Tiles &copy; Esri"
+
+                        // OSM Francia
+                        // url='https://{s}.tile.openstreetmap.fr/osmfr/{z}/{x}/{y}.png'
+                        // attribution='&copy; OpenStreetMap France'
                     />
                     {mapReady &&
                         articles.map((article, index) => (

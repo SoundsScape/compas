@@ -9,9 +9,15 @@ interface ClusterPopupProps {
     markers: MarkerInfo[];
     onClose: () => void;
     onHover: (isHovered: boolean) => void;
+    setIsModalOpen: (open: boolean) => void;
 }
 
-export function ClusterPopup({ markers, onClose, onHover }: ClusterPopupProps) {
+export function ClusterPopup({
+    markers,
+    onClose,
+    onHover,
+    setIsModalOpen,
+}: ClusterPopupProps) {
     const [activeMarkerIndex, setActiveMarkerIndex] = useState<number | null>(
         null
     );
@@ -80,6 +86,10 @@ export function ClusterPopup({ markers, onClose, onHover }: ClusterPopupProps) {
                     <ArticlePopup
                         article={markers[activeMarkerIndex].article}
                         onClose={onClose}
+                        onOpenModal={() => {
+                            setIsModalOpen(true);
+                            onClose();
+                        }}
                     />
                     <button
                         className="absolute top-4 -left-14 z-20 cursor-pointer text-gray-500 hover:text-gray-800"

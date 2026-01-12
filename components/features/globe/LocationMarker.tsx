@@ -18,6 +18,7 @@ function LocationMarkerBase({
     apellidos,
     cameraDistance = 3.5,
     id,
+    setIsModalOpen,
 }: LocationMarkerProps) {
     const [hovered, setHovered] = useState(false);
     const [clicked, setClicked] = useState(false);
@@ -95,6 +96,11 @@ function LocationMarkerBase({
         onHover(false);
     }, [onHover]);
 
+    const handleOpenModal = useCallback(() => {
+        setIsModalOpen(true);
+        handleClose();
+    }, [handleClose]);
+
     // Reconstruimos el objeto Article para pasárselo al popup compartido
     // (Idealmente refactorizaríamos MarkersLayer para pasar el Article completo)
     const articleData: Article = {
@@ -142,7 +148,11 @@ function LocationMarkerBase({
                                 : 'translateY(-93%)',
                     }}
                 >
-                    <ArticlePopup article={articleData} onClose={handleClose} />
+                    <ArticlePopup
+                        article={articleData}
+                        onClose={handleClose}
+                        onOpenModal={handleOpenModal}
+                    />
                 </Html>
             )}
         </group>

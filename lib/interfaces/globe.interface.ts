@@ -1,8 +1,8 @@
-import { DisplaySettings } from '@/components/sections/home/SettingsModal';
 import * as THREE from 'three';
 import { Article } from './article.interface';
-import { Settings } from '@/components/sections/home/SettingsModal';
+
 import { RefObject } from 'react';
+import { DisplaySettings, Settings } from './rightPanel.interface';
 
 export interface GlobeControls {
     target: THREE.Vector3;
@@ -30,6 +30,7 @@ export interface GlobeProps {
         };
         display: DisplaySettings;
     };
+    setIsModalOpen: (value: boolean) => void;
 }
 
 export interface ClusterGroup {
@@ -45,6 +46,7 @@ export interface MarkersLayerProps {
     clusterGroups: ClusterGroup[];
     onHover: (isHovered: boolean) => void;
     cameraDistance: number;
+    setIsModalOpen: (value: boolean) => void;
 }
 
 export interface HomeMapProps {
@@ -70,6 +72,7 @@ export interface LocationMarkerProps {
     apellidos: string;
     cameraDistance?: number;
     id: number;
+    setIsModalOpen: (value: boolean) => void;
 }
 
 export interface MarkerInfo {
@@ -82,6 +85,7 @@ export interface MarkerClusterProps {
     markers: MarkerInfo[];
     onHover: (isHovered: boolean) => void;
     cameraDistance?: number;
+    setIsModalOpen: (value: boolean) => void;
 }
 
 export interface GlobeMainProps {

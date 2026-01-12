@@ -186,8 +186,60 @@ leaflet-popup-close-button {
     background: var(--color-primary) !important;
 }
 
+/* Scrollbar oculta (para modales) */
+.scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+    display: none !important;
+}
+
 /* Para Firefox */
 .custom-scrollbar {
     scrollbar-width: thin !important;
     scrollbar-color: var(--color-muted-foreground) var(--color-primary) !important;
+}
+
+@media print {
+    @page {
+        size: A4;
+        margin: 20mm;
+    }
+
+    body {
+        margin: 0;
+        padding: 0;
+    }
+
+    article {
+        width: 100% !important;
+        max-width: 210mm !important;
+        margin: 0 auto !important;
+        padding: 0 !important;
+        box-shadow: none !important;
+    }
+
+    h2 {
+        font-size: 20pt !important;
+        line-height: 1.4 !important;
+    }
+
+    h3 {
+        font-size: 12pt !important;
+        line-height: 1.4 !important;
+    }
+
+    p,
+    div {
+        font-size: 11pt !important;
+        line-height: 1.5 !important;
+    }
+
+    img {
+        max-width: 60mm !important;
+        height: auto !important;
+        page-break-inside: avoid;
+    }
 }

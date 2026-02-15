@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from 'react';
-import Image from 'next/image';
 import { API_CONFIG } from '@/lib/config/api.config';
 import {
     Article,
@@ -8,10 +7,12 @@ import {
 } from '@/lib/interfaces/article.interface';
 import { Button } from '@/components/ui/button';
 import { X } from 'lucide-react';
+import { ArticleTemplate } from './ArticleTemplate';
 
 export default function ArticleModal({
     isModalOpen,
     setIsModalOpen,
+    
 }: ArticleModalProps) {
     const [article, setArticle] = useState<Article | null>();
     const [_loading, setLoading] = useState(false);
@@ -75,9 +76,8 @@ export default function ArticleModal({
 
     return (
         <div
-            className={`scrollbar-hide fixed inset-0 z-999 overflow-y-auto bg-black py-20 transition-opacity duration-300 print:h-auto print:min-h-screen print:py-0 ${
-                isVisible ? 'opacity-100' : 'opacity-0'
-            }`}
+            className={`scrollbar-hide fixed inset-0 z-999 overflow-y-auto bg-black py-20 transition-opacity duration-300 print:h-auto print:min-h-screen print:py-0 ${isVisible ? 'opacity-100' : 'opacity-0'
+                }`}
         >
             <div className="from-secondary via-primary fixed top-0 left-0 flex w-full justify-between bg-linear-to-b to-black px-6 py-3 print:hidden print:py-0">
                 <Button
@@ -127,43 +127,26 @@ export default function ArticleModal({
                         <strong>
                             {article.created_at
                                 ? new Intl.DateTimeFormat('es-ES', {
-                                      dateStyle: 'long',
-                                  }).format(new Date(article.created_at))
+                                    dateStyle: 'long',
+                                }).format(new Date(article.created_at))
                                 : ''}
                         </strong>
                     </h3>
                 </section>
 
                 <section className="flex flex-col gap-8 print:gap-4">
-                    {article.templates?.map(template => {
-                        console.log(template.image_areas[0]);
-                        if (
-                            template.type === 'plantilla1' ||
-                            template.type === 'plantilla2'
-                        ) {
-                            return (
-                                <div key={template.id}>
-                                    {plantilla(template)}
-                                </div>
-                            );
-                        } else {
-                            return (
-                                <div key={template.id}>
-                                    <p>
-                                        Tipo de plantilla desconocido:{' '}
-                                        {template.type}
-                                    </p>
-                                </div>
-                            );
-                        }
-                    })}
+                    {article.templates?.map(template => (
+                        <ArticleTemplate
+                            key={template.id}
+                            {...template}
+                        />
+                    ))}
                 </section>
                 <section className="flex flex-col gap-8 print:gap-4">
                     <h2 className="text-3xl font-bold print:text-[18pt]">
                         Bibliografía
                     </h2>
                     <ul className="w-full overflow-hidden text-sm print:text-[11pt]">
-                        {/* {article.bibliografia} */}
                         {article.bibliografia
                             .split('\n')
                             .map((line, i, arr) => {
@@ -193,52 +176,5 @@ export default function ArticleModal({
                 </section>
             </article>
         </div>
-    );
-}
-
-function plantilla(plantilla: Template) {
-    return (
-        <>
-            <section className="flex flex-col gap-8 print:gap-4">
-                <div className="text-base print:text-[12pt]">
-                    {/* {imageArea(plantilla.image_areas[0])} */}
-                    {plantilla.image_areas[0] && (
-                        <div className="float-left mr-4 mb-4 flex max-w-[60mm] flex-col">
-                            <Image
-                                src={`${API_CONFIG.baseUrl}${'/storage/'}${plantilla.image_areas[0].imagePath}`}
-                                alt={plantilla.image_areas[0].imageFooter}
-                                width={600}
-                                height={847}
-                                style={{
-                                    aspectRatio: 210 / 297,
-                                    objectFit: 'contain',
-                                }}
-                            />
-                            <p className="text-center italic">
-                                {plantilla.image_areas[0].imageFooter}
-                            </p>
-                        </div>
-                    )}
-                    <p className="m-0 text-sm">
-                        {plantilla.text_areas[0].content
-                            .split('\n')
-                            .map((line, i, arr) => (
-                                <span key={i}>
-                                    {line}
-                                    {i < arr.length - 1 && <br />}
-                                </span>
-                            ))}
-                    </p>
-                </div>
-                <div className="w-full">
-                    <h2 className="text-xl font-bold print:text-[13pt]">
-                        Citas:
-                    </h2>
-                    <div className="text-sm print:text-[11pt]">
-                        {plantilla.shortCitation}
-                    </div>
-                </div>
-            </section>
-        </>
     );
 }

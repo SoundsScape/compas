@@ -32,8 +32,16 @@ export class AuthService {
                 throw new Error("Usuario sin rol asignado");
             }
 
+            // 1.2 Verificar si el usuario está activo
+            if (user.statuses.status_name !== "activo") {
+                throw new Error("Tu cuenta está inactiva. Contacta con un administrador.");
+            }
+
             // 2. Verificar contraseña con bcrypt (compatible con Laravel)
-            const isPasswordValid = await bcrypt.compare(password, user.password);
+            // Laravel usa el prefijo $2y$, pero el paquete nativo de bcrypt en Node
+            // suele esperar $2a$. Hacemos el reemplazo para que sea compatible.
+            const compatibleHash = user.password.replace(/^\$2y\$/, "$2a$");
+            const isPasswordValid = await bcrypt.compare(password, compatibleHash);
 
             if (!isPasswordValid) {
                 throw new Error("Credenciales inválidas");

@@ -33,7 +33,7 @@ export class AuthService {
             }
 
             // 1.2 Verificar si el usuario está activo
-            if (user.statuses.status_name !== "activo") {
+            if (!user.statuses || user.statuses.status_name !== "activo") {
                 throw new Error("Tu cuenta está inactiva. Contacta con un administrador.");
             }
 

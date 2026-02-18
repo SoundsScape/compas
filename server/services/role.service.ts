@@ -31,13 +31,17 @@ export class RoleService {
                 prisma.roles.findMany({
                     skip,
                     take: limit,
-                    orderBy: { id: 'asc' }
+                    orderBy: { id: 'asc' },
+                    include: { users: true }
                 }),
                 prisma.roles.count()
             ]);
 
             return {
-                data: roles.map(role => this.serializeRole(role)),
+                data: roles.map(role => ({
+                    ...this.serializeRole(role),
+                    usersCount: role.users.length
+                })),
                 meta: {
                     total,
                     page,
@@ -54,10 +58,14 @@ export class RoleService {
     static async getRoleById(id: number) {
         try {
             const role = await prisma.roles.findUnique({
-                where: { id: BigInt(id) }
+                where: { id: BigInt(id) },
+                include: { users: true },
             });
             if (!role) throw { status: 404, message: "Rol no encontrado." };
-            return this.serializeRole(role);
+            return {
+                ...this.serializeRole(role),
+                usersCount: role.users.length
+            };
         } catch (error: any) {
             if (error.status) throw error;
             console.error("RoleService.getRoleById Error:", error);

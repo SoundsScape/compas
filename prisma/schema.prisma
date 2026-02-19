@@ -347,7 +347,7 @@ model schools {
   contact_mail  String    @unique(map: "contact_mail_UNIQUE") @db.VarChar(45)
   contact_phone String    @db.VarChar(45)
   created_at    DateTime  @default(now()) @db.Timestamp(0)
-  updated_at    DateTime? @db.Timestamp(0)
+  updated_at    DateTime? @default(now()) @db.Timestamp(0)
   users         users[]
 }
 

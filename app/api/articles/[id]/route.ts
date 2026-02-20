@@ -87,33 +87,3 @@ export async function DELETE(
         return handleRouteError(error);
     }
 }
-
-/**
- * PATCH /api/articles/[id]/validate (Legacy style, but we can use searchParams or a sub-route)
- * Let's implement validation toggle as a sub-route or just use PATCH here.
- * Convention: PATCH /api/articles/[id] with { validated: boolean } or a specific endpoint.
- * To mirror Laravel's ArticleController@validate, we'll use a PATCH here for toggling.
- */
-export async function PATCH(
-    req: NextRequest,
-    { params }: { params: { id: string } }
-) {
-    try {
-        const { id } = await params;
-
-        // Solo admin/superadmin pueden validar
-        const auth = await verifyAuth(req, ["admin", "superadmin"]);
-        if (auth.error) {
-            return authErrorResponse(auth.error, auth.status || 401);
-        }
-
-        const result = await ArticleService.toggleValidation(Number(id));
-        return NextResponse.json({
-            message: result.validated ? "Artículo validado correctamente." : "Artículo invalidado correctamente.",
-            validated: result.validated
-        });
-
-    } catch (error: any) {
-        return handleRouteError(error);
-    }
-}

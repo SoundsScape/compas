@@ -36,7 +36,7 @@ export function Navbar() {
 
     useEffect(() => {
         const userStr = localStorage.getItem('user');
-        if (userStr) {
+        if (userStr && userStr !== undefined && userStr !== null) {
             try {
                 const user = JSON.parse(userStr);
                 setUsername(user.username);

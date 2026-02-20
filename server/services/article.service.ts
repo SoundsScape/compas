@@ -33,15 +33,50 @@ export interface UpdateArticleDTO extends Partial<CreateArticleDTO> {
 
 export class ArticleService {
     /**
-     * Helper privado para limpiar objetos (BigInt a String).
+     * Mapea un objeto de base de datos (Prisma) al formato que espera el frontend.
+     * Convierte BigInt a String y renombra relaciones (article_templates -> templates, article_tag -> tags).
      */
-    private static serialize(data: any) {
+    private static mapToFrontend(data: any): any {
         if (!data) return null;
-        return JSON.parse(
+
+        if (Array.isArray(data)) {
+            return data.map(item => this.mapToFrontend(item));
+        }
+
+        // 1. Serialización básica de BigInt (usando el helper o lógica interna)
+        const serialized = JSON.parse(
             JSON.stringify(data, (key, value) =>
                 typeof value === "bigint" ? value.toString() : value
             )
         );
+
+        // 2. Renombrar relaciones y aplanar tags
+        const mapped: any = { ...serialized };
+
+        // Renombrar article_templates -> templates
+        if (serialized.article_templates) {
+            mapped.templates = serialized.article_templates;
+            delete mapped.article_templates;
+        }
+
+        // Renombrar y aplanar article_tag -> tags
+        if (serialized.article_tag) {
+            mapped.tags = serialized.article_tag.map((at: any) => {
+                const tagObj = at.tags || {};
+                return {
+                    ...tagObj,
+                    pivot: {
+                        article_id: at.article_id,
+                        tag_id: at.tag_id,
+                        created_at: at.created_at,
+                        updated_at: at.updated_at
+                    }
+                };
+            });
+            delete mapped.article_tag;
+        }
+
+        return mapped;
     }
 
     /**
@@ -117,7 +152,7 @@ export class ArticleService {
             ]);
 
             return {
-                data: this.serialize(articles),
+                data: this.mapToFrontend(articles),
                 meta: {
                     total,
                     page,
@@ -154,7 +189,7 @@ export class ArticleService {
 
             if (!article) throw { status: 404, message: "Artículo no encontrado." };
 
-            return this.serialize(article);
+            return this.mapToFrontend(article);
         } catch (error: any) {
             if (error.status) throw error;
             console.error("ArticleService.getArticleById Error:", error);
@@ -246,7 +281,7 @@ export class ArticleService {
                 }
             });
 
-            return this.serialize(article);
+            return this.mapToFrontend(article);
         } catch (error: any) {
             if (error.status) throw error;
             console.error("ArticleService.createArticle Error:", error);
@@ -365,7 +400,7 @@ export class ArticleService {
                     }
                 });
 
-                return this.serialize(updatedArticle);
+                return this.mapToFrontend(updatedArticle);
             });
         } catch (error: any) {
             if (error.status) throw error;

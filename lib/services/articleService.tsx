@@ -23,10 +23,10 @@ export async function getArticles(): Promise<Article[]> {
 
         if (!response.ok) throw new Error('Error al obtener los artículos');
 
-        // Filtro para devolver solo los que estén validados
-        const articles: Article[] = await response.json();
+        const result = await response.json();
+        const articles: Article[] = result.data || [];
 
-        return articles.filter(article => article.validated === true);
+        return articles;
     } catch (error) {
         console.error('Error al obtener los artículos: ', error);
         throw error;

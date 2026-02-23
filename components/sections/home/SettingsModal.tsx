@@ -1,4 +1,4 @@
-import { SettingsModalProps } from '@/lib/interfaces/rightPanel.interface';
+import { SettingsModalProps, Settings } from '@/lib/interfaces/rightPanel.interface';
 import { X } from 'lucide-react';
 
 export function SettingsModal({

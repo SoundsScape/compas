@@ -1,4 +1,4 @@
-import { type Settings as SettingsType } from '@/components/sections/home/SettingsModal';
+import { Settings as SettingsType } from '@/lib/interfaces/rightPanel.interface';
 
 export const DEFAULT_SETTINGS: SettingsType = {
     visual: {

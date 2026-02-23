@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma/client";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import { loginSchema, LoginInput } from "@/validations/auth.schema";
 
 if (!process.env.JWT_SECRET) {
     throw new Error("JWT_SECRET no está definido");
@@ -12,8 +13,11 @@ export class AuthService {
     /**
      * Valida las credenciales del usuario y genera un token JWT.
      */
-    static async login(email: string, password: string) {
+    static async login(data: LoginInput) {
         try {
+            const validatedData = loginSchema.parse(data);
+            const { email, password } = validatedData;
+
             // 1. Buscar usuario con sus relaciones (rol, estado, escuela)
             const user = await prisma.users.findUnique({
                 where: { email },

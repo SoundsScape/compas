@@ -1,35 +1,6 @@
 import { prisma } from "@/lib/prisma/client";
 import { Prisma } from "@prisma/client";
-
-// --- DTOs (Data Transfer Objects) ---
-
-export interface CreateArticleDTO {
-    titulo: string;
-    nombre_autor: string;
-    apellidos_autor: string;
-    id_autor: string; // Recibido como string (id de usuario)
-    centro: string;
-    latitud: string;
-    longitud: string;
-    bibliografia?: string;
-    fecha: number;
-    plantillas: Array<{
-        tipo: string;
-        shortCitation?: string;
-        textAreas?: Array<{
-            value: string;
-        }>;
-        imageAreas?: Array<{
-            imagePath: string;
-            imageFooter?: string;
-        }>;
-    }>;
-    tags?: number[]; // IDs de las etiquetas
-}
-
-export interface UpdateArticleDTO extends Partial<CreateArticleDTO> {
-    validated?: boolean;
-}
+import { createArticleSchema, updateArticleSchema, CreateArticleInput, UpdateArticleInput } from "@/validations/article.schema";
 
 export class ArticleService {
     /**
@@ -77,48 +48,6 @@ export class ArticleService {
         }
 
         return mapped;
-    }
-
-    /**
-     * Valida la estructura interna del artículo (plantillas, textAreas, imageAreas).
-     */
-    private static validateArticleStructure(data: Partial<CreateArticleDTO>) {
-        if (data.plantillas !== undefined) {
-            if (!Array.isArray(data.plantillas)) {
-                throw { status: 400, message: "El campo 'plantillas' debe ser un array." };
-            }
-
-            for (const [idx, p] of data.plantillas.entries()) {
-                if (!p.tipo || typeof p.tipo !== 'string' || p.tipo.trim() === '') {
-                    throw { status: 400, message: `La plantilla en la posición ${idx} debe tener un 'tipo' válido.` };
-                }
-
-                if (p.textAreas !== undefined && !Array.isArray(p.textAreas)) {
-                    throw { status: 400, message: `El campo 'textAreas' en la plantilla ${idx} debe ser un array.` };
-                }
-
-                if (p.imageAreas !== undefined && !Array.isArray(p.imageAreas)) {
-                    throw { status: 400, message: `El campo 'imageAreas' en la plantilla ${idx} debe ser un array.` };
-                }
-
-                // Validar contenido básico si existen los arrays
-                p.textAreas?.forEach((ta, taIdx) => {
-                    if (ta.value === undefined || ta.value === null) {
-                        throw { status: 400, message: `El textArea ${taIdx} de la plantilla ${idx} debe tener un valor ('value').` };
-                    }
-                });
-
-                p.imageAreas?.forEach((ia, iaIdx) => {
-                    if (!ia.imagePath) {
-                        throw { status: 400, message: `El imageArea ${iaIdx} de la plantilla ${idx} debe tener una ruta de imagen ('imagePath').` };
-                    }
-                });
-            }
-        }
-
-        if (data.tags !== undefined && !Array.isArray(data.tags)) {
-            throw { status: 400, message: "El campo 'tags' debe ser un array." };
-        }
     }
 
     /**
@@ -201,17 +130,17 @@ export class ArticleService {
      * Crear un artículo con sus plantillas y áreas anidadas.
      * Seguridad: Valida tags, existencia de autor y previene suplantación si no es admin.
      */
-    static async createArticle(data: CreateArticleDTO, authenticatedUser: { id: string; role: string }) {
+    static async createArticle(data: CreateArticleInput, authenticatedUser: { id: string; role: string }) {
         try {
-            // 0. Validar estructura básica
-            this.validateArticleStructure(data);
+            // 0. Validar estructura básica con Zod
+            const validatedData = createArticleSchema.parse(data);
 
             // 1. Validar que los tags existan (si se envían)
-            if (data.tags && data.tags.length > 0) {
+            if (validatedData.tags && validatedData.tags.length > 0) {
                 const existingTags = await prisma.tags.findMany({
-                    where: { id: { in: data.tags.map(id => BigInt(id)) } }
+                    where: { id: { in: validatedData.tags.map(id => BigInt(id)) } }
                 });
-                if (existingTags.length !== data.tags.length) {
+                if (existingTags.length !== validatedData.tags.length) {
                     throw { status: 400, message: "Uno o más tags proporcionados no existen." };
                 }
             }
@@ -220,42 +149,42 @@ export class ArticleService {
             let finalAuthorId = BigInt(authenticatedUser.id);
 
             // Si es admin/superadmin, permitimos especificar otro autor
-            if ((authenticatedUser.role === 'admin' || authenticatedUser.role === 'superadmin') && data.id_autor) {
+            if ((authenticatedUser.role === 'admin' || authenticatedUser.role === 'superadmin') && validatedData.id_autor) {
                 const userExists = await prisma.users.findUnique({
-                    where: { id: BigInt(data.id_autor) }
+                    where: { id: BigInt(validatedData.id_autor) }
                 });
                 if (!userExists) {
                     throw { status: 400, message: "El ID de autor especificado no existe." };
                 }
-                finalAuthorId = BigInt(data.id_autor);
+                finalAuthorId = BigInt(validatedData.id_autor);
             }
 
             const article = await prisma.articles.create({
                 data: {
-                    titulo: data.titulo,
-                    nombre_autor: data.nombre_autor,
-                    apellidos_autor: data.apellidos_autor,
+                    titulo: validatedData.titulo,
+                    nombre_autor: validatedData.nombre_autor,
+                    apellidos_autor: validatedData.apellidos_autor,
                     id_autor: finalAuthorId,
-                    centro: data.centro,
-                    latitud: data.latitud,
-                    longitud: data.longitud,
-                    bibliografia: data.bibliografia || "",
-                    fecha: data.fecha,
+                    centro: validatedData.centro,
+                    latitud: validatedData.latitud,
+                    longitud: validatedData.longitud,
+                    bibliografia: validatedData.bibliografia || "",
+                    fecha: validatedData.fecha,
                     validated: false,
                     // Escritura anidada para plantillas (Atómica y eficiente)
                     article_templates: {
-                        create: data.plantillas.map((p, idx) => ({
+                        create: validatedData.plantillas.map((p: any, idx: number) => ({
                             type: p.tipo,
                             order: idx,
                             shortCitation: p.shortCitation || null,
                             text_areas: {
-                                create: p.textAreas?.map((ta, taIdx) => ({
+                                create: p.textAreas?.map((ta: any, taIdx: number) => ({
                                     content: ta.value,
                                     order: taIdx
                                 })) || []
                             },
                             image_areas: {
-                                create: p.imageAreas?.map((ia, iaIdx) => ({
+                                create: p.imageAreas?.map((ia: any, iaIdx: number) => ({
                                     imagePath: ia.imagePath,
                                     imageFooter: ia.imageFooter || "",
                                     order: iaIdx
@@ -265,7 +194,7 @@ export class ArticleService {
                     },
                     // Escritura anidada para etiquetas
                     article_tag: {
-                        create: data.tags?.map(tagId => ({
+                        create: validatedData.tags?.map((tagId: number) => ({
                             tag_id: BigInt(tagId)
                         })) || []
                     }
@@ -293,40 +222,31 @@ export class ArticleService {
      * Actualizar un artículo de forma robusta.
      * Estrategia: Actualización transaccional que reemplaza etiquetas y plantillas para asegurar integridad.
      */
-    static async updateArticle(id: number, data: UpdateArticleDTO, authenticatedUser: { id: string; role: string }) {
+    static async updateArticle(id: number, data: UpdateArticleInput, authenticatedUser: { id: string; role: string }) {
         try {
-            // 0. Validar estructura básica
-            this.validateArticleStructure(data);
+            // 0. Validar estructura con Zod
+            const validatedData = updateArticleSchema.parse(data);
 
-            // 1. Validaciones previas de integridad
-            if (data.tags && data.tags.length > 0) {
+            // 1. Validar que los tags existan (si se envían)
+            if (validatedData.tags && validatedData.tags.length > 0) {
                 const existingTags = await prisma.tags.findMany({
-                    where: { id: { in: data.tags.map(t => BigInt(t)) } }
+                    where: { id: { in: validatedData.tags.map(id => BigInt(id)) } }
                 });
-                if (existingTags.length !== data.tags.length) {
+                if (existingTags.length !== validatedData.tags.length) {
                     throw { status: 400, message: "Uno o más tags proporcionados no existen." };
-                }
-            }
-
-            if (data.id_autor) {
-                const userExists = await prisma.users.findUnique({
-                    where: { id: BigInt(data.id_autor) }
-                });
-                if (!userExists) {
-                    throw { status: 400, message: "El ID de autor especificado no existe." };
                 }
             }
 
             return await prisma.$transaction(async (tx) => {
                 // 1. Si se envían nuevas etiquetas, borrar las anteriores y crear las nuevas
-                if (data.tags !== undefined) {
+                if (validatedData.tags !== undefined) {
                     await tx.article_tag.deleteMany({
                         where: { article_id: BigInt(id) }
                     });
 
-                    if (data.tags.length > 0) {
+                    if (validatedData.tags.length > 0) {
                         await tx.article_tag.createMany({
-                            data: data.tags.map(tagId => ({
+                            data: (validatedData.tags as number[]).map(tagId => ({
                                 article_id: BigInt(id),
                                 tag_id: BigInt(tagId)
                             }))
@@ -335,14 +255,14 @@ export class ArticleService {
                 }
 
                 // 2. Si se envían nuevas plantillas, aplicar estrategia de reemplazo (Clear & Create)
-                if (data.plantillas !== undefined) {
+                if (validatedData.plantillas !== undefined) {
                     // Borrar plantillas antiguas (la cascada borrará text_areas e image_areas)
                     await tx.article_templates.deleteMany({
                         where: { article_id: BigInt(id) }
                     });
 
                     // Crear las nuevas
-                    for (const [idx, p] of data.plantillas.entries()) {
+                    for (const [idx, p] of validatedData.plantillas.entries()) {
                         await tx.article_templates.create({
                             data: {
                                 type: p.tipo,
@@ -350,13 +270,13 @@ export class ArticleService {
                                 shortCitation: p.shortCitation || null,
                                 article_id: BigInt(id),
                                 text_areas: {
-                                    create: p.textAreas?.map((ta, taIdx) => ({
+                                    create: p.textAreas?.map((ta: { value: string }, taIdx: number) => ({
                                         content: ta.value,
                                         order: taIdx
                                     })) || []
                                 },
                                 image_areas: {
-                                    create: p.imageAreas?.map((ia, iaIdx) => ({
+                                    create: p.imageAreas?.map((ia: { imagePath: string, imageFooter?: string | null }, iaIdx: number) => ({
                                         imagePath: ia.imagePath,
                                         imageFooter: ia.imageFooter || "",
                                         order: iaIdx

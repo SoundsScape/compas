@@ -28,10 +28,30 @@ export class TagsService {
     }
 
     /** Obtener todas las etiquetas */
-    static async getTags() {
+    static async getTags(page: number = 1, limit: number = 20) {
         try {
-            const tags = await prisma.tags.findMany({ orderBy: { name: "asc" } });
-            return serialize(tags);
+            const skip = (page - 1) * limit;
+            const [tags, total] = await Promise.all([
+                prisma.tags.findMany({ 
+                    skip,
+                    take: limit,
+                    orderBy: { name: "asc" },
+                    include: { article_tag: true } 
+                }),
+                prisma.tags.count()
+            ]) 
+            return {
+                data: tags.map(tag => ({
+                    ...serialize(tag),
+                    articlesCount: tag.article_tag.length
+                })),
+                meta: {
+                    total,
+                    page,
+                    limit,
+                    totalPages: Math.ceil(total / limit)
+                }
+            };
         } catch (error) {
             console.error("TagsService.getTags Error:", error);
             throw { status: 500, message: "Error al obtener las etiquetas." };

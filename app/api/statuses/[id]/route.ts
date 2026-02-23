@@ -3,7 +3,7 @@ import { verifyAuth, authErrorResponse } from "@/server/middleware/auth";
 import { StatusService } from "@/server/services/status.service";
 import { handleRouteError } from "@/server/utils/handleRouteError";
 
-export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
     try {
         const { id } = await params;
         const auth = await verifyAuth(req);
@@ -16,9 +16,9 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
     }
 }
 
-export async function PUT(req: NextRequest, { params }: { params: { id: string } }) {
+export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
     try {
-        const { id } = params;
+        const { id } = await params;
         const auth = await verifyAuth(req, ["admin", "superadmin"]);
         if (auth.error) return authErrorResponse(auth.error, auth.status || 401);
 
@@ -30,9 +30,9 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
     }
 }
 
-export async function DELETE(req: NextRequest, { params }: { params: { id: string } }) {
+export async function DELETE(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
     try {
-        const { id } = params;
+        const { id } = await params;
         const auth = await verifyAuth(req, ["admin", "superadmin"]);
         if (auth.error) return authErrorResponse(auth.error, auth.status || 401);
 

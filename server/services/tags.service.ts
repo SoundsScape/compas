@@ -7,39 +7,22 @@ export const serialize = <T>(data: T) =>
         typeof value === "bigint" ? value.toString() : value
     ));
 
-export interface TagDTO {
-    name: string;
-}
+import { tagSchema, TagInput } from "@/validations/tag.schema";
 
 export class TagsService {
-    /**
-     * Validación de datos de tag
-     */
-    private static validateTagData(data: Partial<TagDTO>, isUpdate: boolean = false) {
-        if (!isUpdate) {
-            if (!data.name || data.name.trim() === "") {
-                throw { status: 400, message: "El campo 'name' es obligatorio para crear una etiqueta." };
-            }
-        }
-
-        if (data.name !== undefined && (typeof data.name !== "string" || data.name.trim() === "")) {
-            throw { status: 400, message: "El campo 'name' debe ser una cadena de texto no vacía." };
-        }
-    }
-
     /** Obtener todas las etiquetas */
     static async getTags(page: number = 1, limit: number = 20) {
         try {
             const skip = (page - 1) * limit;
             const [tags, total] = await Promise.all([
-                prisma.tags.findMany({ 
+                prisma.tags.findMany({
                     skip,
                     take: limit,
                     orderBy: { name: "asc" },
-                    include: { article_tag: true } 
+                    include: { article_tag: true }
                 }),
                 prisma.tags.count()
-            ]) 
+            ])
             return {
                 data: tags.map(tag => ({
                     ...serialize(tag),
@@ -69,10 +52,10 @@ export class TagsService {
     }
 
     /** Crear una etiqueta */
-    static async createTag(data: { name: string }) {
+    static async createTag(data: TagInput) {
         try {
-            this.validateTagData(data);
-            const tag = await prisma.tags.create({ data: { name: data.name } });
+            const validatedData = tagSchema.parse(data);
+            const tag = await prisma.tags.create({ data: { name: validatedData.name } });
             return serialize(tag);
         } catch (error) {
             console.error("TagsService.createTag Error:", error);
@@ -81,11 +64,11 @@ export class TagsService {
     }
 
     /** Actualizar una etiqueta */
-    static async updateTag(id: number | bigint, data: Partial<TagDTO>) {
+    static async updateTag(id: number | bigint, data: Partial<TagInput>) {
         try {
-            this.validateTagData(data, true);
-            const updateData: Partial<TagDTO> = {};
-            if (data.name !== undefined) updateData.name = data.name;
+            const validatedData = tagSchema.partial().parse(data);
+            const updateData: Partial<TagInput> = {};
+            if (validatedData.name !== undefined) updateData.name = validatedData.name;
 
             const tag = await prisma.tags.update({
                 where: { id: BigInt(id) },

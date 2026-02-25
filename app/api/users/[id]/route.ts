@@ -22,8 +22,15 @@ export async function GET(
             return authErrorResponse(auth.error, auth.status || 401);
         }
 
-        if (auth.user && auth.user.role !== "admin" && auth.user.role !== "superadmin" && auth.user.id !== id) {
-            throw { status: 403, message: "Forbidden" };
+        if (auth.user) {
+            const isAdminOrSuperadmin =
+                auth.user.role === "admin" || auth.user.role === "superadmin";
+            const isSameUser = String(auth.user.id) === String(id);
+
+            // Deny access unless user is admin/superadmin or accessing their own record
+            if (!isAdminOrSuperadmin && !isSameUser) {
+                throw { status: 403, message: "Forbidden" };
+            }
         }
 
         // 2. Obtener usuario mediante el servicio

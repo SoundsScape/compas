@@ -47,7 +47,7 @@ export async function POST(req: NextRequest) {
             return authErrorResponse(auth.error, auth.status || 401);
         }
 
-        const body = await req.json(); // TODO: Validar body con ZOD
+        const body = await req.json();
         const newSchool = await SchoolService.createSchool(body);
 
         return NextResponse.json({

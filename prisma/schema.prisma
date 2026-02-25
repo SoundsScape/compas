@@ -1,0 +1,493 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+}
+
+model article_tag {
+  id         BigInt    @id @default(autoincrement()) @db.UnsignedBigInt
+  article_id BigInt    @db.UnsignedBigInt
+  tag_id     BigInt    @db.UnsignedBigInt
+  created_at DateTime? @db.Timestamp(0)
+  updated_at DateTime? @db.Timestamp(0)
+  articles   articles  @relation(fields: [article_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "article_tag_article_id_foreign")
+  tags       tags      @relation(fields: [tag_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "article_tag_tag_id_foreign")
+
+  @@index([article_id], map: "article_tag_article_id_foreign")
+  @@index([tag_id], map: "article_tag_tag_id_foreign")
+}
+
+model article_templates {
+  id            BigInt        @id @default(autoincrement()) @db.UnsignedBigInt
+  created_at    DateTime      @default(now()) @db.Timestamp(0)
+  updated_at    DateTime      @default(now()) @db.Timestamp(0)
+  type          String        @db.VarChar(255)
+  order         Int
+  shortCitation String?       @db.VarChar(400)
+  article_id    BigInt        @db.UnsignedBigInt
+  articles      articles      @relation(fields: [article_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "article_templates_article_id_foreign")
+  image_areas   image_areas[]
+  text_areas    text_areas[]
+
+  @@index([article_id], map: "article_templates_article_id_foreign")
+}
+
+model articles {
+  id                BigInt              @id @default(autoincrement()) @db.UnsignedBigInt
+  created_at        DateTime            @default(now()) @db.Timestamp(0)
+  updated_at        DateTime            @default(now()) @db.Timestamp(0)
+  titulo            String              @db.VarChar(255)
+  nombre_autor      String              @db.VarChar(255)
+  apellidos_autor   String              @db.VarChar(255)
+  id_autor          BigInt?             @db.UnsignedBigInt
+  validated         Boolean             @default(false)
+  centro            String              @db.VarChar(255)
+  latitud           String              @db.VarChar(255)
+  longitud          String              @db.VarChar(255)
+  bibliografia      String              @db.VarChar(4000)
+  fecha             Int
+  article_tag       article_tag[]
+  article_templates article_templates[]
+  users             users?              @relation(fields: [id_autor], references: [id], onUpdate: NoAction, map: "articles_id_autor_foreign")
+
+  @@index([id_autor], map: "articles_id_autor_foreign")
+}
+
+model assignements {
+  id          BigInt    @id @default(autoincrement()) @db.UnsignedBigInt
+  assigned_to BigInt    @db.UnsignedBigInt
+  tasks_id    BigInt    @db.UnsignedBigInt
+  created_at  DateTime  @default(now()) @db.Timestamp(0)
+  updated_at  DateTime? @db.Timestamp(0)
+  tasks       tasks     @relation(fields: [tasks_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_assignements_tasks1")
+  users       users     @relation(fields: [assigned_to], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_assignements_users1")
+
+  @@unique([assigned_to, tasks_id], map: "assignements_assigned_to_tasks_id_unique")
+  @@index([tasks_id], map: "fk_assignements_tasks1_idx")
+  @@index([assigned_to], map: "fk_assignements_users1_idx")
+}
+
+model audit_trials {
+  id          BigInt    @id @default(autoincrement()) @db.UnsignedBigInt
+  user_id     BigInt?   @db.UnsignedBigInt
+  action      String    @db.VarChar(10)
+  table_name  String    @db.VarChar(45)
+  record_id   BigInt    @db.UnsignedBigInt
+  old_values  String?   @db.LongText
+  new_values  String?   @db.LongText
+  ip_address  String?   @db.VarChar(45)
+  user_agent  String?   @db.Text
+  description String?   @db.Text
+  created_at  DateTime? @db.Timestamp(0)
+  updated_at  DateTime? @db.Timestamp(0)
+  users       users?    @relation(fields: [user_id], references: [id], onUpdate: NoAction, map: "audit_trials_user_id_foreign")
+
+  @@index([user_id], map: "fk_audit_trials_users1_idx")
+}
+
+model calendar_events {
+  id             BigInt    @id @default(autoincrement()) @db.UnsignedBigInt
+  title          String    @db.VarChar(45)
+  description    String?   @db.Text
+  start_datetime DateTime  @default(now()) @db.Timestamp(0)
+  end_datetime   DateTime  @default(now()) @db.Timestamp(0)
+  created_at     DateTime? @db.Timestamp(0)
+  updated_at     DateTime? @db.Timestamp(0)
+  statuses_id    BigInt    @db.UnsignedBigInt
+  created_by     BigInt    @db.UnsignedBigInt
+  users          users     @relation(fields: [created_by], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "calendar_events_created_by_foreign")
+  statuses       statuses  @relation(fields: [statuses_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "calendar_events_statuses_id_foreign")
+
+  @@index([created_by], map: "calendar_events_created_by_foreign")
+  @@index([statuses_id], map: "calendar_events_statuses_id_foreign")
+}
+
+model chats {
+  id              BigInt            @id @default(autoincrement()) @db.UnsignedBigInt
+  name            String            @db.VarChar(50)
+  created_at      DateTime          @default(now()) @db.Timestamp(0)
+  updated_at      DateTime?         @db.Timestamp(0)
+  created_by      BigInt            @db.UnsignedBigInt
+  users           users             @relation(fields: [created_by], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "chats_created_by_foreign")
+  messages        messages[]
+  rel_users_chats rel_users_chats[]
+
+  @@unique([name, created_by], map: "chats_name_created_by_unique")
+  @@index([created_by], map: "chats_created_by_foreign")
+}
+
+model cities {
+  id         BigInt    @id @default(autoincrement()) @db.UnsignedBigInt
+  city       String    @db.VarChar(255)
+  city_ascii String    @db.VarChar(255)
+  lat        Decimal   @db.Decimal(10, 8)
+  lng        Decimal   @db.Decimal(11, 8)
+  country    String    @db.VarChar(255)
+  iso2       String    @db.VarChar(2)
+  iso3       String    @db.VarChar(3)
+  admin_name String?   @db.VarChar(255)
+  capital    String?   @db.VarChar(255)
+  population Int?
+  created_at DateTime? @db.Timestamp(0)
+  updated_at DateTime? @db.Timestamp(0)
+}
+
+model content_types {
+  id        BigInt     @id @default(autoincrement()) @db.UnsignedBigInt
+  name      String     @db.VarChar(45)
+  extension String     @unique(map: "content_types_extension_unique") @db.VarChar(10)
+  contents  contents[]
+}
+
+model contents {
+  id                    BigInt                  @id @default(autoincrement()) @db.UnsignedBigInt
+  title                 String                  @db.VarChar(45)
+  description           String?                 @db.Text
+  file_path             String                  @db.VarChar(100)
+  created_at            DateTime                @default(now()) @db.Timestamp(0)
+  updated_at            DateTime?               @db.Timestamp(0)
+  music_eras_id         BigInt                  @db.UnsignedBigInt
+  music_genres_id       BigInt                  @db.UnsignedBigInt
+  content_types_id      BigInt                  @db.UnsignedBigInt
+  content_types         content_types           @relation(fields: [content_types_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "contents_content_types_id_foreign")
+  music_eras            music_eras              @relation(fields: [music_eras_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "contents_music_eras_id_foreign")
+  music_genres          music_genres            @relation(fields: [music_genres_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "contents_music_genres_id_foreign")
+  rel_musician_contents rel_musician_contents[]
+
+  @@index([content_types_id], map: "contents_content_types_id_foreign")
+  @@index([music_eras_id], map: "contents_music_eras_id_foreign")
+  @@index([music_genres_id], map: "contents_music_genres_id_foreign")
+}
+
+model image_areas {
+  id                BigInt            @id @default(autoincrement()) @db.UnsignedBigInt
+  created_at        DateTime          @default(now()) @db.Timestamp(0)
+  updated_at        DateTime          @default(now()) @db.Timestamp(0)
+  imagePath         String            @db.VarChar(255)
+  imageFooter       String            @db.VarChar(50)
+  order             Int
+  template_id       BigInt            @db.UnsignedBigInt
+  article_templates article_templates @relation(fields: [template_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "image_areas_template_id_foreign")
+
+  @@index([template_id], map: "image_areas_template_id_foreign")
+}
+
+model logs {
+  id          BigInt    @id @default(autoincrement()) @db.UnsignedBigInt
+  action      String    @db.VarChar(45)
+  table_name  String    @db.VarChar(45)
+  record_id   Int
+  timestamp   DateTime  @default(now()) @db.Timestamp(0)
+  description String?   @db.Text
+  users_id    BigInt    @db.UnsignedBigInt
+  created_at  DateTime? @db.Timestamp(0)
+  updated_at  DateTime? @db.Timestamp(0)
+  users       users     @relation(fields: [users_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "logs_users_id_foreign")
+
+  @@index([users_id], map: "logs_users_id_foreign")
+}
+
+model messages {
+  id               BigInt   @id @default(autoincrement()) @db.UnsignedBigInt
+  content          String   @db.Text
+  sent_at          DateTime @default(now()) @db.Timestamp(0)
+  sender_id        BigInt   @db.UnsignedBigInt
+  receiver_chat_id BigInt   @db.UnsignedBigInt
+  statuses_id      BigInt   @db.UnsignedBigInt
+  chats            chats    @relation(fields: [receiver_chat_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "messages_receiver_chat_id_foreign")
+  users            users    @relation(fields: [sender_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "messages_sender_id_foreign")
+  statuses         statuses @relation(fields: [statuses_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "messages_statuses_id_foreign")
+
+  @@index([receiver_chat_id], map: "messages_receiver_chat_id_foreign")
+  @@index([sender_id], map: "messages_sender_id_foreign")
+  @@index([statuses_id], map: "messages_statuses_id_foreign")
+}
+
+model migrations {
+  id        Int    @id @default(autoincrement()) @db.UnsignedInt
+  migration String @db.VarChar(255)
+  batch     Int
+}
+
+model music_eras {
+  id                 BigInt               @id @default(autoincrement()) @db.UnsignedBigInt
+  name               String               @unique(map: "music_eras_name_unique") @db.VarChar(45)
+  description        String?              @db.Text
+  start_date         DateTime             @db.Date
+  end_date           DateTime             @db.Date
+  created_at         DateTime             @default(now()) @db.Timestamp(0)
+  updated_at         DateTime?            @db.Timestamp(0)
+  contents           contents[]
+  rel_musicians_eras rel_musicians_eras[]
+}
+
+model music_genres {
+  id                   BigInt                 @id @default(autoincrement()) @db.UnsignedBigInt
+  name                 String                 @unique(map: "music_genres_name_unique") @db.VarChar(45)
+  description          String?                @db.Text
+  created_at           DateTime               @default(now()) @db.Timestamp(0)
+  updated_at           DateTime?              @db.Timestamp(0)
+  originated_at        DateTime               @db.Date
+  contents             contents[]
+  rel_musicians_genres rel_musicians_genres[]
+}
+
+model musicians {
+  id                    BigInt                  @id @default(autoincrement()) @db.UnsignedBigInt
+  first_name            String                  @db.VarChar(45)
+  last_name             String?                 @db.VarChar(100)
+  bio                   String?                 @db.Text
+  birth_date            DateTime                @db.Date
+  death_date            DateTime?               @db.Date
+  created_at            DateTime                @default(now()) @db.Timestamp(0)
+  updated_at            DateTime?               @db.Timestamp(0)
+  rel_musician_contents rel_musician_contents[]
+  rel_musicians_eras    rel_musicians_eras[]
+  rel_musicians_genres  rel_musicians_genres[]
+}
+
+model notifications {
+  id          BigInt    @id @default(autoincrement()) @db.UnsignedBigInt
+  message     String?   @db.Text
+  created_at  DateTime? @default(now()) @db.Timestamp(0)
+  statuses_id BigInt    @db.UnsignedBigInt
+  users_id    BigInt    @db.UnsignedBigInt
+  statuses    statuses  @relation(fields: [statuses_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_notifications_statuses1")
+  users       users     @relation(fields: [users_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_notifications_users1")
+
+  @@index([statuses_id], map: "fk_notifications_statuses1_idx")
+  @@index([users_id], map: "fk_notifications_users1_idx")
+}
+
+model personal_access_tokens {
+  id             BigInt    @id @default(autoincrement()) @db.UnsignedBigInt
+  tokenable_type String    @db.VarChar(255)
+  tokenable_id   BigInt    @db.UnsignedBigInt
+  name           String    @db.VarChar(255)
+  token          String    @unique(map: "personal_access_tokens_token_unique") @db.VarChar(64)
+  abilities      String?   @db.Text
+  last_used_at   DateTime? @db.Timestamp(0)
+  expires_at     DateTime? @db.Timestamp(0)
+  created_at     DateTime? @db.Timestamp(0)
+  updated_at     DateTime? @db.Timestamp(0)
+
+  @@index([tokenable_type, tokenable_id], map: "personal_access_tokens_tokenable_type_tokenable_id_index")
+}
+
+model rel_musician_contents {
+  id           BigInt    @id @default(autoincrement()) @db.UnsignedBigInt
+  musicians_id BigInt    @db.UnsignedBigInt
+  contents_id  BigInt    @db.UnsignedBigInt
+  created_at   DateTime  @default(now()) @db.Timestamp(0)
+  updated_at   DateTime? @db.Timestamp(0)
+  contents     contents  @relation(fields: [contents_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_rel_musician_contents_contents1")
+  musicians    musicians @relation(fields: [musicians_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_rel_musician_contents_musicians1")
+
+  @@unique([musicians_id, contents_id], map: "rel_musician_contents_musicians_id_contents_id_unique")
+  @@index([contents_id], map: "fk_rel_musician_contents_contents1_idx")
+  @@index([musicians_id], map: "fk_rel_musician_contents_musicians1_idx")
+}
+
+model rel_musicians_eras {
+  id            BigInt     @id @default(autoincrement()) @db.UnsignedBigInt
+  musicians_id  BigInt     @db.UnsignedBigInt
+  music_eras_id BigInt     @db.UnsignedBigInt
+  created_at    DateTime   @default(now()) @db.Timestamp(0)
+  updated_at    DateTime?  @db.Timestamp(0)
+  music_eras    music_eras @relation(fields: [music_eras_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_rel_musicians_eras_music_eras1")
+  musicians     musicians  @relation(fields: [musicians_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_rel_musicians_eras_musicians1")
+
+  @@unique([musicians_id, music_eras_id], map: "rel_musicians_eras_musicians_id_music_eras_id_unique")
+  @@index([music_eras_id], map: "fk_rel_musicians_eras_music_eras1_idx")
+  @@index([musicians_id], map: "fk_rel_musicians_eras_musicians1_idx")
+}
+
+model rel_musicians_genres {
+  id              BigInt       @id @default(autoincrement()) @db.UnsignedBigInt
+  musicians_id    BigInt       @db.UnsignedBigInt
+  music_genres_id BigInt       @db.UnsignedBigInt
+  created_at      DateTime     @default(now()) @db.Timestamp(0)
+  updated_at      DateTime?    @db.Timestamp(0)
+  music_genres    music_genres @relation(fields: [music_genres_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_rel_musicians_genres_music_genres1")
+  musicians       musicians    @relation(fields: [musicians_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_rel_musicians_genres_musicians1")
+
+  @@unique([musicians_id, music_genres_id], map: "rel_musicians_genres_musicians_id_music_genres_id_unique")
+  @@index([music_genres_id], map: "fk_rel_musicians_genres_music_genres1_idx")
+  @@index([musicians_id], map: "fk_rel_musicians_genres_musicians1_idx")
+}
+
+model rel_users_chats {
+  id        BigInt   @id @default(autoincrement()) @db.UnsignedBigInt
+  users_id  BigInt   @db.UnsignedBigInt
+  chats_id  BigInt   @db.UnsignedBigInt
+  joined_at DateTime @default(now()) @db.Timestamp(0)
+  chats     chats    @relation(fields: [chats_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_rel_users_chats_chats1")
+  users     users    @relation(fields: [users_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_rel_users_chats_users1")
+
+  @@unique([users_id, chats_id], map: "rel_users_chats_users_id_chats_id_unique")
+  @@index([chats_id], map: "fk_rel_users_chats_chats1_idx")
+  @@index([users_id], map: "fk_rel_users_chats_users1_idx")
+}
+
+model roles {
+  id          BigInt    @id @default(autoincrement()) @db.UnsignedBigInt
+  role_name   String    @db.VarChar(45)
+  description String?   @db.Text
+  created_at  DateTime @default(now()) @db.Timestamp(0)
+  updated_at  DateTime @default(now()) @db.Timestamp(0)
+  users       users[]
+}
+
+model schools {
+  id            BigInt    @id @default(autoincrement()) @db.UnsignedBigInt
+  name          String    @db.VarChar(45)
+  address       String    @db.VarChar(255)
+  contact_mail  String    @unique(map: "contact_mail_UNIQUE") @db.VarChar(45)
+  contact_phone String    @db.VarChar(45)
+  created_at    DateTime  @default(now()) @db.Timestamp(0)
+  updated_at    DateTime? @default(now()) @db.Timestamp(0)
+  users         users[]
+}
+
+model sessions {
+  id            String  @id @db.VarChar(255)
+  user_id       BigInt? @db.UnsignedBigInt
+  ip_address    String? @db.VarChar(45)
+  user_agent    String? @db.Text
+  payload       String  @db.LongText
+  last_activity Int
+
+  @@index([last_activity], map: "sessions_last_activity_index")
+  @@index([user_id], map: "sessions_user_id_index")
+}
+
+model statuses {
+  id              BigInt            @id @default(autoincrement()) @db.UnsignedBigInt
+  status_name     String            @unique(map: "statuses_status_name_unique") @db.VarChar(45)
+  description     String?           @db.Text
+  created_at      DateTime?         @db.Timestamp(0)
+  updated_at      DateTime?         @db.Timestamp(0)
+  calendar_events calendar_events[]
+  messages        messages[]
+  notifications   notifications[]
+  tasks           tasks[]
+  users           users[]
+}
+
+model submissions {
+  id              BigInt    @id @default(autoincrement()) @db.UnsignedBigInt
+  submission_date DateTime  @default(now()) @db.Timestamp(0)
+  file_path       String    @db.VarChar(45)
+  grade           Float?
+  feedback        String?   @db.Text
+  created_at      DateTime  @default(now()) @db.Timestamp(0)
+  updated_at      DateTime? @db.Timestamp(0)
+  submitted_by    BigInt    @db.UnsignedBigInt
+  tasks_id        BigInt    @db.UnsignedBigInt
+  users           users     @relation(fields: [submitted_by], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "submissions_submitted_by_foreign")
+  tasks           tasks     @relation(fields: [tasks_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "submissions_tasks_id_foreign")
+
+  @@index([submitted_by], map: "submissions_submitted_by_foreign")
+  @@index([tasks_id], map: "submissions_tasks_id_foreign")
+}
+
+model tags {
+  id          BigInt        @id @default(autoincrement()) @db.UnsignedBigInt
+  name        String        @unique(map: "tags_name_unique") @db.VarChar(50)
+  created_at  DateTime?     @db.Timestamp(0)
+  updated_at  DateTime?     @db.Timestamp(0)
+  article_tag article_tag[]
+}
+
+model tasks {
+  id           BigInt         @id @default(autoincrement()) @db.UnsignedBigInt
+  title        String         @db.VarChar(45)
+  description  String?        @db.Text
+  due_date     DateTime       @db.Date
+  created_at   DateTime       @default(now()) @db.Timestamp(0)
+  updated_at   DateTime?      @db.Timestamp(0)
+  assigned_by  BigInt         @db.UnsignedBigInt
+  statuses_id  BigInt         @db.UnsignedBigInt
+  assignements assignements[]
+  submissions  submissions[]
+  users        users          @relation(fields: [assigned_by], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "tasks_assigned_by_foreign")
+  statuses     statuses       @relation(fields: [statuses_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "tasks_statuses_id_foreign")
+
+  @@index([assigned_by], map: "tasks_assigned_by_foreign")
+  @@index([statuses_id], map: "tasks_statuses_id_foreign")
+}
+
+model text_areas {
+  id                BigInt            @id @default(autoincrement()) @db.UnsignedBigInt
+  created_at        DateTime          @default(now()) @db.Timestamp(0)
+  updated_at        DateTime          @default(now()) @db.Timestamp(0)
+  content           String            @db.VarChar(3500)
+  order             Int
+  template_id       BigInt            @db.UnsignedBigInt
+  article_templates article_templates @relation(fields: [template_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "text_areas_template_id_foreign")
+
+  @@index([template_id], map: "text_areas_template_id_foreign")
+}
+
+model user_block_list {
+  id                                      BigInt    @id @default(autoincrement()) @db.UnsignedBigInt
+  blocker_id                              BigInt    @db.UnsignedBigInt
+  blocked_id                              BigInt    @db.UnsignedBigInt
+  created_at                              DateTime? @db.Timestamp(0)
+  updated_at                              DateTime? @db.Timestamp(0)
+  users_user_block_list_blocked_idTousers users     @relation("user_block_list_blocked_idTousers", fields: [blocked_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "user_block_list_blocked_id_foreign")
+  users_user_block_list_blocker_idTousers users     @relation("user_block_list_blocker_idTousers", fields: [blocker_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "user_block_list_blocker_id_foreign")
+
+  @@unique([blocker_id, blocked_id], map: "user_block_list_blocker_id_blocked_id_unique")
+  @@index([blocked_id], map: "user_block_list_blocked_id_foreign")
+}
+
+model user_preferences {
+  id               BigInt    @id @default(autoincrement()) @db.UnsignedBigInt
+  preference_key   String?   @db.VarChar(45)
+  preference_value String?   @db.VarChar(45)
+  updated_at       DateTime? @db.Timestamp(0)
+  users_id         BigInt    @db.UnsignedBigInt
+  users            users     @relation(fields: [users_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_user_preferences_users1")
+
+  @@index([users_id], map: "fk_user_preferences_users1_idx")
+}
+
+model users {
+  id                                                BigInt             @id @default(autoincrement()) @db.UnsignedBigInt
+  username                                          String             @unique(map: "users_username_unique") @db.VarChar(50)
+  password                                          String             @db.VarChar(255)
+  image_path                                        String?            @db.VarChar(255)
+  email                                             String             @unique(map: "users_email_unique") @db.VarChar(255)
+  first_name                                        String             @db.VarChar(50)
+  last_name                                         String?            @db.VarChar(100)
+  created_at                                        DateTime           @default(now()) @db.Timestamp(0)
+  updated_at                                        DateTime           @default(now()) @db.Timestamp(0)
+  recovery_token                                    String?            @db.VarChar(255)
+  statuses_id                                       BigInt             @default(1) @db.UnsignedBigInt
+  roles_id                                          BigInt             @default(1) @db.UnsignedBigInt
+  school_id                                         BigInt?            @db.UnsignedBigInt
+  articles                                          articles[]
+  assignements                                      assignements[]
+  audit_trials                                      audit_trials[]
+  calendar_events                                   calendar_events[]
+  chats                                             chats[]
+  logs                                              logs[]
+  messages                                          messages[]
+  notifications                                     notifications[]
+  rel_users_chats                                   rel_users_chats[]
+  submissions                                       submissions[]
+  tasks                                             tasks[]
+  user_block_list_user_block_list_blocked_idTousers user_block_list[]  @relation("user_block_list_blocked_idTousers")
+  user_block_list_user_block_list_blocker_idTousers user_block_list[]  @relation("user_block_list_blocker_idTousers")
+  user_preferences                                  user_preferences[]
+  roles                                             roles              @relation(fields: [roles_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "users_roles_id_foreign")
+  schools                                           schools?           @relation(fields: [school_id], references: [id], onUpdate: NoAction, map: "users_school_id_foreign")
+  statuses                                          statuses           @relation(fields: [statuses_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "users_statuses_id_foreign")
+
+  @@index([roles_id], map: "users_roles_id_foreign")
+  @@index([school_id], map: "users_school_id_foreign")
+  @@index([statuses_id], map: "users_statuses_id_foreign")
+}

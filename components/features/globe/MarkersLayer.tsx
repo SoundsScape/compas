@@ -10,6 +10,7 @@ export function MarkersLayer({
     clusterGroups,
     onHover,
     cameraDistance,
+    setIsModalOpen,
 }: MarkersLayerProps) {
     return (
         <>
@@ -41,6 +42,7 @@ export function MarkersLayer({
                             apellidos={article.apellidos_autor}
                             cameraDistance={cameraDistance}
                             id={article.id}
+                            setIsModalOpen={setIsModalOpen}
                         />
                     );
                 } else {
@@ -52,6 +54,7 @@ export function MarkersLayer({
                             markers={group.markers}
                             onHover={onHover}
                             cameraDistance={cameraDistance}
+                            setIsModalOpen={setIsModalOpen}
                         />
                     );
                 }

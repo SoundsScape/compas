@@ -14,8 +14,8 @@ export const API_CONFIG = {
         tags: '/api/tags',
         schools: '/api/schools',
         cities: '/api/cities',
-        status: '/api/status',
-        roles: '/api/role',
+        status: '/api/statuses',
+        roles: '/api/roles',
     },
 } as const;
 

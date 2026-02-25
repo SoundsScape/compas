@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { type Settings as SettingsType } from '@/components/sections/home/SettingsModal';
+import { Settings as SettingsType } from '@/lib/interfaces/rightPanel.interface';
 import { DEFAULT_SETTINGS } from '@/lib/utils/defaultSettings';
 
 export function useSettings() {

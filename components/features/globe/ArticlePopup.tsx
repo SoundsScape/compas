@@ -6,27 +6,28 @@ import { ArticleCardInfo } from './ArticleCardInfo';
 interface ArticlePopupProps {
     article: Article;
     onClose: () => void;
-    position?: [number, number, number]; // Posición opcional para el HTML wrapper
+    position?: [number, number, number];
     className?: string;
+    onOpenModal: () => void;
 }
 
 export function ArticlePopup({
     article,
     onClose,
     className = '',
+    onOpenModal,
 }: ArticlePopupProps) {
     const popupRef = useRef<HTMLDivElement>(null);
 
     return (
         <div
             ref={popupRef}
-            className={`w-full -translate-x-1/4 transform rounded-lg bg-white/90 p-4 shadow-lg backdrop-blur-md select-none ${className}`}
+            className={`w-xs -translate-x-1/4 transform rounded-lg bg-white p-5 shadow-sm backdrop-blur-md select-none ${className}`}
             onClick={e => e.stopPropagation()}
             onPointerOver={e => e.stopPropagation()}
             onWheel={e => e.stopPropagation()}
         >
             <div className="mb-3 flex items-center justify-between border-b border-gray-200 pb-2">
-                <div className="w-5 select-none"></div>
                 <button
                     className="ml-auto cursor-pointer text-gray-500 select-none hover:text-gray-800"
                     onClick={e => {
@@ -38,9 +39,14 @@ export function ArticlePopup({
                 </button>
             </div>
 
-            <div className="max-h-64 overflow-y-auto select-none">
-                <ArticleCardInfo article={article} descriptionLimit={20} />
-            </div>
+            <ArticleCardInfo
+                article={article}
+                descriptionLimit={20}
+                onOpenModal={() => {
+                    onOpenModal?.();
+                    onClose();
+                }}
+            />
         </div>
     );
 }

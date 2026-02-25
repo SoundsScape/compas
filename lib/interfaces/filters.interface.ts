@@ -1,8 +1,8 @@
 export interface Tag {
     id: number;
     name: string;
-    created_at: Date;
-    updated_at: Date;
+    created_at?: string | Date;
+    updated_at?: string | Date;
 }
 
 export interface ActiveFiltersChipsProps {

@@ -1,0 +1,95 @@
+import { prisma } from "@/lib/prisma/client";
+/**
+ * Helper para serializar BigInt a string
+ */
+export const serialize = <T>(data: T) =>
+    JSON.parse(JSON.stringify(data, (key, value) =>
+        typeof value === "bigint" ? value.toString() : value
+    ));
+
+import { tagSchema, TagInput } from "@/validations/tag.schema";
+
+export class TagsService {
+    /** Obtener todas las etiquetas */
+    static async getTags(page: number = 1, limit: number = 20) {
+        try {
+            const skip = (page - 1) * limit;
+            const [tags, total] = await Promise.all([
+                prisma.tags.findMany({
+                    skip,
+                    take: limit,
+                    orderBy: { name: "asc" },
+                    include: { article_tag: true }
+                }),
+                prisma.tags.count()
+            ])
+            return {
+                data: tags.map(tag => ({
+                    ...serialize(tag),
+                    articlesCount: tag.article_tag.length
+                })),
+                meta: {
+                    total,
+                    page,
+                    limit,
+                    totalPages: Math.ceil(total / limit)
+                }
+            };
+        } catch (error) {
+            console.error("TagsService.getTags Error:", error);
+            throw { status: 500, message: "Error al obtener las etiquetas." };
+        }
+    }
+
+    static async getTagById(id: number | bigint) {
+        try {
+            const tag = await prisma.tags.findUnique({ where: { id: BigInt(id) } });
+            return serialize(tag);
+        } catch (error) {
+            console.error("TagsService.getTagById Error:", error);
+            throw { status: 500, message: "Error al obtener la etiqueta." };
+        }
+    }
+
+    /** Crear una etiqueta */
+    static async createTag(data: TagInput) {
+        try {
+            const validatedData = tagSchema.parse(data);
+            const tag = await prisma.tags.create({ data: { name: validatedData.name } });
+            return serialize(tag);
+        } catch (error) {
+            console.error("TagsService.createTag Error:", error);
+            throw error;
+        }
+    }
+
+    /** Actualizar una etiqueta */
+    static async updateTag(id: number | bigint, data: Partial<TagInput>) {
+        try {
+            const validatedData = tagSchema.partial().parse(data);
+            const updateData: Partial<TagInput> = {};
+            if (validatedData.name !== undefined) updateData.name = validatedData.name;
+
+            const tag = await prisma.tags.update({
+                where: { id: BigInt(id) },
+                data: updateData
+            });
+            return serialize(tag);
+        } catch (error: any) {
+            if (error.status) throw error;
+            console.error("TagsService.updateTag Error:", error);
+            throw { status: 500, message: "Error al actualizar la etiqueta." };
+        }
+    }
+
+    /** Eliminar una etiqueta */
+    static async deleteTag(id: number | bigint) {
+        try {
+            await prisma.tags.delete({ where: { id: BigInt(id) } });
+            return { message: "Etiqueta eliminada exitosamente." };
+        } catch (error: any) {
+            console.error("TagsService.deleteTag Error:", error);
+            throw { status: 500, message: "Error al eliminar la etiqueta." };
+        }
+    }
+}

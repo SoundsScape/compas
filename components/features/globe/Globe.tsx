@@ -13,7 +13,12 @@ import { Clouds } from './Clouds';
 import { MarkersLayer } from './MarkersLayer';
 import { GlobeProps } from '@/lib/interfaces/globe.interface';
 
-export function Globe({ filters, isPaused, settings }: GlobeProps) {
+export function Globe({
+    filters,
+    isPaused,
+    settings,
+    setIsModalOpen,
+}: GlobeProps) {
     const globeRef = useRef<THREE.Group>(null);
     const cloudsRef = useRef<THREE.Mesh>(null);
     const [isHovered, setIsHovered] = useState(false);
@@ -120,6 +125,7 @@ export function Globe({ filters, isPaused, settings }: GlobeProps) {
                             clusterGroups={clusterGroups}
                             onHover={setIsHovered}
                             cameraDistance={cameraDistance}
+                            setIsModalOpen={setIsModalOpen}
                         />
                     </group>
                 </>

@@ -1,21 +1,6 @@
 import { prisma } from "@/lib/prisma/client";
 import { Prisma } from "@prisma/client";
-
-// --- DTOs (Data Transfer Objects) para tipado fuerte ---
-
-export interface CreateSchoolDTO {
-    name: string;
-    address: string;
-    contact_mail: string;
-    contact_phone: string;
-}
-
-export interface UpdateSchoolDTO {
-    name?: string;
-    address?: string;
-    contact_mail?: string;
-    contact_phone?: string;
-}
+import { createSchoolSchema, updateSchoolSchema, CreateSchoolInput, UpdateSchoolInput } from "@/validations/school.schema";
 
 export class SchoolService {
     /**
@@ -88,19 +73,22 @@ export class SchoolService {
     /**
      * Crear una nueva escuela.
      */
-    static async createSchool(data: CreateSchoolDTO) {
+    static async createSchool(data: CreateSchoolInput) {
         try {
+            const validatedData = createSchoolSchema.parse(data);
+
             const school = await prisma.schools.create({
                 data: {
-                    name: data.name,
-                    address: data.address,
-                    contact_mail: data.contact_mail,
-                    contact_phone: data.contact_phone,
+                    name: validatedData.name,
+                    address: validatedData.address,
+                    contact_mail: validatedData.contact_mail,
+                    contact_phone: validatedData.contact_phone,
                 }
             });
 
             return this.serializeSchool(school);
-        } catch (error) {
+        } catch (error: any) {
+            if (error.name === "ZodError") throw error;
             if (error instanceof Prisma.PrismaClientKnownRequestError) {
                 if (error.code === "P2002") {
                     throw {
@@ -117,14 +105,16 @@ export class SchoolService {
     /**
      * Actualizar una escuela existente de forma segura.
      */
-    static async updateSchool(id: number, data: UpdateSchoolDTO) {
+    static async updateSchool(id: number, data: UpdateSchoolInput) {
         try {
+            const validatedData = updateSchoolSchema.parse(data);
+
             // Mapping explícito para evitar inyección de campos no deseados
             const updateData: any = {};
-            if (data.name !== undefined) updateData.name = data.name;
-            if (data.address !== undefined) updateData.address = data.address;
-            if (data.contact_mail !== undefined) updateData.contact_mail = data.contact_mail;
-            if (data.contact_phone !== undefined) updateData.contact_phone = data.contact_phone;
+            if (validatedData.name !== undefined) updateData.name = validatedData.name;
+            if (validatedData.address !== undefined) updateData.address = validatedData.address;
+            if (validatedData.contact_mail !== undefined) updateData.contact_mail = validatedData.contact_mail;
+            if (validatedData.contact_phone !== undefined) updateData.contact_phone = validatedData.contact_phone;
 
             const school = await prisma.schools.update({
                 where: { id: BigInt(id) },
@@ -132,7 +122,8 @@ export class SchoolService {
             });
 
             return this.serializeSchool(school);
-        } catch (error) {
+        } catch (error: any) {
+            if (error.name === "ZodError") throw error;
             if (error instanceof Prisma.PrismaClientKnownRequestError) {
                 if (error.code === "P2002") {
                     throw { status: 409, message: "El email de contacto ya está en uso." };

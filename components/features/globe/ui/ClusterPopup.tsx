@@ -1,3 +1,8 @@
+/**
+ * ClusterPopup.tsx
+ * Popup para agrupaciones de artículos en el globo 3D.
+ * Permite listar múltiples artículos y navegar a la vista individual de cada uno.
+ */
 import { useState, useRef } from 'react';
 import { X, ArrowLeft } from 'lucide-react';
 import { formatYear } from '@/lib/utils/dateUtils';

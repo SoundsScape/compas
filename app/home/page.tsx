@@ -14,12 +14,15 @@ import ArticleModal from '@/components/shared/articles/ArticleModal';
 // Importaciones de componentes
 // Al desactivar el SSR, se preveen fallos con librerías pesadas de mapas y 3D.
 const GlobeMain = dynamic(
-    () => import('@/components/features/globe/GlobeMain'),
+    () => import('@/components/features/globe/core/GlobeMain'),
     { ssr: false }
 );
-const HomeMap = dynamic(() => import('@/components/features/globe/HomeMap'), {
-    ssr: false,
-});
+const HomeMap = dynamic(
+    () => import('@/components/features/globe/core/HomeMap'),
+    {
+        ssr: false,
+    }
+);
 const Timeline = dynamic(() => import('@/components/sections/home/Timeline'), {
     ssr: false,
 });

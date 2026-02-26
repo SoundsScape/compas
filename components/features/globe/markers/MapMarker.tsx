@@ -1,6 +1,11 @@
+/**
+ * MapMarker.tsx (2D)
+ * Adaptador de marcador para Leaflet.
+ * Renderiza el ArticleCardInfo dentro de un Popup nativo del mapa 2D.
+ */
 import dynamic from 'next/dynamic';
 import { Article } from '@/lib/interfaces/article.interface';
-import { ArticleCardInfo } from './ArticleCardInfo';
+import { ArticleCardInfo } from '../ui/ArticleCardInfo';
 
 // Importaciones dinámicas para Leaflet (solo cliente)
 const Marker = dynamic(() => import('react-leaflet').then(mod => mod.Marker), {

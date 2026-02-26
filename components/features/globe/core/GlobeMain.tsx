@@ -1,11 +1,14 @@
+/**
+ * GlobeMain.tsx
+ * Orquestador principal de la vista 3D. Maneja el Canvas de Three.js,
+ * los controles de cámara y la integración del globo con el modal de artículos.
+ */
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls } from '@react-three/drei';
-import { useState } from 'react';
 import { Globe } from './Globe';
 import { GlobeMainProps } from '@/lib/interfaces/globe.interface';
 import { useCameraControls } from '@/lib/hooks/useCameraControls';
-import { GlobeControls } from './GlobeControls';
-import ArticleModal from '@/components/shared/articles/ArticleModal';
+import { GlobeControls } from '../ui/GlobeControls';
 
 export default function GlobeMain({
     filters,

@@ -1,3 +1,8 @@
+/**
+ * ArticlePopup.tsx
+ * Ventana emergente (Tooltip/Popup) que se muestra sobre el globo 3D.
+ * Contiene la información resumida del artículo y el botón para abrir el modal completo.
+ */
 import { X } from 'lucide-react';
 import { Article } from '@/lib/interfaces/article.interface';
 import { useRef } from 'react';

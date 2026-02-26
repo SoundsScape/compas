@@ -1,3 +1,8 @@
+/**
+ * ArticleCardInfo.tsx
+ * Componente de bajo nivel que renderiza la ficha técnica de un artículo.
+ * Se utiliza tanto en los popups del globo 3D como en los del mapa 2D.
+ */
 import { Article } from '@/lib/interfaces/article.interface';
 import { getHistoricalPeriod } from '@/lib/utils/historicalPeriods';
 import { limitWords } from '@/lib/utils/textUtils';

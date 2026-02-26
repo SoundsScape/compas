@@ -1,3 +1,9 @@
+/**
+ * Globe.tsx
+ * Componente núcleo del planeta Tierra en 3D. 
+ * Gestiona el ciclo de vida de Three.js, la rotación, el clustering dinámico
+ * y la visibilidad de los marcadores en la esfera.
+ */
 'use client';
 
 import { useRef, useState, useEffect, useMemo } from 'react';
@@ -8,9 +14,9 @@ import { isPointVisible } from '@/lib/utils/threeUtils';
 import { useArticles } from '@/lib/hooks/useArticles';
 import { useGlobeTextures } from '@/lib/hooks/useGlobeTextures';
 import { useClustering } from '@/lib/hooks/useClustering';
-import { Earth } from './Earth';
-import { Clouds } from './Clouds';
-import { MarkersLayer } from './MarkersLayer';
+import { Earth } from '../elements-3d/Earth';
+import { Clouds } from '../elements-3d/Clouds';
+import { MarkersLayer } from '../elements-3d/MarkersLayer';
 import { GlobeProps } from '@/lib/interfaces/globe.interface';
 
 export function Globe({

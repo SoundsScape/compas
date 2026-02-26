@@ -1,3 +1,8 @@
+/**
+ * Clouds.tsx
+ * Capa atmosférica de nubes en 3D.
+ * Se renderiza sobre la Tierra con transparencia y una rotación independiente.
+ */
 import { forwardRef } from 'react';
 import { Sphere } from '@react-three/drei';
 import * as THREE from 'three';

@@ -1,7 +1,12 @@
+/**
+ * MarkersLayer.tsx
+ * Capa lógica que decide si renderizar un marcador individual (LocationMarker)
+ * o una agrupación de artículos (MarkerCluster) basándose en el clustering 3D.
+ */
 'use client';
 
-import { LocationMarker } from './LocationMarker';
-import { MarkerCluster } from './MarkerCluster';
+import { LocationMarker } from '../markers/LocationMarker';
+import { MarkerCluster } from '../markers/MarkerCluster';
 import { getHistoricalPeriod } from '@/lib/utils/historicalPeriods';
 import { limitWords } from '@/lib/utils/textUtils';
 import { MarkersLayerProps } from '@/lib/interfaces/globe.interface';

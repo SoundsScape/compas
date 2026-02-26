@@ -1,3 +1,8 @@
+/**
+ * GlobeControls.tsx
+ * Interfaz de usuario (HUD) para controlar la cámara del globo.
+ * Incluye botones de zoom, reset y pausa de rotación.
+ */
 import { Button } from '@/components/ui/button';
 import { GlobeControlsProps } from '@/lib/interfaces/globe.interface';
 import { Plus, Minus, RotateCcw, Pause, Play } from 'lucide-react';

@@ -1,3 +1,8 @@
+/**
+ * MusicNote.tsx
+ * Efecto visual de notas musicales que flotan desde los marcadores.
+ * Aporta dinamismo y feedback visual a la interacción con el globo.
+ */
 import { useRef, useEffect, useState } from 'react';
 import { useFrame } from '@react-three/fiber';
 import * as THREE from 'three';

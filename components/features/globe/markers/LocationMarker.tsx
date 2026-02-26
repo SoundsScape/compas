@@ -1,57 +1,70 @@
+/**
+ * LocationMarker.tsx (3D)
+ * Marcador individual para la esfera 3D.
+ * Maneja eventos de hover/click y muestra el ArticlePopup cuando se selecciona.
+ */
 import { useState, useRef, useEffect, useCallback, memo } from 'react';
 import { Html } from '@react-three/drei';
 import * as THREE from 'three';
-import { ThreeEvent } from '@react-three/fiber';
+import { ArticlePopup } from '../ui/ArticlePopup';
 import { useMarkerSize } from '@/lib/hooks/useMarkerSize';
-import { ClusterPopup } from './ClusterPopup';
-import { MarkerClusterProps } from '@/lib/interfaces/globe.interface';
+import { Article } from '@/lib/interfaces/article.interface';
+import { LocationMarkerProps } from '@/lib/interfaces/globe.interface';
 
-function MarkerClusterBase({
+function LocationMarkerBase({
     position,
-    markers,
+    name,
+    description,
     onHover,
+    region,
+    year,
+    tags = [],
+    autor,
+    apellidos,
     cameraDistance = 3.5,
+    id,
     setIsModalOpen,
-}: MarkerClusterProps) {
+}: LocationMarkerProps) {
     const [hovered, setHovered] = useState(false);
     const [clicked, setClicked] = useState(false);
     const sphereRef = useRef<THREE.Mesh>(null);
     const [popupPosition, setPopupPosition] = useState<'top' | 'bottom'>('top');
-
-    // Usar hook para tamaño. Escalamos un poco más los clusters (1.3x)
-    const markerSize = useMarkerSize(cameraDistance, 0.018, 1.3);
-    // Tamaño para el badge de número, un poco más pequeño
-    const informativeMarkerSize = useMarkerSize(cameraDistance, 0.018, 1.3);
+    // Usar el nuevo hook para el tamaño
+    const markerSize = useMarkerSize(cameraDistance);
 
     useEffect(() => {
         setPopupPosition(position[1] > 0 ? 'bottom' : 'top');
     }, [position]);
 
-    // Cerrar al hacer clic fuera (si está abierto)
+    // Cerrar al hacer clic fuera
     useEffect(() => {
-        const handleClickOutside = () => {
+        const handleClickOuside = () => {
             if (clicked) {
                 setClicked(false);
                 setHovered(false);
                 onHover(false);
             }
         };
+
         if (clicked) {
+            // Usamos un timeout pequeño para evitar que el click que abre el popup lo cierre inmediatamente
             setTimeout(
-                () => document.addEventListener('click', handleClickOutside),
+                () => document.addEventListener('click', handleClickOuside),
                 0
             );
         }
-        return () => {
-            document.removeEventListener('click', handleClickOutside);
-        };
+
+        return () => document.removeEventListener('click', handleClickOuside);
     }, [clicked, onHover]);
 
-    const handlePointerOver = useCallback(
-        (e: ThreeEvent<MouseEvent>) => {
-            e.stopPropagation();
-            document.body.style.cursor = 'pointer';
+    interface ThreeEvent extends THREE.Event {
+        stopPropagation?: () => void;
+    }
 
+    const handlePointerOver = useCallback(
+        (e: ThreeEvent) => {
+            e.stopPropagation?.();
+            document.body.style.cursor = 'pointer';
             if (!clicked) {
                 setHovered(true);
                 onHover(true);
@@ -61,8 +74,8 @@ function MarkerClusterBase({
     );
 
     const handlePointerOut = useCallback(
-        (e: ThreeEvent<MouseEvent>) => {
-            e.stopPropagation();
+        (e: ThreeEvent) => {
+            e.stopPropagation?.();
             document.body.style.cursor = 'auto';
             if (!clicked) {
                 setHovered(false);
@@ -73,14 +86,40 @@ function MarkerClusterBase({
     );
 
     const handleClick = useCallback(
-        (e: ThreeEvent<MouseEvent>) => {
-            e.stopPropagation();
+        (e: ThreeEvent) => {
+            e.stopPropagation?.();
             setClicked(!clicked);
             setHovered(true);
             onHover(true);
         },
         [clicked, onHover]
     );
+
+    const handleClose = useCallback(() => {
+        setClicked(false);
+        setHovered(false);
+        onHover(false);
+    }, [onHover]);
+
+    const handleOpenModal = useCallback(() => {
+        setIsModalOpen(true);
+        handleClose();
+    }, [handleClose]);
+
+    // Reconstruimos el objeto Article para pasárselo al popup compartido
+    // (Idealmente refactorizaríamos MarkersLayer para pasar el Article completo)
+    const articleData: Article = {
+        id,
+        titulo: name,
+        fecha: year,
+        latitud: String(position[0]), // Aproximación
+        longitud: String(position[1]), // Aproximación
+        centro: region,
+        nombre_autor: autor,
+        apellidos_autor: apellidos,
+        templates: [{ text_areas: [{ content: description }] }],
+        tags: tags,
+    } as any;
 
     return (
         <group position={position}>
@@ -92,30 +131,9 @@ function MarkerClusterBase({
             >
                 <sphereGeometry args={[markerSize, 16, 16]} />
                 <meshBasicMaterial
-                    color={hovered || clicked ? '#ff6600' : '#ff9900'}
+                    color={hovered || clicked ? '#ff4444' : 'red'}
                 />
             </mesh>
-
-            {/* Indicador de número de items */}
-            <Html
-                position={[0, informativeMarkerSize * 1.5, 0]}
-                center
-                style={{
-                    width: '20px',
-                    height: '20px',
-                    transformOrigin: 'center center',
-                    scale: '1',
-                    userSelect: 'none',
-                    pointerEvents: 'none',
-                }}
-                zIndexRange={[0, 0]}
-                occlude={false}
-            >
-                <div className="pointer-events-none flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-xs font-bold text-white select-none">
-                    {markers.length}
-                </div>
-            </Html>
-
             {hovered && (
                 <Html
                     position={[
@@ -135,19 +153,15 @@ function MarkerClusterBase({
                                 : 'translateY(-93%)',
                     }}
                 >
-                    <ClusterPopup
-                        markers={markers}
-                        onClose={() => {
-                            setClicked(false);
-                            setHovered(false);
-                            onHover(false);
-                        }}
-                        onHover={onHover}
-                        setIsModalOpen={setIsModalOpen}
+                    <ArticlePopup
+                        article={articleData}
+                        onClose={handleClose}
+                        onOpenModal={handleOpenModal}
                     />
                 </Html>
             )}
         </group>
     );
 }
-export const MarkerCluster = memo(MarkerClusterBase);
+
+export const LocationMarker = memo(LocationMarkerBase);

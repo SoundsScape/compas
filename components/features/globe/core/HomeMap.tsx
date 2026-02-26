@@ -1,3 +1,8 @@
+/**
+ * HomeMap.tsx
+ * Orquestador principal de la vista de mapa 2D (Leaflet).
+ * Renderiza los artículos sobre una capa de satélite sincronizada con los filtros globales.
+ */
 'use client';
 
 import dynamic from 'next/dynamic';
@@ -5,7 +10,7 @@ import { useEffect, useState } from 'react';
 import { LatLngBoundsLiteral } from 'leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
-import { MapMarker } from './MapMarker';
+import { MapMarker } from '../markers/MapMarker';
 import { useArticles } from '@/lib/hooks/useArticles';
 import { HomeMapProps } from '@/lib/interfaces/globe.interface';
 

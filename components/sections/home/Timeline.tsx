@@ -10,6 +10,7 @@ export default function Timeline({
     setSelectedYearRange,
     minYear,
     maxYear,
+    dateFormat,
 }: TimelineProps) {
     const [sliderValue, setSliderValue] = useState<[number, number]>([0, 100]);
     const [_inputValue, setInputValue] = useState<{
@@ -56,7 +57,7 @@ export default function Timeline({
             const year = Math.round(
                 Math.exp(
                     (absLogValue * Math.log(Math.abs(maxYear) + 1)) /
-                        Math.abs(maxYear)
+                    Math.abs(maxYear)
                 ) - 1
             );
 
@@ -126,14 +127,14 @@ export default function Timeline({
                     <div className="w-full flex-1 p-3 px-6">
                         <div className="flex items-baseline justify-between px-1">
                             <span className="text-md text-muted-foreground">
-                                {formatYear(minYear)}
+                                {formatYear(minYear, dateFormat)}
                             </span>
                             <span className="text-lg tracking-wider">
-                                Rango: {formatYear(selectedYearRange[0])} -{' '}
-                                {formatYear(selectedYearRange[1])}
+                                Rango: {formatYear(selectedYearRange[0], dateFormat)} -{' '}
+                                {formatYear(selectedYearRange[1], dateFormat)}
                             </span>
                             <span className="text-md text-muted-foreground">
-                                {formatYear(maxYear)}
+                                {formatYear(maxYear, dateFormat)}
                             </span>
                         </div>
                         <Slider

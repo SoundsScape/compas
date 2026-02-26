@@ -15,6 +15,7 @@ interface ClusterPopupProps {
     onClose: () => void;
     onHover: (isHovered: boolean) => void;
     setIsModalOpen: (open: boolean) => void;
+    dateFormat?: 'AC/DC' | 'BCE/CE';
 }
 
 export function ClusterPopup({
@@ -22,6 +23,7 @@ export function ClusterPopup({
     onClose,
     onHover,
     setIsModalOpen,
+    dateFormat,
 }: ClusterPopupProps) {
     const [activeMarkerIndex, setActiveMarkerIndex] = useState<number | null>(
         null
@@ -72,7 +74,10 @@ export function ClusterPopup({
                                         {marker.article.titulo}
                                     </span>
                                     <span className="text-xs">
-                                        {formatYear(marker.article.fecha)}
+                                        {formatYear(
+                                            marker.article.fecha,
+                                            dateFormat
+                                        )}
                                     </span>
                                 </div>
                                 <span className="mt-1 block text-xs text-gray-600 select-none">
@@ -95,6 +100,7 @@ export function ClusterPopup({
                             setIsModalOpen(true);
                             onClose();
                         }}
+                        dateFormat={dateFormat}
                     />
                     <button
                         className="absolute top-4 -left-14 z-20 cursor-pointer text-gray-500 hover:text-gray-800"

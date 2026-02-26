@@ -32,6 +32,7 @@ export interface YearRangeSelectorProps {
     maxYear: number;
     value: [number, number];
     onChange: (range: [number, number]) => void;
+    dateFormat?: 'AC/DC' | 'BCE/CE';
 }
 
 export interface FiltersProps {
@@ -54,6 +55,7 @@ export interface FiltersProps {
     setSelectedYearRange: (range: [number, number]) => void;
     minYear: number;
     maxYear: number;
+    dateFormat?: 'AC/DC' | 'BCE/CE';
 }
 
 export interface FiltersPanelProps {
@@ -64,4 +66,5 @@ export interface FiltersPanelProps {
     setSelectedYearRange: (range: [number, number]) => void;
     minYear: number;
     maxYear: number;
+    dateFormat?: 'AC/DC' | 'BCE/CE';
 }

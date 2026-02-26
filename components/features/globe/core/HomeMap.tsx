@@ -10,7 +10,7 @@ import { useEffect, useState } from 'react';
 import { LatLngBoundsLiteral } from 'leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
-import { MapMarker } from '../markers/MapMarker';
+import MapMarker from '../markers/MapMarker';
 import { useArticles } from '@/lib/hooks/useArticles';
 import { HomeMapProps } from '@/lib/interfaces/globe.interface';
 
@@ -39,7 +39,11 @@ const bounds: LatLngBoundsLiteral = [
     [90, 180], // Esquina noreste
 ];
 
-export default function HomeMap({ filters, setIsModalOpen }: HomeMapProps) {
+export default function HomeMap({
+    filters,
+    setIsModalOpen,
+    dateFormat,
+}: HomeMapProps) {
     const [mapReady, setMapReady] = useState(false);
     // Inyectamos los mismos datos que el Globo
     // Pasamos 0 como umbral de cluster porque el mapa 2D no los usa (por ahora)
@@ -94,9 +98,10 @@ export default function HomeMap({ filters, setIsModalOpen }: HomeMapProps) {
                     {mapReady &&
                         articles.map((article, index) => (
                             <MapMarker
-                                key={`${article.id}-${index}`}
+                                key={article.id}
                                 article={article}
                                 setIsModalOpen={setIsModalOpen}
+                                dateFormat={dateFormat}
                             />
                         ))}
                 </MapContainer>

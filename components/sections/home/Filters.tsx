@@ -28,6 +28,7 @@ export default function Filters({
     setSelectedYearRange,
     minYear,
     maxYear,
+    dateFormat,
 }: FiltersProps) {
     const [tags, setTags] = useState<Tag[]>([]);
     const [isLoading, setIsLoading] = useState(true);
@@ -139,6 +140,7 @@ export default function Filters({
                         maxYear={maxYear}
                         value={filters.yearRange}
                         onChange={handleYearRangeChange}
+                        dateFormat={dateFormat}
                     />
                 </div>
 

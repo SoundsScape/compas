@@ -14,6 +14,7 @@ interface ArticlePopupProps {
     position?: [number, number, number];
     className?: string;
     onOpenModal: () => void;
+    dateFormat?: 'AC/DC' | 'BCE/CE';
 }
 
 export function ArticlePopup({
@@ -21,6 +22,7 @@ export function ArticlePopup({
     onClose,
     className = '',
     onOpenModal,
+    dateFormat,
 }: ArticlePopupProps) {
     const popupRef = useRef<HTMLDivElement>(null);
 
@@ -46,11 +48,8 @@ export function ArticlePopup({
 
             <ArticleCardInfo
                 article={article}
-                descriptionLimit={20}
-                onOpenModal={() => {
-                    onOpenModal?.();
-                    onClose();
-                }}
+                onOpenModal={onOpenModal}
+                dateFormat={dateFormat}
             />
         </div>
     );

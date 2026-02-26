@@ -132,6 +132,7 @@ export function Globe({
                             onHover={setIsHovered}
                             cameraDistance={cameraDistance}
                             setIsModalOpen={setIsModalOpen}
+                            dateFormat={settings.display.dateFormat as any}
                         />
                     </group>
                 </>

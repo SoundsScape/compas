@@ -9,6 +9,7 @@ export function YearRangeSelector({
     maxYear,
     value,
     onChange,
+    dateFormat,
 }: YearRangeSelectorProps) {
     const [startYear, setStartYear] = useState(value[0].toString());
     const [endYear, setEndYear] = useState(value[1].toString());
@@ -45,7 +46,7 @@ export function YearRangeSelector({
             const year = Math.round(
                 Math.exp(
                     (absLogValue * Math.log(Math.abs(maxYear) + 1)) /
-                        Math.abs(maxYear)
+                    Math.abs(maxYear)
                 ) - 1
             );
 
@@ -157,10 +158,10 @@ export function YearRangeSelector({
                 />
                 <div className="mt-4 flex justify-between">
                     <span className="text-muted-foreground text-xs">
-                        {formatYear(parseInt(startYear) || minYear)}
+                        {formatYear(parseInt(startYear) || minYear, dateFormat)}
                     </span>
                     <span className="text-muted-foreground text-xs">
-                        {formatYear(parseInt(endYear) || maxYear)}
+                        {formatYear(parseInt(endYear) || maxYear, dateFormat)}
                     </span>
                 </div>
             </div>

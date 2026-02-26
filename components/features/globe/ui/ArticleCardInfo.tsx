@@ -13,12 +13,14 @@ interface ArticleCardInfoProps {
     article: Article;
     descriptionLimit?: number;
     onOpenModal?: () => void;
+    dateFormat?: 'AC/DC' | 'BCE/CE';
 }
 
 export function ArticleCardInfo({
     article,
     descriptionLimit = 20,
     onOpenModal,
+    dateFormat,
 }: ArticleCardInfoProps) {
     return (
         <div className="flex max-h-80 flex-col gap-3 select-none">
@@ -27,7 +29,7 @@ export function ArticleCardInfo({
                     {article.titulo}
                 </h3>
                 <span className="mt-1 text-sm font-medium whitespace-nowrap text-gray-800 select-none">
-                    {formatYear(article.fecha)}
+                    {formatYear(article.fecha, dateFormat)}
                 </span>
             </div>
 

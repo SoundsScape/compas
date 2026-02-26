@@ -47,6 +47,7 @@ export interface MarkersLayerProps {
     onHover: (isHovered: boolean) => void;
     cameraDistance: number;
     setIsModalOpen: (value: boolean) => void;
+    dateFormat?: 'AC/DC' | 'BCE/CE';
 }
 
 export interface HomeMapProps {
@@ -58,6 +59,7 @@ export interface HomeMapProps {
         regions: string[];
     };
     setIsModalOpen: (value: boolean) => void;
+    dateFormat?: 'AC/DC' | 'BCE/CE';
 }
 
 export interface LocationMarkerProps {
@@ -74,6 +76,7 @@ export interface LocationMarkerProps {
     cameraDistance?: number;
     id: number;
     setIsModalOpen: (value: boolean) => void;
+    dateFormat?: 'AC/DC' | 'BCE/CE';
 }
 
 export interface MarkerInfo {
@@ -87,6 +90,7 @@ export interface MarkerClusterProps {
     onHover: (isHovered: boolean) => void;
     cameraDistance?: number;
     setIsModalOpen: (value: boolean) => void;
+    dateFormat?: 'AC/DC' | 'BCE/CE';
 }
 
 export interface GlobeMainProps {

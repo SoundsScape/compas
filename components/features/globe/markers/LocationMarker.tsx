@@ -24,6 +24,7 @@ function LocationMarkerBase({
     cameraDistance = 3.5,
     id,
     setIsModalOpen,
+    dateFormat,
 }: LocationMarkerProps) {
     const [hovered, setHovered] = useState(false);
     const [clicked, setClicked] = useState(false);

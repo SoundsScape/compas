@@ -69,6 +69,7 @@ export default function Home() {
                     <HomeMap
                         filters={filters}
                         setIsModalOpen={setIsModalOpen}
+                        dateFormat={settings.display.dateFormat as any}
                     />
                 ) : (
                     <GlobeMain
@@ -98,6 +99,7 @@ export default function Home() {
                             maxYear={MAX_YEAR}
                             showFilters={showFilters}
                             setShowFilters={setShowFilters}
+                            dateFormat={settings.display.dateFormat as any}
                         />
                     )}
 
@@ -113,6 +115,7 @@ export default function Home() {
                             setSelectedYearRange={setSelectedYearRange}
                             minYear={MIN_YEAR}
                             maxYear={MAX_YEAR}
+                            dateFormat={settings.display.dateFormat as any}
                         />
                     )}
                 </div>

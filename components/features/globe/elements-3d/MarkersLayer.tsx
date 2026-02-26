@@ -16,6 +16,7 @@ export function MarkersLayer({
     onHover,
     cameraDistance,
     setIsModalOpen,
+    dateFormat,
 }: MarkersLayerProps) {
     return (
         <>
@@ -48,6 +49,7 @@ export function MarkersLayer({
                             cameraDistance={cameraDistance}
                             id={article.id}
                             setIsModalOpen={setIsModalOpen}
+                            dateFormat={dateFormat}
                         />
                     );
                 } else {
@@ -60,6 +62,7 @@ export function MarkersLayer({
                             onHover={onHover}
                             cameraDistance={cameraDistance}
                             setIsModalOpen={setIsModalOpen}
+                            dateFormat={dateFormat}
                         />
                     );
                 }

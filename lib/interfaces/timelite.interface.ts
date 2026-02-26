@@ -3,4 +3,5 @@ export interface TimelineProps {
     setSelectedYearRange: (range: [number, number]) => void;
     minYear: number;
     maxYear: number;
+    dateFormat?: 'AC/DC' | 'BCE/CE';
 }

@@ -11,6 +11,7 @@ export function FiltersPanel({
     setSelectedYearRange,
     minYear,
     maxYear,
+    dateFormat,
 }: FiltersPanelProps) {
     return (
         <div
@@ -25,6 +26,7 @@ export function FiltersPanel({
                     setSelectedYearRange={setSelectedYearRange}
                     minYear={minYear}
                     maxYear={maxYear}
+                    dateFormat={dateFormat}
                 />
             </div>
             <Button

@@ -15,13 +15,17 @@ const Popup = dynamic(() => import('react-leaflet').then(mod => mod.Popup), {
     ssr: false,
 });
 
-export function MapMarker({
-    article,
-    setIsModalOpen
-}: {
+interface MapMarkerProps {
     article: Article;
     setIsModalOpen: (value: boolean) => void;
-}) {
+    dateFormat?: 'AC/DC' | 'BCE/CE';
+}
+
+export default function MapMarker({
+    article,
+    setIsModalOpen,
+    dateFormat,
+}: MapMarkerProps) {
     return (
         <Marker
             position={[
@@ -35,6 +39,7 @@ export function MapMarker({
                         article={article}
                         descriptionLimit={10}
                         onOpenModal={() => setIsModalOpen(true)}
+                        dateFormat={dateFormat}
                     />
                 </div>
             </Popup>

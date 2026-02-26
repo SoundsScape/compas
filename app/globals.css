@@ -56,7 +56,7 @@
     --secondary: #0f4285;
     --secondary-foreground: #ffffff;
     --muted: #1e293b;
-    --muted-foreground: rgb(179, 178, 178);
+    --muted-foreground: #d1d5dc;
     --accent: #ffed00;
     --accent-foreground: #081a31;
     --destructive: #ff6b6b;
@@ -151,7 +151,7 @@
     }
 
     body {
-        @apply bg-background text-foreground;
+        @apply bg-background text-foreground tracking-wide;
     }
 }
 

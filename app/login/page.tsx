@@ -2,52 +2,26 @@
 
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { API_CONFIG } from '@/lib/config/api.config';
+import { login } from '@/lib/services/authService';
 import LoginForm from '@/components/sections/login/LoginForm';
 import { QuoteSection } from '@/components/sections/login/QuoteSection';
 
 export default function Login() {
-    // Gestión de estado
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [_error, setError] = useState('');
     const router = useRouter();
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        setError('');
 
-        // Llamada a la API de autenticación
-        fetch(`${API_CONFIG.baseUrl}${API_CONFIG.endpoints.auth.login}`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                Accept: 'application/json',
-            },
-            body: JSON.stringify({ email, password }),
-        })
-            .then(res => {
-                if (!res.ok) {
-                    throw new Error('Invalid credentials');
-                }
-                return res.json();
-            })
-            .then(data => {
-                // Almacenar datos de autenticación
-                localStorage.setItem('token', data.token);
-                localStorage.setItem('user', JSON.stringify(data.user));
-
-                // Redirección basada en el rol del usuario
-                // if (data.user.roles_id == 3 || data.user.roles_id == 4) {
-                //     router.push('/dashboard');
-                // } else if (data.user.roles_id == 2) {
-                //     router.push('/home');
-                // } else {
-                router.push('/home');
-                // }
-            })
-            .catch(err => {
-                setError(err.message);
-            });
+        try {
+            await login({ email, password });
+            router.push('/home');
+        } catch (err: any) {
+            setError(err.message || 'Error al iniciar sesión');
+        }
     };
 
     return (

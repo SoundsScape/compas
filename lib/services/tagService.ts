@@ -1,58 +1,76 @@
-import { Tag } from '../interfaces/tag.interface';
+import { Tag, CreateTag } from '../interfaces/tag.interface';
 import { API_CONFIG } from '../config/api.config';
+import { apiClient } from '../api/apiClient';
 
-const API_URL = `${API_CONFIG.baseUrl + API_CONFIG.endpoints.tags}`;
+const ENDPOINT = API_CONFIG.endpoints.tags;
 
-//Obtener todos los tags
+/**
+ * Obtener todas las etiquetas
+ */
 export async function getTags(): Promise<Tag[]> {
     try {
-        const token: string | null = localStorage.getItem('token');
-
-        if (!token) {
-            throw new Error('No hay token de autenticación');
-        }
-
-        const response = await fetch(API_URL, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-                Accept: 'application/json',
-                Authorization: `Bearer ${token}`,
-            },
-        });
-
-        if (!response.ok) throw new Error('Error al obtener los artículos');
-
-        return await response.json();
+        return await apiClient<Tag[]>(ENDPOINT);
     } catch (error) {
-        console.error('Error al obtener los artículos: ', error);
+        console.error('Error al obtener etiquetas: ', error);
         throw error;
     }
 }
 
-// Obtener un tag específico por ID
+/**
+ * Obtener una etiqueta específica por ID
+ */
 export async function getTagById(id: number): Promise<Tag> {
     try {
-        const token: string | null = localStorage.getItem('token');
-
-        if (!token) {
-            throw new Error('No hay token de autenticación');
-        }
-
-        const response = await fetch(`${API_URL}/${id}`, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-                Accept: 'application/json',
-                Authorization: `Bearer ${token}`,
-            },
-        });
-
-        if (!response.ok) throw new Error('Error al obtener el artículo');
-
-        return await response.json();
+        return await apiClient<Tag>(`${ENDPOINT}/${id}`);
     } catch (error) {
-        console.error('Error al obtener el tag: ', error);
+        console.error('Error al obtener la etiqueta: ', error);
+        throw error;
+    }
+}
+
+/**
+ * Crear una etiqueta
+ */
+export async function postTag(body: CreateTag): Promise<Tag> {
+    try {
+        return await apiClient<Tag>(ENDPOINT, {
+            method: 'POST',
+            body: JSON.stringify(body),
+        });
+    } catch (error) {
+        console.error('Error al crear etiqueta: ', error);
+        throw error;
+    }
+}
+
+/**
+ * Actualizar una etiqueta
+ */
+export async function updateTag(
+    id: number,
+    body: Partial<Tag>
+): Promise<Tag> {
+    try {
+        return await apiClient<Tag>(`${ENDPOINT}/${id}`, {
+            method: 'PUT',
+            body: JSON.stringify(body),
+        });
+    } catch (error) {
+        console.error('Error al actualizar etiqueta: ', error);
+        throw error;
+    }
+}
+
+/**
+ * Eliminar una etiqueta
+ */
+export async function deleteTag(id: number): Promise<{ message: string }> {
+    try {
+        return await apiClient<{ message: string }>(`${ENDPOINT}/${id}`, {
+            method: 'DELETE',
+        });
+    } catch (error) {
+        console.error('Error al eliminar etiqueta: ', error);
         throw error;
     }
 }

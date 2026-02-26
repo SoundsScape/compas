@@ -60,7 +60,7 @@ export function FiltersSection({
                             <p className="text-destructive text-xs">{error}</p>
                         ) : (
                             <div className="flex flex-wrap gap-1.5">
-                                {/* {tags.map(tag => (
+                                {Array.isArray(tags) && tags.map(tag => (
                                     <Button
                                         key={tag.id}
                                         variant={
@@ -77,7 +77,7 @@ export function FiltersSection({
                                     >
                                         {tag.name}
                                     </Button>
-                                ))} */}
+                                ))}
                             </div>
                         )}
                     </AccordionContent>

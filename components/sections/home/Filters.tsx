@@ -38,8 +38,8 @@ export default function Filters({
         const fetchTags = async () => {
             try {
                 setIsLoading(true);
-                const fetchedTags = await getTags();
-                setTags(fetchedTags);
+                const response = await getTags();
+                setTags(Array.isArray(response) ? response : (response as any).data || []);
                 setIsLoading(false);
             } catch (err) {
                 setError('Error al cargar los tags');

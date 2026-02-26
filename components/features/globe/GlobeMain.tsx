@@ -11,13 +11,13 @@ export default function GlobeMain({
     filters,
     isPaused,
     setIsPaused,
+    setIsModalOpen,
     settings,
     orbitControlsRef,
 }: GlobeMainProps) {
     const { zoomIn, zoomOut, resetCamera, DEFAULT_CAMERA } = useCameraControls(
         orbitControlsRef as any
     );
-    const [isModalOpen, setIsModalOpen] = useState(false);
 
     return (
         <>
@@ -51,13 +51,9 @@ export default function GlobeMain({
                     filters={filters}
                     isPaused={isPaused}
                     settings={settings}
-                    setIsModalOpen={(value: boolean) => setIsModalOpen(value)}
+                    setIsModalOpen={setIsModalOpen}
                 />
             </Canvas>
-            <ArticleModal
-                isModalOpen={isModalOpen}
-                setIsModalOpen={setIsModalOpen}
-            />
         </>
     );
 }

@@ -9,6 +9,7 @@ import dynamic from 'next/dynamic';
 import { GlobeControls } from '@/lib/interfaces/globe.interface';
 import { RightControls } from '@/components/sections/home/RightControls';
 import { FiltersPanel } from '@/components/sections/home/FiltersPanel';
+import ArticleModal from '@/components/shared/articles/ArticleModal';
 
 // Importaciones de componentes
 // Al desactivar el SSR, se preveen fallos con librerías pesadas de mapas y 3D.
@@ -45,6 +46,7 @@ export default function Home() {
     const [showMap, setShowMap] = useState(false);
     const [showSettings, setShowSettings] = useState(false);
     const [isPaused, setIsPaused] = useState(false);
+    const [isModalOpen, setIsModalOpen] = useState(false);
     const [settingsButtonRef, setSettingsButtonRef] = useState<{
         x: number;
         y: number;
@@ -61,13 +63,17 @@ export default function Home() {
         <ProtectedRoute>
             <div className="from-primary to-background relative h-screen w-full bg-radial to-65%">
                 {showMap ? (
-                    <HomeMap filters={filters} />
+                    <HomeMap
+                        filters={filters}
+                        setIsModalOpen={setIsModalOpen}
+                    />
                 ) : (
                     <GlobeMain
                         selectedYearRange={selectedYearRange}
                         filters={filters}
                         isPaused={isPaused}
                         setIsPaused={setIsPaused}
+                        setIsModalOpen={setIsModalOpen}
                         settings={settings}
                         orbitControlsRef={orbitControlsRef}
                     />
@@ -117,6 +123,11 @@ export default function Home() {
                         saveSettings(newSettings);
                     }}
                     buttonPosition={settingsButtonRef}
+                />
+
+                <ArticleModal
+                    isModalOpen={isModalOpen}
+                    setIsModalOpen={setIsModalOpen}
                 />
             </div>
         </ProtectedRoute>

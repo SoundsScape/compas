@@ -57,6 +57,7 @@ export interface HomeMapProps {
         eventTypes: string[];
         regions: string[];
     };
+    setIsModalOpen: (value: boolean) => void;
 }
 
 export interface LocationMarkerProps {
@@ -99,6 +100,7 @@ export interface GlobeMainProps {
     };
     isPaused: boolean;
     setIsPaused: (paused: boolean) => void;
+    setIsModalOpen: (value: boolean) => void;
     settings: Settings;
     orbitControlsRef: RefObject<{
         target: THREE.Vector3;

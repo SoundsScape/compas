@@ -34,7 +34,7 @@ const bounds: LatLngBoundsLiteral = [
     [90, 180], // Esquina noreste
 ];
 
-export default function HomeMap({ filters }: HomeMapProps) {
+export default function HomeMap({ filters, setIsModalOpen }: HomeMapProps) {
     const [mapReady, setMapReady] = useState(false);
     // Inyectamos los mismos datos que el Globo
     // Pasamos 0 como umbral de cluster porque el mapa 2D no los usa (por ahora)
@@ -82,15 +82,16 @@ export default function HomeMap({ filters }: HomeMapProps) {
                         url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
                         attribution="Tiles &copy; Esri"
 
-                        // OSM Francia
-                        // url='https://{s}.tile.openstreetmap.fr/osmfr/{z}/{x}/{y}.png'
-                        // attribution='&copy; OpenStreetMap France'
+                    // OSM Francia
+                    // url='https://{s}.tile.openstreetmap.fr/osmfr/{z}/{x}/{y}.png'
+                    // attribution='&copy; OpenStreetMap France'
                     />
                     {mapReady &&
                         articles.map((article, index) => (
                             <MapMarker
                                 key={`${article.id}-${index}`}
                                 article={article}
+                                setIsModalOpen={setIsModalOpen}
                             />
                         ))}
                 </MapContainer>

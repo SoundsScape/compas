@@ -10,7 +10,13 @@ const Popup = dynamic(() => import('react-leaflet').then(mod => mod.Popup), {
     ssr: false,
 });
 
-export function MapMarker({ article }: { article: Article }) {
+export function MapMarker({
+    article,
+    setIsModalOpen
+}: {
+    article: Article;
+    setIsModalOpen: (value: boolean) => void;
+}) {
     return (
         <Marker
             position={[
@@ -20,7 +26,11 @@ export function MapMarker({ article }: { article: Article }) {
         >
             <Popup>
                 <div className="mt-13 w-64 border-t border-gray-200 pt-3">
-                    <ArticleCardInfo article={article} descriptionLimit={10} />
+                    <ArticleCardInfo
+                        article={article}
+                        descriptionLimit={10}
+                        onOpenModal={() => setIsModalOpen(true)}
+                    />
                 </div>
             </Popup>
         </Marker>

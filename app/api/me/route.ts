@@ -34,7 +34,11 @@ export async function GET(req: NextRequest) {
             )
         );
 
-        return NextResponse.json(serializedUser);
+        return NextResponse.json({
+            ...serializedUser,
+            role: serializedUser.roles?.role_name || "student",
+            name: `${serializedUser.first_name} ${serializedUser.last_name || ""}`.trim() || serializedUser.username
+        });
 
     } catch (error) {
         console.error("API Me Error:", error);

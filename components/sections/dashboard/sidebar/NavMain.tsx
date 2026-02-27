@@ -10,6 +10,7 @@ import {
     SidebarMenuItem,
 } from "@/components/ui/sidebar"
 import Link from "next/link"
+import { Separator } from "@/components/ui/separator"
 
 export function NavMain({
     label,
@@ -26,8 +27,8 @@ export function NavMain({
     const pathname = usePathname()
 
     return (
-        <SidebarGroup>
-            <SidebarGroupLabel>{label}</SidebarGroupLabel>
+        <SidebarGroup className="">
+            <SidebarGroupLabel className="mb-1">{label}</SidebarGroupLabel>
             <SidebarMenu>
                 {items.map((item) => {
                     const isActive = pathname === item.url || (item.url !== "/dashboard" && pathname.startsWith(item.url))
@@ -44,6 +45,7 @@ export function NavMain({
                     )
                 })}
             </SidebarMenu>
+            <Separator className="border-b border-border mt-3" />
         </SidebarGroup>
     )
 }

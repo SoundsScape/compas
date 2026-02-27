@@ -31,14 +31,20 @@ import { useEffect } from "react";
 const data = {
     navItems: [
         {
-            title: "Mis Artículos",
+            title: "Artículos",
             url: "/dashboard/articles",
+            icon: FileText,
+            roles: ["teacher", "superadmin", "admin"]
+        },
+        {
+            title: "Mis Artículos",
+            url: "/dashboard/articles/my-articles",
             icon: FileText,
             roles: ["student", "teacher"]
         },
         {
             title: "Revisión",
-            url: "/dashboard/review",
+            url: "/dashboard/articles/review",
             icon: BadgeCheck,
             roles: ["teacher", "admin", "superadmin"]
         },
@@ -67,13 +73,7 @@ const data = {
             url: "/home",
             icon: Globe,
             roles: ["student", "teacher", "admin", "superadmin"]
-        },
-        {
-            title: "Configuración",
-            url: "/dashboard/settings",
-            icon: Settings,
-            roles: ["admin", "superadmin"]
-        },
+        }
     ]
 }
 
@@ -99,10 +99,10 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     return (
         <Sidebar collapsible="icon" {...props}>
             <SidebarHeader>
-                <SidebarMenu>
+                <SidebarMenu className="border-b border-border">
                     <SidebarMenuItem>
-                        <SidebarMenuButton className="border-b border-foreground/50 h-fit rounded-none py-6 hover:bg-transparent" asChild>
-                            <Link href="/dashboard" className="w-full flex flex-col justify-center items-center gap-2">
+                        <SidebarMenuButton className=" h-fit rounded-none py-6 hover:bg-transparent" asChild>
+                            <Link href="/home" className="w-full flex flex-col justify-center items-center gap-2">
                                 <Image
                                     src="/logo.png"
                                     alt="White Logo"
@@ -123,7 +123,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                     <NavMain label="Sistema" items={filteredSystem} />
                 )}
             </SidebarContent>
-            <SidebarFooter>
+            <SidebarFooter className="border-t border-border p-0">
                 <NavUser />
             </SidebarFooter>
             <SidebarRail />

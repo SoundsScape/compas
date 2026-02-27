@@ -62,19 +62,24 @@ export class AuthService {
                 { expiresIn: "24h" }
             );
 
-            // 4. Preparar objeto de usuario para el frontend (sin el hash de la password)
-            const { password: _, ...userWithoutPassword } = user;
-
-            // Serialización de BigInt
-            const serializedUser = JSON.parse(
-                JSON.stringify(userWithoutPassword, (key, value) =>
+            // 4. Preparar objeto de usuario para el frontend
+            // Primero convertimos a objeto plano y manejamos BigInt para evitar problemas con Prisma y destructuring
+            const userJson = JSON.parse(
+                JSON.stringify(user, (key, value) =>
                     typeof value === "bigint" ? value.toString() : value
                 )
             );
 
+            // Ahora extraemos el password y el resto de campos de forma segura
+            const { password: _, ...userWithoutPassword } = userJson;
+
             return {
                 token,
-                user: serializedUser,
+                user: {
+                    ...userWithoutPassword,
+                    role: userJson.roles?.role_name || "student", // Aplanamos el rol para el frontend
+                    name: `${userJson.first_name} ${userJson.last_name || ""}`.trim() || userJson.username // Aplanamos el nombre
+                },
             };
         } catch (error) {
             console.error("AuthService Error:", error);

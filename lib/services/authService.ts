@@ -19,11 +19,14 @@ export async function login(credentials: { email: string; password: string }): P
             body: JSON.stringify(credentials),
         });
 
-        if (typeof window !== 'undefined') {
-            localStorage.setItem('token', data.token);
-            localStorage.setItem('user', JSON.stringify(data.user));
+        if (typeof window !== 'undefined' && data) {
+            if (data.token) localStorage.setItem('token', data.token);
+            if (data.user) {
+                localStorage.setItem('user', JSON.stringify(data.user));
+            } else {
+                console.warn('Login successful but no user data received', data);
+            }
         }
-
         return data;
     } catch (error) {
         console.error('Login error:', error);

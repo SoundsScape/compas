@@ -39,9 +39,12 @@ const ProtectedRoute = ({ requiredRoles, children }: ProtectedRouteProps) => {
 
                 if (!res.ok) throw new Error('Failed to fetch user');
 
-                const data = await res.json();
-                localStorage.setItem('user', JSON.stringify(data.user));
-                const userRole = data.user?.role?.role_name?.toLowerCase();
+                const user = await res.json();
+                // Guardar el usuario actualizado
+                localStorage.setItem('user', JSON.stringify(user));
+
+                // Usar la propiedad 'role' aplanada (que añadiremos a la API)
+                const userRole = user.role?.toLowerCase() || user.roles?.role_name?.toLowerCase();
 
                 if (!requiredRoles || requiredRoles.length === 0) {
                     setIsAuthorized(true);

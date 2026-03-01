@@ -38,7 +38,7 @@ const data = {
         },
         {
             title: "Mis Artículos",
-            url: "/dashboard/articles/my-articles",
+            url: "/dashboard/my-articles",
             icon: FileText,
             roles: ["student", "teacher"]
         },

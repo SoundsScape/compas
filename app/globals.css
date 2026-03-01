@@ -58,8 +58,8 @@
     --muted: #1e293b;
     --muted-foreground: #d1d5dc;
     --accent: #ffed00;
-    --accent-foreground: #081a31;
-    --destructive: #ff6b6b;
+    --accent-foreground: rgb(0, 0, 0);
+    --destructive: #ff8686;
     --border: #1e293b;
     --input: #1e293b;
     --ring: #081a31;

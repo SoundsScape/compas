@@ -16,6 +16,18 @@ export interface Article {
     tags?: Tag[];
 }
 
+export interface PaginatedArticleResponse {
+    data: Article[];
+    meta: {
+        total: number;
+        page: number;
+        limit: number;
+        totalPages: number;
+        validatedCount: number;
+        pendingCount: number;
+    }
+}
+
 export interface ArticleTemplate {
     id: number;
     type: string;

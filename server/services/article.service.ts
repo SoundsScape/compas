@@ -53,12 +53,12 @@ export class ArticleService {
     /**
      * Obtener artículos con paginación y filtros.
      */
-    static async getAllArticles(page: number = 1, limit: number = 10, onlyValidated: boolean = false) {
+    static async getAllArticles(page: number = 1, limit: number = 1000, onlyValidated: boolean = false) {
         try {
             const skip = (page - 1) * limit;
             const where: Prisma.articlesWhereInput = onlyValidated ? { validated: true } : {};
 
-            const [articles, total] = await Promise.all([
+            const [articles, total, validatedCount, pendingCount] = await Promise.all([
                 prisma.articles.findMany({
                     where,
                     skip,
@@ -77,7 +77,9 @@ export class ArticleService {
                     },
                     orderBy: { created_at: "desc" }
                 }),
-                prisma.articles.count({ where })
+                prisma.articles.count({ where }),
+                prisma.articles.count({ where: { validated: true } }),
+                prisma.articles.count({ where: { validated: false } })
             ]);
 
             return {
@@ -86,7 +88,9 @@ export class ArticleService {
                     total,
                     page,
                     limit,
-                    totalPages: Math.ceil(total / limit)
+                    totalPages: Math.ceil(total / limit),
+                    validatedCount,
+                    pendingCount
                 }
             };
         } catch (error) {

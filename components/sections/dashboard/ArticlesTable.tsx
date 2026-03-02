@@ -9,6 +9,7 @@ import {
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Eye } from "lucide-react"
+import ActionsMenu from "@/components/shared/ActionsMenu"
 
 interface Article {
     id: number
@@ -20,10 +21,12 @@ interface Article {
 }
 
 interface ArticlesTableProps {
-    articles: Article[]
+    articles: Article[];
+    setIsModalOpen: (open: boolean) => void;
+    onDeleteSuccess: () => Promise<void>;
 }
 
-export function ArticlesTable({ articles }: ArticlesTableProps) {
+export function ArticlesTable({ articles, setIsModalOpen, onDeleteSuccess }: ArticlesTableProps) {
     return (
         <div className="rounded-md border bg-background/80 backdrop-blur-xl overflow-x-auto custom-scrollbar w-full">
             <Table>
@@ -64,13 +67,22 @@ export function ArticlesTable({ articles }: ArticlesTableProps) {
                             <TableCell className="text-muted-foreground text-center max-w-24">{article.date}</TableCell>
                             <TableCell className="text-right w-[180px]">
                                 <div className="flex justify-end gap-2">
-                                    <Button size="sm" variant="secondary" className="bg-accent hover:bg-accent/90 text-accent-foreground border-none gap-2">
+                                    <Button
+                                        onClick={e => {
+                                            e.stopPropagation();
+                                            setIsModalOpen(true);
+                                            sessionStorage.setItem('articleId', article.id.toString());
+                                        }}
+                                        size="sm"
+                                        variant="secondary"
+                                    >
                                         <Eye className="size-4" />
                                         Ver
                                     </Button>
-                                    <Button size="sm" variant="destructive" className="bg-red-600 hover:bg-red-700 text-white border-none">
-                                        Eliminar
-                                    </Button>
+                                    <ActionsMenu
+                                        article={article}
+                                        onActionSuccess={onDeleteSuccess}
+                                    />
                                 </div>
                             </TableCell>
                         </TableRow>

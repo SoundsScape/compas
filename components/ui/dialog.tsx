@@ -38,7 +38,7 @@ function DialogOverlay({
         <DialogPrimitive.Overlay
             data-slot="dialog-overlay"
             className={cn(
-                'data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 fixed inset-0 z-50 bg-black print:relative',
+                'data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 fixed inset-0 z-50 bg-black/70 backdrop-blur-sm print:relative',
                 className
             )}
             {...props}
@@ -60,7 +60,7 @@ function DialogContent({
             <DialogPrimitive.Content
                 data-slot="dialog-content"
                 className={cn(
-                    'data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 fixed top-[50%] left-[50%] z-50 grid w-full max-w-[50%] translate-x-[-50%] translate-y-[-50%] gap-6 py-11 shadow-lg duration-200 outline-none sm:max-w-[210mm]',
+                    'data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 fixed top-[50%] left-[50%] z-50 grid w-full max-w-[50%] translate-x-[-50%] translate-y-[-50%] gap-6 py-11 shadow-lg duration-200 outline-none sm:max-w-[170mm] min-h-64 bg-background shadow-primary/20 rounded-md p-9',
                     className
                 )}
                 {...props}
@@ -69,7 +69,7 @@ function DialogContent({
                 {showCloseButton && (
                     <DialogPrimitive.Close
                         data-slot="dialog-close"
-                        className="ring-offset-background focus:ring-ring data-[state=open]:bg-accent data-[state=open]:text-foreground absolute top-4 right-4 flex items-center gap-1 rounded-xs opacity-70 transition-opacity hover:opacity-100 focus:ring-2 focus:ring-offset-2 focus:outline-hidden disabled:pointer-events-none print:hidden [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-5"
+                        className="cursor-pointer ring-offset-background focus:ring-ring data-[state=open]:bg-accent data-[state=open]:text-foreground absolute top-4 right-4 flex items-center gap-1 rounded-xs opacity-70 transition-opacity hover:opacity-100 focus:ring-2 focus:ring-offset-2 focus:outline-hidden disabled:pointer-events-none print:hidden [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-5"
                     >
                         <XIcon color="#ffff" />
                         <span className="text-white">Cerrar</span>
@@ -98,7 +98,7 @@ function DialogFooter({ className, ...props }: React.ComponentProps<'div'>) {
         <div
             data-slot="dialog-footer"
             className={cn(
-                'flex flex-col-reverse gap-2 sm:flex-row sm:justify-end',
+                'flex flex-col-reverse gap-6 sm:flex-row sm:justify-end sm:items-center',
                 className
             )}
             {...props}

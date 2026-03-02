@@ -8,6 +8,7 @@ import { FileText, CheckCircle2, Clock, Plus, Loader2 } from "lucide-react"
 import { getDashboardArticles } from "@/lib/services/articleService"
 import { Article } from "@/lib/interfaces/article.interface"
 import DashboardPagination from "@/components/shared/Pagination"
+import ArticleModal from "@/components/shared/articles/ArticleModal"
 
 export default function ArticlesPage() {
     const [articles, setArticles] = useState<Article[]>([])
@@ -16,6 +17,7 @@ export default function ArticlesPage() {
     const [totalItems, setTotalItems] = useState(0)
     const [limit] = useState(10) // Items per page
     const [stats, setStats] = useState({ total: 0, validated: 0, pending: 0 })
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
     const fetchArticles = async (page: number) => {
         setLoading(true)
@@ -96,8 +98,12 @@ export default function ArticlesPage() {
                 )}
             </div>
             <div className="min-w-0">
-                <ArticlesTable articles={mappedArticles} />
+                <ArticlesTable articles={mappedArticles} setIsModalOpen={setIsModalOpen} onDeleteSuccess={() => fetchArticles(currentPage)} />
             </div>
+            <ArticleModal
+                isModalOpen={isModalOpen}
+                setIsModalOpen={setIsModalOpen}
+            />
         </div>
     )
 }

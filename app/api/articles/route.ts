@@ -104,6 +104,10 @@ export async function POST(req: NextRequest) {
                 let imagePath = "";
 
                 if (imageFile instanceof File) {
+                    const MAX_SIZE = 4 * 1024 * 1024; // 4MB
+                    if (imageFile.size > MAX_SIZE) {
+                        throw { status: 400, message: `La imagen ${imageFile.name} excede el límite de 4MB.` };
+                    }
                     imagePath = await saveFileLocally(imageFile);
                 }
 

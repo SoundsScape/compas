@@ -17,7 +17,7 @@ export function ArticleTemplate(template: Template) {
             </div>
         );
     }
-    
+
     return (
         <>
             <section className="flex flex-col gap-8 print:gap-4">
@@ -25,7 +25,10 @@ export function ArticleTemplate(template: Template) {
                     {template.image_areas[0] && (
                         <div className="float-left mr-4 mb-4 flex max-w-[60mm] flex-col">
                             <Image
-                                src={`${API_CONFIG.baseUrl}${'/storage/'}${template.image_areas[0].imagePath}`}
+                                src={template.image_areas[0].imagePath.startsWith('http')
+                                    ? template.image_areas[0].imagePath
+                                    : `${API_CONFIG.baseUrl}/storage/${template.image_areas[0].imagePath.replace(/^\/?(storage\/)?/, '').replace(/^images\//, 'articles/')}`
+                                }
                                 alt={template.image_areas[0].imageFooter}
                                 width={600}
                                 height={847}

@@ -216,9 +216,14 @@ export class ArticleService {
 
             return this.mapToFrontend(article);
         } catch (error: any) {
-            if (error.status) throw error;
-            console.error("ArticleService.createArticle Error:", error);
-            throw { status: 500, message: "Error al crear el artículo." };
+            // No envolver errores que ya tienen status o son ZodErrors (estos debe manejarlos el handleRouteError)
+            if (error.status || error.name === 'ZodError') throw error;
+
+            console.error("CRITICAL ArticleService.createArticle Error:", error);
+            throw {
+                status: 500,
+                message: `Error interno al crear el artículo: ${error.message || 'Error desconocido'}`
+            };
         }
     }
 

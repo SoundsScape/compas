@@ -3,10 +3,11 @@ import { ZodError } from "zod";
 
 export function handleRouteError(error: any) {
     if (error instanceof ZodError) {
+        const fieldErrors = error.flatten().fieldErrors;
         return NextResponse.json(
             {
                 message: "Error de validación",
-                errors: error.flatten().fieldErrors
+                errors: fieldErrors
             },
             { status: 400 }
         );

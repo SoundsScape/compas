@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { verifyAuth, authErrorResponse } from "@/server/middleware/auth";
 import { ArticleService } from "@/server/services/article.service";
 import { handleRouteError } from "@/server/utils/handleRouteError";
+import { saveFileLocally } from "@/server/utils/uploadUtils";
 
 /**
  * GET /api/articles
@@ -35,7 +36,6 @@ export async function GET(req: NextRequest) {
         return handleRouteError(error);
     }
 }
-
 /**
  * POST /api/articles
  * Creates a new article with templates and content blocks.
@@ -48,7 +48,73 @@ export async function POST(req: NextRequest) {
             return authErrorResponse(auth.error, auth.status || 401);
         }
 
-        const body = await req.json();
+        const formData = await req.formData();
+
+        // Reconstrucción del objeto complejo desde FormData
+        const body: any = {
+            titulo: formData.get("titulo"),
+            nombre_autor: formData.get("nombre_autor"),
+            apellidos_autor: formData.get("apellidos_autor"),
+            centro: formData.get("centro"),
+            bibliografia: formData.get("bibliografia"),
+            fecha: parseInt(formData.get("fecha") as string),
+            latitud: formData.get("latitud"),
+            longitud: formData.get("longitud"),
+            id_autor: auth.user!.id, // Usamos el ID del usuario autenticado por defecto
+            tags: [],
+            plantillas: []
+        };
+
+        // Procesar Tags
+        let tagIndex = 0;
+        while (formData.has(`tags[${tagIndex}]`)) {
+            body.tags.push(parseInt(formData.get(`tags[${tagIndex}]`) as string));
+            tagIndex++;
+        }
+
+        // Procesar Plantillas
+        let pIndex = 0;
+        while (formData.has(`plantillas[${pIndex}][tipo]`)) {
+            const plantilla: any = {
+                tipo: formData.get(`plantillas[${pIndex}][tipo]`),
+                order: parseInt(formData.get(`plantillas[${pIndex}][order]`) as string),
+                shortCitation: formData.get(`plantillas[${pIndex}][shortCitation]`),
+                textAreas: [],
+                imageAreas: []
+            };
+
+            // Procesar TextAreas de la plantilla
+            let taIndex = 0;
+            while (formData.has(`plantillas[${pIndex}][textAreas][${taIndex}][value]`)) {
+                plantilla.textAreas.push({
+                    value: formData.get(`plantillas[${pIndex}][textAreas][${taIndex}][value]`),
+                    order: taIndex
+                });
+                taIndex++;
+            }
+
+            // Procesar ImageAreas de la plantilla
+            let iaIndex = 0;
+            while (formData.has(`plantillas[${pIndex}][imageAreas][${iaIndex}][imageFooter]`)) {
+                const imageFile = formData.get(`plantillas[${pIndex}][imageAreas][${iaIndex}][imageFile]`);
+                let imagePath = "";
+
+                if (imageFile instanceof File) {
+                    imagePath = await saveFileLocally(imageFile);
+                }
+
+                plantilla.imageAreas.push({
+                    imagePath,
+                    imageFooter: formData.get(`plantillas[${pIndex}][imageAreas][${iaIndex}][imageFooter]`),
+                    order: iaIndex
+                });
+                iaIndex++;
+            }
+
+            body.plantillas.push(plantilla);
+            pIndex++;
+        }
+
         const article = await ArticleService.createArticle(body, {
             id: auth.user!.id,
             role: auth.user!.role
@@ -60,6 +126,7 @@ export async function POST(req: NextRequest) {
         }, { status: 201 });
 
     } catch (error: any) {
+        console.error("Error in POST /api/articles:", error);
         return handleRouteError(error);
     }
 }

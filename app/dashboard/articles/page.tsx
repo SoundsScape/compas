@@ -9,6 +9,7 @@ import { getDashboardArticles } from "@/lib/services/articleService"
 import { Article } from "@/lib/interfaces/article.interface"
 import DashboardPagination from "@/components/shared/Pagination"
 import ArticleModal from "@/components/shared/articles/ArticleModal"
+import Link from "next/link"
 
 export default function ArticlesPage() {
     const [articles, setArticles] = useState<Article[]>([])
@@ -85,10 +86,10 @@ export default function ArticlesPage() {
                 />
             </div>
             <div className="flex justify-between items-center">
-                <Button className="bg-accent hover:bg-accent/90  h-12 text-lg font-semibold text-accent-foreground transition-all duration-300 ease-in-out hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-50">
+                <Link href="/articles/new" className='inline-flex items-center gap-2 bg-accent text-accent-foreground font-medium px-4 py-2 rounded-md'>
                     <Plus className="size-5" />
-                    Crear Articulo
-                </Button>
+                    Crear Artículo
+                </Link>
                 {totalItems > 0 && (
                     <DashboardPagination
                         currentPage={currentPage}

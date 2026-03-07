@@ -128,6 +128,16 @@ export function useArticleForm() {
 
         setIsSubmitting(true);
         try {
+            const MAX_SIZE = 4 * 1024 * 1024; // 4MB
+            for (const p of plantillaData) {
+                for (const i of p.imageAreas) {
+                    if (i.imageFile instanceof File && i.imageFile.size > MAX_SIZE) {
+                        setIsSubmitting(false);
+                        return;
+                    }
+                }
+            }
+
             const formData = prepareArticleFormData(getFormData(), cities);
             await createArticle(formData);
             localStorage.removeItem('article_form_draft');

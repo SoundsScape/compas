@@ -1,4 +1,4 @@
-import { ArticleFormData, Plantilla } from "../interfaces/article.interface";
+import { ArticleFormData } from "../interfaces/article.interface";
 import { City } from "../hooks/useCities";
 
 /**

@@ -4,6 +4,10 @@ import { ArticleService } from "@/server/services/article.service";
 import { handleRouteError } from "@/server/utils/handleRouteError";
 import { saveFileLocally } from "@/server/utils/uploadUtils";
 
+export const maxDuration = 60; // 60 seconds
+export const dynamic = 'force-dynamic';
+export const fetchCache = 'force-no-store';
+
 /**
  * GET /api/articles
  * Returns a list of articles.

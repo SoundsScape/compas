@@ -59,6 +59,14 @@ export interface ImageArea {
     updated_at: string;
 }
 
+export interface Plantilla {
+    id: number;
+    tipo: "plantilla1" | "plantilla2";
+    textAreas: { value: string }[];
+    imageAreas: { imageFile: File | null | string; imageFooter: string }[];
+    shortCitation: string;
+}
+
 export interface Tag {
     id: number;
     name: string;
@@ -122,4 +130,16 @@ export interface Template {
 export interface ArticleModalProps {
     isModalOpen: boolean;
     setIsModalOpen: (value: boolean) => void;
+}
+
+export interface ArticleFormData {
+    titulo: string;
+    nombre_autor: string;
+    apellidos_autor: string;
+    centro: string;
+    bibliografia: string;
+    fecha: number;
+    location: { value: string; label: string } | null;
+    selectedTags: { value: string; label: string }[];
+    plantillaData: Plantilla[];
 }

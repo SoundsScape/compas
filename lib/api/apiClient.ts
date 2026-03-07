@@ -17,9 +17,13 @@ export async function apiClient<T>(
     const url = `${API_CONFIG.baseUrl}${endpoint}`;
 
     const defaultHeaders: Record<string, string> = {
-        'Content-Type': 'application/json',
         Accept: 'application/json',
     };
+
+    // Si el body es FormData, el navegador debe poner el Content-Type solo (con el boundary)
+    if (!(options.body instanceof FormData)) {
+        defaultHeaders['Content-Type'] = 'application/json';
+    }
 
     if (useAuth) {
         // Solo intentamos acceder a localStorage si estamos en el cliente
@@ -44,8 +48,11 @@ export async function apiClient<T>(
             // Manejo básico de errores de auth (e.g. 401)
             if (response.status === 401 && typeof window !== 'undefined') {
                 localStorage.removeItem('token');
-                // Podríamos redirigir al login aquí si fuera necesario
             }
+
+            // Intentar leer el cuerpo del error para dar más info
+            const errorBody = await response.json().catch(() => ({}));
+
             throw new Error(`API Error: ${response.status} ${response.statusText}`);
         }
 

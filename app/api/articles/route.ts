@@ -17,9 +17,9 @@ export async function GET(req: NextRequest) {
 
         const { searchParams } = new URL(req.url);
         const page = parseInt(searchParams.get("page") || "1");
-        const limit = parseInt(searchParams.get("limit") || "100");
+        const limit = parseInt(searchParams.get("limit") || "1000");
 
-        if (isNaN(page) || page < 1 || isNaN(limit) || limit < 1 || limit > 100) {
+        if (isNaN(page) || page < 1 || isNaN(limit) || limit < 1 || limit > 1000) {
             return NextResponse.json(
                 { message: "Parámetros de paginación inválidos." },
                 { status: 400 }

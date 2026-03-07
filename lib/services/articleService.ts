@@ -74,3 +74,17 @@ export async function deleteArticle(id: number): Promise<{ message: string }> {
         throw error;
     }
 }
+/**
+ * Crear un nuevo artículo
+ */
+export async function createArticle(formData: FormData): Promise<Article> {
+    try {
+        return await apiClient<Article>(ENDPOINT, {
+            method: 'POST',
+            body: formData,
+        });
+    } catch (error) {
+        console.error('Error al crear el artículo: ', error);
+        throw error;
+    }
+}

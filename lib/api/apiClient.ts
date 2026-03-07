@@ -52,8 +52,9 @@ export async function apiClient<T>(
 
             // Intentar leer el cuerpo del error para dar más info
             const errorBody = await response.json().catch(() => ({}));
+            const errorMessage = errorBody.message || errorBody.error || response.statusText;
 
-            throw new Error(`API Error: ${response.status} ${response.statusText}`);
+            throw new Error(`API Error: ${response.status} ${errorMessage}`);
         }
 
         return await response.json();

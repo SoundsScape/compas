@@ -1,13 +1,13 @@
 import { z } from "zod";
 
 export const textAreaSchema = z.object({
-    value: z.string(),
+    value: z.string().max(3500, "El contenido del bloque de texto no puede superar los 3500 caracteres"),
     order: z.number().int().optional(),
 });
 
 export const imageAreaSchema = z.object({
     imagePath: z.string().min(1, "La ruta de la imagen es obligatoria"),
-    imageFooter: z.string().optional().nullable(),
+    imageFooter: z.string().max(50, "El pie de foto no puede superar los 50 caracteres").optional().nullable(),
     order: z.number().int().optional(),
 });
 

@@ -78,6 +78,7 @@ export class AuthService {
                 user: {
                     ...userWithoutPassword,
                     role: userJson.roles?.role_name || "student", // Aplanamos el rol para el frontend
+                    school: userJson.schools, // Mapeamos schools (plural) a school (singular) para el frontend
                     name: `${userJson.first_name} ${userJson.last_name || ""}`.trim() || userJson.username // Aplanamos el nombre
                 },
             };

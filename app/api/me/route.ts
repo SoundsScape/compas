@@ -37,6 +37,7 @@ export async function GET(req: NextRequest) {
         return NextResponse.json({
             ...serializedUser,
             role: serializedUser.roles?.role_name || "student",
+            school: serializedUser.schools,
             name: `${serializedUser.first_name} ${serializedUser.last_name || ""}`.trim() || serializedUser.username
         });
 

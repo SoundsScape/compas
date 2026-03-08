@@ -100,6 +100,55 @@ export class ArticleService {
     }
 
     /**
+     * Obtener artículos de un usuario específico con paginación y estadísticas.
+     */
+    static async getUserArticles(userId: number, page: number = 1, limit: number = 10) {
+        try {
+            const skip = (page - 1) * limit;
+            const where: Prisma.articlesWhereInput = { id_autor: BigInt(userId) };
+
+            const [articles, total, validatedCount, pendingCount] = await Promise.all([
+                prisma.articles.findMany({
+                    where,
+                    skip,
+                    take: limit,
+                    include: {
+                        article_tag: {
+                            include: { tags: true }
+                        },
+                        article_templates: {
+                            include: {
+                                text_areas: true,
+                                image_areas: true,
+                            },
+                            orderBy: { order: "asc" }
+                        }
+                    },
+                    orderBy: { created_at: "desc" }
+                }),
+                prisma.articles.count({ where }),
+                prisma.articles.count({ where: { ...where, validated: true } }),
+                prisma.articles.count({ where: { ...where, validated: false } })
+            ]);
+
+            return {
+                data: this.mapToFrontend(articles),
+                meta: {
+                    total,
+                    page,
+                    limit,
+                    totalPages: Math.ceil(total / limit),
+                    validatedCount,
+                    pendingCount
+                }
+            };
+        } catch (error) {
+            console.error("ArticleService.getUserArticles Error:", error);
+            throw { status: 500, message: "Error al obtener los artículos del usuario." };
+        }
+    }
+
+    /**
      * Obtener un artículo por ID con todas sus relaciones.
      */
     static async getArticleById(id: number) {

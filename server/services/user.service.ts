@@ -5,23 +5,41 @@ import { createUserSchema, updateUserSchema, CreateUserInput, UpdateUserInput } 
 
 export class UserService {
     /**
-     * Helper privado para limpiar objetos de usuario (BigInt a String y quitar password).
+     * Mapea el objeto de Prisma al formato del frontend.
+     * Convierte BigInt a String, quita el password y renombra relaciones a singular.
      */
-    private static serializeUser(user: any) {
-        if (!user) return null;
+    private static mapToFrontend(data: any): any {
+        if (!data) return null;
 
-        // Clonamos para no mutar el original de Prisma
-        const cleanUser = { ...user };
+        if (Array.isArray(data)) {
+            return data.map(item => this.mapToFrontend(item));
+        }
 
-        // 1. Eliminar password si existe
-        if ('password' in cleanUser) delete cleanUser.password;
-
-        // 2. Convertir BigInts recursivamente a String para JSON
-        return JSON.parse(
-            JSON.stringify(cleanUser, (key, value) =>
-                typeof value === "bigint" ? value.toString() : value
-            )
+        // 1. Serialización básica (BigInt -> String y quitar password)
+        const serialized = JSON.parse(
+            JSON.stringify(data, (key, value) => {
+                if (key === 'password') return undefined;
+                return typeof value === "bigint" ? value.toString() : value;
+            })
         );
+
+        // 2. Renombrar relaciones a singular para el frontend
+        const mapped: any = { ...serialized };
+
+        if (serialized.roles) {
+            mapped.role = serialized.roles;
+            delete mapped.roles;
+        }
+        if (serialized.statuses) {
+            mapped.status = serialized.statuses;
+            delete mapped.statuses;
+        }
+        if (serialized.schools) {
+            mapped.school = serialized.schools;
+            delete mapped.schools;
+        }
+
+        return mapped;
     }
 
     /**
@@ -36,7 +54,7 @@ export class UserService {
                     schools: true,
                 },
             });
-            return users.map(user => this.serializeUser(user));
+            return this.mapToFrontend(users);
         } catch (error) {
             console.error("UserService.getAllUsers Error:", error);
             throw {
@@ -64,7 +82,7 @@ export class UserService {
                 throw { status: 404, message: "Usuario no encontrado." };
             }
 
-            return this.serializeUser(user);
+            return this.mapToFrontend(user);
         } catch (error: any) {
             if (error.status) throw error;
             console.error("UserService.getUserById Error:", error);
@@ -102,7 +120,7 @@ export class UserService {
                 }
             });
 
-            return this.serializeUser(user);
+            return this.mapToFrontend(user);
         } catch (error: any) {
             console.error("UserService.createUser Error details:", error);
 
@@ -156,8 +174,10 @@ export class UserService {
                 }
             });
 
-            return this.serializeUser(user);
-        } catch (error) {
+            return this.mapToFrontend(user);
+        } catch (error: any) {
+            console.error("UserService.updateUser Error details:", error);
+
             if (error instanceof Prisma.PrismaClientKnownRequestError) {
                 if (error.code === "P2002") {
                     throw { status: 409, message: "Email o username ya existe." };
@@ -166,7 +186,15 @@ export class UserService {
                     throw { status: 404, message: "Usuario no encontrado para actualizar." };
                 }
             }
-            console.error("UserService.updateUser Error:", error);
+
+            // Si es un error de validación de Zod, relanzarlo para que handleRouteError lo maneje (o manejarlo aquí)
+            if (error.name === "ZodError") {
+                throw { status: 400, message: "Error de validación", details: error.errors };
+            }
+
+            // Si ya tiene un status definido, simplemente relanzar
+            if (error.status) throw error;
+
             throw { status: 500, message: "Error al actualizar el usuario." };
         }
     }
@@ -179,7 +207,7 @@ export class UserService {
             const deletedUser = await prisma.users.delete({
                 where: { id: BigInt(id) }
             });
-            return this.serializeUser(deletedUser);
+            return this.mapToFrontend(deletedUser);
         } catch (error) {
             if (error instanceof Prisma.PrismaClientKnownRequestError) {
                 if (error.code === "P2025") {

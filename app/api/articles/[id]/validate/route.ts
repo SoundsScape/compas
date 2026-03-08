@@ -12,7 +12,7 @@ export async function PATCH(
 
     try {
         // Verificar autenticación y rol (solo admins pueden validar)
-        const auth = await verifyAuth(req, ["admin", "superadmin"]);
+        const auth = await verifyAuth(req, ["admin", "superadmin", "teacher"]);
         if (auth.error) {
             return authErrorResponse(auth.error, auth.status || 401);
         }

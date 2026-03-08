@@ -18,7 +18,7 @@ export async function GET(req: NextRequest) {
     try {
         // Verificar si el usuario es admin para mostrar no validados
         const auth = await verifyAuth(req);
-        const isAdmin = !auth.error && (auth.user?.role === "admin" || auth.user?.role === "superadmin");
+        const isAdmin = !auth.error && (auth.user?.role === "admin" || auth.user?.role === "superadmin" || auth.user?.role === "teacher");
 
         const { searchParams } = new URL(req.url);
         const page = parseInt(searchParams.get("page") || "1");
@@ -47,7 +47,7 @@ export async function GET(req: NextRequest) {
 export async function POST(req: NextRequest) {
     try {
         // Solo admin/superadmin pueden crear artículos
-        const auth = await verifyAuth(req, ["admin", "superadmin"]);
+        const auth = await verifyAuth(req, ["admin", "superadmin", "student", "teacher"]);
         if (auth.error) {
             return authErrorResponse(auth.error, auth.status || 401);
         }

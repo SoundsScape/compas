@@ -17,7 +17,7 @@ export async function GET(
 
         // Si no está validado, solo admin puede verlo
         if (!article.validated) {
-            const auth = await verifyAuth(req, ["admin", "superadmin"]);
+            const auth = await verifyAuth(req, ["admin", "superadmin", "student", "teacher"]);
             if (auth.error) {
                 return authErrorResponse("No autorizado para ver artículos no validados.", 403);
             }
@@ -42,7 +42,7 @@ export async function PUT(
         const { id } = await params;
 
         // Solo admin/superadmin pueden editar
-        const auth = await verifyAuth(req, ["admin", "superadmin"]);
+        const auth = await verifyAuth(req, ["admin", "superadmin", "student", "teacher"]);
         if (auth.error) {
             return authErrorResponse(auth.error, auth.status || 401);
         }
@@ -75,7 +75,7 @@ export async function DELETE(
         const { id } = await params;
 
         // Solo admin/superadmin pueden borrar
-        const auth = await verifyAuth(req, ["admin", "superadmin"]);
+        const auth = await verifyAuth(req, ["admin", "superadmin", "student", "teacher"]);
         if (auth.error) {
             return authErrorResponse(auth.error, auth.status || 401);
         }

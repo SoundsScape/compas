@@ -33,6 +33,19 @@ export async function getDashboardArticles(page: number = 1, limit: number = 10)
 }
 
 /**
+ * Obtener los artículos del propio usuario (para el Dashboard de Estudiante)
+ */
+export async function getMyArticles(page: number = 1, limit: number = 10): Promise<PaginatedArticleResponse> {
+    try {
+        const url = `${ENDPOINT}/mine?page=${page}&limit=${limit}`;
+        return await apiClient<PaginatedArticleResponse>(url);
+    } catch (error) {
+        console.error('Error al obtener mis artículos: ', error);
+        throw error;
+    }
+}
+
+/**
  * Obtener un artículo específico por ID
  */
 export async function getArticleById(id: number): Promise<Article> {
@@ -85,6 +98,21 @@ export async function createArticle(formData: FormData): Promise<Article> {
         });
     } catch (error) {
         console.error('Error al crear el artículo: ', error);
+        throw error;
+    }
+}
+
+/**
+ * Actualizar un artículo existente
+ */
+export async function updateArticle(id: number, formData: FormData): Promise<Article> {
+    try {
+        return await apiClient<Article>(`${ENDPOINT}/${id}`, {
+            method: 'PUT',
+            body: formData,
+        });
+    } catch (error) {
+        console.error('Error al actualizar el artículo: ', error);
         throw error;
     }
 }

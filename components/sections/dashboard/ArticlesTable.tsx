@@ -24,11 +24,13 @@ interface ArticlesTableProps {
     articles: Article[];
     setIsModalOpen: (open: boolean) => void;
     onDeleteSuccess: () => Promise<void>;
+    userRole?: string;
+    isLoading?: boolean;
 }
 
-export function ArticlesTable({ articles, setIsModalOpen, onDeleteSuccess }: ArticlesTableProps) {
+export function ArticlesTable({ articles, setIsModalOpen, onDeleteSuccess, userRole, isLoading }: ArticlesTableProps) {
     return (
-        <div className="rounded-md border bg-background/80 backdrop-blur-xl overflow-x-auto custom-scrollbar w-full">
+        <div className={`rounded-md border bg-background/80 backdrop-blur-xl overflow-x-auto custom-scrollbar w-full transition-opacity duration-300 ${isLoading ? 'opacity-50' : 'opacity-100'}`}>
             <Table>
                 <TableHeader className="h-16 text-xl bg-linear-to-r from-primary to-transparent">
                     <TableRow className="hover:bg-transparent border">
@@ -82,6 +84,7 @@ export function ArticlesTable({ articles, setIsModalOpen, onDeleteSuccess }: Art
                                     <ActionsMenu
                                         article={article}
                                         onActionSuccess={onDeleteSuccess}
+                                        userRole={userRole}
                                     />
                                 </div>
                             </TableCell>

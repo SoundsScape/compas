@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { verifyAuth, authErrorResponse } from "@/server/middleware/auth";
 import { ArticleService } from "@/server/services/article.service";
 import { handleRouteError } from "@/server/utils/handleRouteError";
+import { parseArticleFormData } from "@/server/utils/articleRequestParser";
 
 /**
  * GET /api/articles/[id]
@@ -47,7 +48,16 @@ export async function PUT(
             return authErrorResponse(auth.error, auth.status || 401);
         }
 
-        const body = await req.json();
+        let body;
+        const contentType = req.headers.get("content-type") || "";
+
+        if (contentType.includes("multipart/form-data")) {
+            const formData = await req.formData();
+            body = await parseArticleFormData(formData, Number(auth.user!.id));
+        } else {
+            body = await req.json();
+        }
+
         const updatedArticle = await ArticleService.updateArticle(Number(id), body, {
             id: auth.user!.id,
             role: auth.user!.role

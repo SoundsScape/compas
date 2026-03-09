@@ -62,7 +62,7 @@ export function ArticleSidebar({
                         </div>
                     </div>
                 </div>
-            </div>            
+            </div>
         </aside>
     );
 }

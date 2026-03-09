@@ -2,17 +2,7 @@
 
 import * as React from "react"
 import Image from 'next/image';
-import {
-    LayoutDashboard,
-    FileText,
-    School,
-    Tags,
-    Users,
-    Settings,
-    Globe,
-    BadgeCheck,
-} from "lucide-react"
-
+import { FileText, School, Tags, Users, Globe } from "lucide-react"
 import {
     Sidebar,
     SidebarContent,
@@ -43,12 +33,6 @@ const data = {
             roles: ["student", "teacher"]
         },
         {
-            title: "Revisión",
-            url: "/dashboard/articles/review",
-            icon: BadgeCheck,
-            roles: ["teacher", "admin", "superadmin"]
-        },
-        {
             title: "Escuelas",
             url: "/dashboard/schools",
             icon: School,
@@ -65,6 +49,12 @@ const data = {
             url: "/dashboard/users",
             icon: Users,
             roles: ["admin", "superadmin"]
+        },
+        {
+            title: "Roles",
+            url: "/dashboard/roles",
+            icon: Users,
+            roles: ["superadmin"]
         },
     ],
     system: [

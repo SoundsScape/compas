@@ -10,6 +10,7 @@ import {
     prepareArticleFormData,
     filterCityOptions
 } from "../utils/articleUtils";
+import { toast } from "sonner";
 
 export function useArticleForm(articleId?: number) {
     const router = useRouter();
@@ -209,7 +210,7 @@ export function useArticleForm(articleId?: number) {
             for (const p of plantillaData) {
                 for (const i of p.imageAreas) {
                     if (i.imageFile instanceof File && i.imageFile.size > MAX_SIZE) {
-                        alert("Una de las imágenes supera el tamaño máximo de 4MB.");
+                        toast.warning("Una de las imágenes supera el tamaño máximo de 4MB.");
                         setIsSubmitting(false);
                         return;
                     }
@@ -225,10 +226,14 @@ export function useArticleForm(articleId?: number) {
                 localStorage.removeItem('article_form_draft');
             }
 
-            router.push('/dashboard/my-articles');
+            if (userRole === "student") {
+                router.push('/dashboard/my-articles');
+            } else {
+                router.push('/dashboard/articles');
+            }
         } catch (error) {
             console.error("Error submitting article:", error);
-            alert("Error al procesar el artículo. Por favor, intenta de nuevo.");
+            toast.error("Error al procesar el artículo. Por favor, intenta de nuevo.")
         } finally {
             setIsSubmitting(false);
         }

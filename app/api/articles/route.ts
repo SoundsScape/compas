@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { verifyAuth, authErrorResponse } from "@/server/middleware/auth";
 import { ArticleService } from "@/server/services/article.service";
 import { handleRouteError } from "@/server/utils/handleRouteError";
-import { saveFileLocally } from "@/server/utils/uploadUtils";
+import { parseArticleFormData } from "@/server/utils/articleRequestParser";
 
 export const maxDuration = 60; // 60 seconds
 export const dynamic = 'force-dynamic';
@@ -53,75 +53,7 @@ export async function POST(req: NextRequest) {
         }
 
         const formData = await req.formData();
-
-        // Reconstrucción del objeto complejo desde FormData
-        const body: any = {
-            titulo: formData.get("titulo"),
-            nombre_autor: formData.get("nombre_autor"),
-            apellidos_autor: formData.get("apellidos_autor"),
-            centro: formData.get("centro"),
-            bibliografia: formData.get("bibliografia"),
-            fecha: parseInt(formData.get("fecha") as string),
-            latitud: formData.get("latitud"),
-            longitud: formData.get("longitud"),
-            id_autor: auth.user!.id, // Usamos el ID del usuario autenticado por defecto
-            tags: [],
-            plantillas: []
-        };
-
-        // Procesar Tags
-        let tagIndex = 0;
-        while (formData.has(`tags[${tagIndex}]`)) {
-            body.tags.push(parseInt(formData.get(`tags[${tagIndex}]`) as string));
-            tagIndex++;
-        }
-
-        // Procesar Plantillas
-        let pIndex = 0;
-        while (formData.has(`plantillas[${pIndex}][tipo]`)) {
-            const plantilla: any = {
-                tipo: formData.get(`plantillas[${pIndex}][tipo]`),
-                order: parseInt(formData.get(`plantillas[${pIndex}][order]`) as string),
-                shortCitation: formData.get(`plantillas[${pIndex}][shortCitation]`),
-                textAreas: [],
-                imageAreas: []
-            };
-
-            // Procesar TextAreas de la plantilla
-            let taIndex = 0;
-            while (formData.has(`plantillas[${pIndex}][textAreas][${taIndex}][value]`)) {
-                plantilla.textAreas.push({
-                    value: formData.get(`plantillas[${pIndex}][textAreas][${taIndex}][value]`),
-                    order: taIndex
-                });
-                taIndex++;
-            }
-
-            // Procesar ImageAreas de la plantilla
-            let iaIndex = 0;
-            while (formData.has(`plantillas[${pIndex}][imageAreas][${iaIndex}][imageFooter]`)) {
-                const imageFile = formData.get(`plantillas[${pIndex}][imageAreas][${iaIndex}][imageFile]`);
-                let imagePath = "";
-
-                if (imageFile instanceof File) {
-                    const MAX_SIZE = 4 * 1024 * 1024; // 4MB
-                    if (imageFile.size > MAX_SIZE) {
-                        throw { status: 400, message: `La imagen ${imageFile.name} excede el límite de 4MB.` };
-                    }
-                    imagePath = await saveFileLocally(imageFile);
-                }
-
-                plantilla.imageAreas.push({
-                    imagePath,
-                    imageFooter: formData.get(`plantillas[${pIndex}][imageAreas][${iaIndex}][imageFooter]`),
-                    order: iaIndex
-                });
-                iaIndex++;
-            }
-
-            body.plantillas.push(plantilla);
-            pIndex++;
-        }
+        const body = await parseArticleFormData(formData, Number(auth.user!.id));
 
         const article = await ArticleService.createArticle(body, {
             id: auth.user!.id,

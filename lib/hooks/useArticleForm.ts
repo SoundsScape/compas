@@ -1,17 +1,17 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { useCities } from "./useCities";
 import { useTags, OptionType } from "./useTags";
-import { createArticle } from "../services/articleService";
+import { createArticle, getArticleById, updateArticle } from "../services/articleService";
 import { User } from "../interfaces/user.interface";
-import { Plantilla, ArticleFormData } from "../interfaces/article.interface";
+import { Plantilla, ArticleFormData, Article } from "../interfaces/article.interface";
 import {
     validateArticleForm,
     prepareArticleFormData,
     filterCityOptions
 } from "../utils/articleUtils";
 
-export function useArticleForm() {
+export function useArticleForm(articleId?: number) {
     const router = useRouter();
     const { cities } = useCities();
     const { options: tagOptions } = useTags();
@@ -33,7 +33,7 @@ export function useArticleForm() {
     const currentYear = new Date().getFullYear();
 
     // Helper for easier data access
-    const getFormData = (): ArticleFormData => ({
+    const getFormData = useCallback((): ArticleFormData => ({
         titulo,
         nombre_autor,
         apellidos_autor,
@@ -43,19 +43,95 @@ export function useArticleForm() {
         location,
         selectedTags,
         plantillaData
-    });
+    }), [titulo, nombre_autor, apellidos_autor, centro, bibliografia, fecha, location, selectedTags, plantillaData]);
 
     const isFormValid = validateArticleForm(getFormData());
 
+    // Load article data if editing
+    useEffect(() => {
+        if (!articleId || cities.length === 0) return;
+
+        const loadArticle = async () => {
+            try {
+                const article: Article = await getArticleById(articleId);
+                setTitulo(article.titulo);
+                setNombre(article.nombre_autor);
+                setApellidos(article.apellidos_autor);
+                setCentro(article.centro);
+                setBibliografia(article.bibliografia);
+                setFecha(article.fecha);
+
+                // Map location
+                const city = cities.find(c => c.lat === article.latitud && c.lng === article.longitud);
+                if (city) {
+                    setLocation({ value: city.id, label: `${city.city}, ${city.country}` });
+                }
+
+                // Map tags
+                if (article.tags) {
+                    setSelectedTags(article.tags.map(t => ({ value: t.id.toString(), label: t.name })));
+                }
+
+                // Map templates
+                if (article.templates) {
+                    const mappedPlantillas: Plantilla[] = article.templates
+                        .sort((a, b) => a.order - b.order)
+                        .map(t => ({
+                            id: t.id,
+                            tipo: t.type as "plantilla1" | "plantilla2",
+                            shortCitation: t.shortCitation,
+                            textAreas: t.text_areas.sort((a, b) => a.order - b.order).map(ta => ({ value: ta.content })),
+                            imageAreas: t.image_areas.sort((a, b) => a.order - b.order).map(ia => ({
+                                imageFile: ia.imagePath,
+                                imageFooter: ia.imageFooter
+                            }))
+                        }));
+                    setPlantillaData(mappedPlantillas);
+                }
+            } catch (error) {
+                console.error("Error loading article for edit:", error);
+            }
+        };
+
+        loadArticle();
+    }, [articleId, cities]);
+
     // Load user data and draft from localStorage
     useEffect(() => {
+        // If editing, we don't load draft/user data over the fetched article
+        if (articleId) return;
+
         const userData = localStorage.getItem('user');
         if (userData) {
-            const user: User = JSON.parse(userData);
-            setNombre(user.first_name || "");
-            setApellidos(user.last_name || "");
-            setCentro(user.school?.name || "");
-            setUserRole(user.role?.role_name || "user");
+            try {
+                const user: any = JSON.parse(userData);
+                setNombre(user.first_name || "");
+                setApellidos(user.last_name || "");
+                setCentro(user.school?.name || "");
+
+                const r_name = (
+                    user.role ||
+                    user.role_name ||
+                    user.roles?.role_name ||
+                    (user.username === 'admin' ? 'admin' : "")
+                ).toLowerCase();
+
+                if (r_name === 'student') {
+                    setUserRole("student");
+                } else if (r_name === 'teacher') {
+                    setUserRole("teacher");
+                } else if (r_name === 'admin' || r_name === 'superadmin') {
+                    setUserRole("admin");
+                } else {
+                    const r_id = Number(user.roles_id);
+                    if (r_id === 3) setUserRole("student");
+                    else if (r_id === 4) setUserRole("teacher");
+                    else if (r_id === 1 || r_id === 2) setUserRole("admin");
+                    else setUserRole(r_name || "user");
+                }
+            } catch (e) {
+                console.error("Error parsing user data in hook", e);
+            }
         }
 
         const draft = localStorage.getItem('article_form_draft');
@@ -73,13 +149,14 @@ export function useArticleForm() {
                 console.error("Error loading draft", e);
             }
         }
-    }, [currentYear]);
+    }, [currentYear, articleId]);
 
-    // Save draft to localStorage
+    // Save draft to localStorage (only if not editing)
     useEffect(() => {
+        if (articleId) return;
         const draft = getFormData();
         localStorage.setItem('article_form_draft', JSON.stringify(draft));
-    }, [titulo, fecha, location, plantillaData, bibliografia, selectedTags, centro]);
+    }, [titulo, fecha, location, plantillaData, bibliografia, selectedTags, centro, articleId, getFormData]);
 
     // Handlers
     const loadCityOptions = (inputValue: string, callback: (options: OptionType[]) => void) => {
@@ -132,6 +209,7 @@ export function useArticleForm() {
             for (const p of plantillaData) {
                 for (const i of p.imageAreas) {
                     if (i.imageFile instanceof File && i.imageFile.size > MAX_SIZE) {
+                        alert("Una de las imágenes supera el tamaño máximo de 4MB.");
                         setIsSubmitting(false);
                         return;
                     }
@@ -139,12 +217,18 @@ export function useArticleForm() {
             }
 
             const formData = prepareArticleFormData(getFormData(), cities);
-            await createArticle(formData);
-            localStorage.removeItem('article_form_draft');
-            router.push('/articles');
+
+            if (articleId) {
+                await updateArticle(articleId, formData);
+            } else {
+                await createArticle(formData);
+                localStorage.removeItem('article_form_draft');
+            }
+
+            router.push('/dashboard/my-articles');
         } catch (error) {
-            console.error("Error creating article:", error);
-            alert("Error al crear el artículo. Por favor, intenta de nuevo.");
+            console.error("Error submitting article:", error);
+            alert("Error al procesar el artículo. Por favor, intenta de nuevo.");
         } finally {
             setIsSubmitting(false);
         }

@@ -3,7 +3,6 @@
 import { useState, useEffect, useMemo } from "react"
 import { StatsCard } from "@/components/sections/dashboard/StatsCard"
 import { ArticlesTable } from "@/components/sections/dashboard/ArticlesTable"
-import { Button } from "@/components/ui/button"
 import { FileText, CheckCircle2, Clock, Plus, Loader2 } from "lucide-react"
 import { getDashboardArticles } from "@/lib/services/articleService"
 import { Article } from "@/lib/interfaces/article.interface"
@@ -19,6 +18,40 @@ export default function ArticlesPage() {
     const [limit] = useState(10) // Items per page
     const [stats, setStats] = useState({ total: 0, validated: 0, pending: 0 })
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [userRole, setUserRole] = useState<string>("");
+
+    const [isFirstLoad, setIsFirstLoad] = useState(true);
+
+    useEffect(() => {
+        const userData = localStorage.getItem('user');
+        if (userData) {
+            try {
+                const user = JSON.parse(userData);
+                const r_name = (
+                    user.role ||
+                    user.role_name ||
+                    user.roles?.role_name ||
+                    ""
+                ).toLowerCase();
+
+                if (r_name === 'student') {
+                    setUserRole("student");
+                } else if (r_name === 'teacher') {
+                    setUserRole("teacher");
+                } else if (r_name === 'admin' || r_name === 'superadmin') {
+                    setUserRole("admin");
+                } else {
+                    const r_id = Number(user.roles_id);
+                    if (r_id === 3) setUserRole("student");
+                    else if (r_id === 4) setUserRole("teacher");
+                    else if (r_id === 1 || r_id === 2) setUserRole("admin");
+                    else setUserRole(r_name || "user");
+                }
+            } catch (e) {
+                console.error("Error parsing user data", e);
+            }
+        }
+    }, []);
 
     const fetchArticles = async (page: number) => {
         setLoading(true)
@@ -37,6 +70,7 @@ export default function ArticlesPage() {
             console.error("Error fetching articles:", error)
         } finally {
             setLoading(false)
+            setIsFirstLoad(false)
         }
     }
 
@@ -56,7 +90,7 @@ export default function ArticlesPage() {
         }))
     }, [articles])
 
-    if (loading) {
+    if (loading && isFirstLoad) {
         return (
             <div className="flex h-[60vh] items-center justify-center">
                 <Loader2 className="size-8 animate-spin text-accent" />
@@ -99,7 +133,13 @@ export default function ArticlesPage() {
                 )}
             </div>
             <div className="min-w-0">
-                <ArticlesTable articles={mappedArticles} setIsModalOpen={setIsModalOpen} onDeleteSuccess={() => fetchArticles(currentPage)} />
+                <ArticlesTable
+                    articles={mappedArticles}
+                    setIsModalOpen={setIsModalOpen}
+                    onDeleteSuccess={() => fetchArticles(currentPage)}
+                    userRole={userRole}
+                    isLoading={loading}
+                />
             </div>
             <ArticleModal
                 isModalOpen={isModalOpen}

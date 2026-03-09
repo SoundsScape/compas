@@ -29,10 +29,12 @@ export function Navbar() {
     const [modalAbierto, setModalAbierto] = useState(false);
     const modalRef = useRef<HTMLDivElement>(null);
     const [username, setUsername] = useState<string | null>(null);
+    const [dashboardLink, setDashboardLink] = useState("/dashboard/articles");
 
     const toggleModal = () => {
         setModalAbierto(!modalAbierto);
     };
+
 
     useEffect(() => {
         const userStr = localStorage.getItem('user');
@@ -40,6 +42,11 @@ export function Navbar() {
             try {
                 const user = JSON.parse(userStr);
                 setUsername(user.username);
+                if (user.role === "student") {
+                    setDashboardLink("/dashboard/my-articles");
+                } else {
+                    setDashboardLink("/dashboard/articles");
+                }
             } catch (e) {
                 console.error('Error parsing user from localStorage', e);
             }
@@ -91,7 +98,7 @@ export function Navbar() {
                         <span>Artículos</span>
                     </Link>
                     <Link
-                        href="/dashboard"
+                        href={dashboardLink}
                         className="flex items-center gap-2 transition-all duration-500 hover:drop-shadow-[0px_0px_10px_rgba(255,255,255,0.9)]"
                     >
                         <LayoutDashboard className="h-5 w-5" />
@@ -112,24 +119,23 @@ export function Navbar() {
                                 initial={{ opacity: 0, y: -40 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 exit={{ opacity: 0, y: -20 }}
-                                className="absolute top-20 right-5 w-48 rounded-sm text-white shadow-lg"
+                                className="absolute top-9 right-5 w-48 rounded-sm text-white shadow-lg"
                             >
-                                <div className="flex h-full w-full flex-col rounded-sm bg-black/90 p-4 backdrop-blur-sm">
-                                    <p className="font-semibold">{username}</p>
+                                <div className="flex h-full w-full flex-col rounded-sm bg-linear-to-b from-background/90 to-primary/90 p-2 backdrop-blur-sm">
                                     <Link
-                                        className="cursor-pointer rounded px-2 py-2 hover:bg-black/60"
+                                        className="cursor-pointer rounded px-6 py-2 hover:bg-primary"
                                         href="/home/user-info/${username}"
                                     >
                                         Perfil
                                     </Link>
                                     <Link
-                                        className="cursor-pointer rounded px-2 py-2 hover:bg-black/60"
+                                        className="cursor-pointer rounded px-6 py-2 hover:bg-primary"
                                         href="/home/configuracion"
                                     >
                                         Configuración
                                     </Link>
                                     <button
-                                        className="cursor-pointer rounded px-2 py-2 text-left hover:bg-black/60"
+                                        className="cursor-pointer rounded px-6 py-2 text-left hover:bg-primary"
                                         onClick={cerrarSesion}
                                     >
                                         Cerrar sesión

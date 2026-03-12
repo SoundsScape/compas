@@ -60,6 +60,8 @@ export const prepareArticleFormData = (data: ArticleFormData, cities: City[]): F
             p.imageAreas.forEach((ia, j) => {
                 if (ia.imageFile instanceof File) {
                     formData.append(`plantillas[${i}][imageAreas][${j}][imageFile]`, ia.imageFile);
+                } else if (typeof ia.imageFile === 'string') {
+                    formData.append(`plantillas[${i}][imageAreas][${j}][imagePath]`, ia.imageFile);
                 }
                 formData.append(`plantillas[${i}][imageAreas][${j}][imageFooter]`, ia.imageFooter);
             });

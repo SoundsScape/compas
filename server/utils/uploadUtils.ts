@@ -28,7 +28,7 @@ export async function saveFileLocally(file: File, subDir: string = 'articles'): 
         // Guardar archivo
         await writeFile(filePath, buffer);
 
-        return `${subDir}/${uniqueName}`;
+        return `/storage/${subDir}/${uniqueName}`;
     } catch (error) {
         console.error('Error al guardar el archivo localmente:', error);
         throw new Error('No se pudo guardar la imagen en el servidor.');

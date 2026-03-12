@@ -14,14 +14,14 @@ export class ArticleService {
             return data.map(item => this.mapToFrontend(item));
         }
 
-        // 1. Serialización básica de BigInt (usando el helper o lógica interna)
+        // Serialización básica de BigInt (usando el helper o lógica interna)
         const serialized = JSON.parse(
             JSON.stringify(data, (key, value) =>
                 typeof value === "bigint" ? value.toString() : value
             )
         );
 
-        // 2. Renombrar relaciones y aplanar tags
+        // Renombrar relaciones y aplanar tags
         const mapped: any = { ...serialized };
 
         // Renombrar article_templates -> templates
@@ -45,6 +45,21 @@ export class ArticleService {
                 };
             });
             delete mapped.article_tag;
+        }
+
+        // Fix image paths (if missing /storage/ prefix)
+        if (mapped.templates) {
+            mapped.templates = mapped.templates.map((template: any) => {
+                if (template.image_areas) {
+                    template.image_areas = template.image_areas.map((ia: any) => {
+                        if (ia.imagePath && !ia.imagePath.startsWith("/") && !ia.imagePath.startsWith("http")) {
+                            return { ...ia, imagePath: `/storage/${ia.imagePath}` };
+                        }
+                        return ia;
+                    });
+                }
+                return template;
+            });
         }
 
         return mapped;

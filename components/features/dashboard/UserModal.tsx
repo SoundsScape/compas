@@ -23,7 +23,8 @@ export default function UserModal({ isOpen, onClose, user, onSuccess }: UserModa
     const [loading, setLoading] = useState(false)
     const [schools, setSchools] = useState<any[]>([])
     const [roles, setRoles] = useState<any[]>([])
-    const [statuses, setStatuses] = useState<any[]>([])
+    const [statuses, setStatuses] = useState<any[]>([]);
+    const [currentUserRole, setCurrentUserRole] = useState<string>("");
 
     const [formData, setFormData] = useState({
         username: "",
@@ -38,7 +39,16 @@ export default function UserModal({ isOpen, onClose, user, onSuccess }: UserModa
 
     useEffect(() => {
         if (isOpen) {
-            fetchData()
+            fetchData();
+            const userStr = localStorage.getItem('user');
+            if (userStr && userStr !== "undefined" && userStr !== null) {
+                try {
+                    const user = JSON.parse(userStr);
+                    setCurrentUserRole(user.roles_id.toString());
+                } catch (e) {
+                    console.error('Error parsing user from localStorage', e);
+                }
+            }
             if (user) {
                 setFormData({
                     username: user.username || "",
@@ -117,7 +127,7 @@ export default function UserModal({ isOpen, onClose, user, onSuccess }: UserModa
 
     return (
         <Dialog open={isOpen} onOpenChange={onClose}>
-            <DialogContent className="max-w-2xl bg-background/95 backdrop-blur-xl border-white/10 text-white">
+            <DialogContent className="max-w-2xl  backdrop-blur-xl border-white/10 text-white">
                 <DialogHeader>
                     <DialogTitle className="text-2xl font-bold bg-clip-text text-transparent bg-linear-to-r from-white to-white/60">
                         {user ? "Editar Usuario" : "Crear Nuevo Usuario"}
@@ -181,13 +191,13 @@ export default function UserModal({ isOpen, onClose, user, onSuccess }: UserModa
                             </div>
                         )}
 
-                        <div className="space-y-2">
+                        <div className={`space-y-2 ${!user ? "col-span-full" : "col-span-1"}`}>
                             <Label htmlFor="school">Centro Educativo</Label>
                             <Select
                                 value={formData.school_id}
                                 onValueChange={(val: string) => handleChange("school_id", val)}
                             >
-                                <SelectTrigger className="bg-white/5 border-white/10">
+                                <SelectTrigger className="bg-white/5 border-white/10 w-full">
                                     <SelectValue placeholder="Selecciona un centro" />
                                 </SelectTrigger>
                                 <SelectContent className="bg-background/95 backdrop-blur-xl border-white/10">
@@ -200,44 +210,53 @@ export default function UserModal({ isOpen, onClose, user, onSuccess }: UserModa
                             </Select>
                         </div>
 
-                        <div className="space-y-2">
-                            <Label htmlFor="role">Rol</Label>
-                            <Select
-                                value={formData.roles_id}
-                                onValueChange={(val: string) => handleChange("roles_id", val)}
-                                required
-                            >
-                                <SelectTrigger className="bg-white/5 border-white/10">
-                                    <SelectValue placeholder="Selecciona un rol" />
-                                </SelectTrigger>
-                                <SelectContent className="bg-background/95 backdrop-blur-xl border-white/10">
-                                    {roles.map((r) => (
-                                        <SelectItem key={r.id} value={r.id.toString()}>
-                                            {r.role_name}
-                                        </SelectItem>
-                                    ))}
-                                </SelectContent>
-                            </Select>
-                        </div>
-
-                        <div className="space-y-2">
-                            <Label htmlFor="status">Estatus</Label>
-                            <Select
-                                value={formData.statuses_id}
-                                onValueChange={(val: string) => handleChange("statuses_id", val)}
-                                required
-                            >
-                                <SelectTrigger className="bg-white/5 border-white/10">
-                                    <SelectValue placeholder="Selecciona un estatus" />
-                                </SelectTrigger>
-                                <SelectContent className="bg-background/95 backdrop-blur-xl border-white/10">
-                                    {statuses.map((s) => (
-                                        <SelectItem key={s.id} value={s.id.toString()}>
-                                            {s.status_name}
-                                        </SelectItem>
-                                    ))}
-                                </SelectContent>
-                            </Select>
+                        <div className={`flex gap-4 ${!user ? "col-span-full" : "col-span-1"}`}>
+                            {(!user || currentUserRole === "4") && (
+                                <div className="space-y-2 w-full">
+                                    <Label htmlFor="role">Rol</Label>
+                                    <Select
+                                        value={formData.roles_id}
+                                        onValueChange={(val: string) => handleChange("roles_id", val)}
+                                        required
+                                    >
+                                        <SelectTrigger className="bg-white/5 border-white/10 w-full">
+                                            <SelectValue placeholder="Selecciona un rol" />
+                                        </SelectTrigger>
+                                        <SelectContent className="w-full bg-background/95 backdrop-blur-xl border-white/10">
+                                            {roles
+                                                .filter((r) => {
+                                                    if (currentUserRole === "4") return true;
+                                                    const roleName = r.role_name.toLowerCase();
+                                                    return roleName !== "admin" && roleName !== "superadmin";
+                                                })
+                                                .map((r) => (
+                                                    <SelectItem key={r.id} value={r.id.toString()}>
+                                                        {r.role_name}
+                                                    </SelectItem>
+                                                ))}
+                                        </SelectContent>
+                                    </Select>
+                                </div>
+                            )}
+                            <div className={`space-y-2 ${!user ? "w-full" : "w-32"}`}>
+                                <Label htmlFor="status">Estatus</Label>
+                                <Select
+                                    value={formData.statuses_id}
+                                    onValueChange={(val: string) => handleChange("statuses_id", val)}
+                                    required
+                                >
+                                    <SelectTrigger className="w-full bg-white/5 border-white/10">
+                                        <SelectValue placeholder="Selecciona un estatus" />
+                                    </SelectTrigger>
+                                    <SelectContent className="bg-background/95 backdrop-blur-xl border-white/10">
+                                        {statuses.map((s) => (
+                                            <SelectItem key={s.id} value={s.id.toString()}>
+                                                {s.status_name}
+                                            </SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
+                            </div>
                         </div>
                     </div>
 

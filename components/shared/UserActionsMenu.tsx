@@ -27,9 +27,9 @@ export default function UserActionsMenu({ userId, onEdit, onActionSuccess }: Use
                 <DropdownMenuSeparator className="bg-white/10" />
 
                 <DropdownMenuItem asChild className="cursor-pointer gap-2">
-                    <Link href={`/dashboard/user-info/${userId}`}>
-                        <UserIcon className="size-4 text-accent" />
-                        Ver Perfil
+                    <Link href={`/dashboard/users/${userId}`}>
+                    <UserIcon className="size-4 text-accent" />
+                    Ver Perfil
                     </Link>
                 </DropdownMenuItem>
 

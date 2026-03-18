@@ -10,7 +10,6 @@ import {
 } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
 import UserActionsMenu from "@/components/shared/UserActionsMenu"
-import Link from "next/link"
 
 interface User {
     id: number
@@ -47,9 +46,9 @@ export function UsersTable({ users, onEdit, onDeleteSuccess }: UsersTableProps) 
                         <TableRow key={user.id} className="border hover:from-background hover:via-primary/80 hover:to-background hover:bg-linear-to-b transition-colors text-nowrap">
                             <TableCell className="text-muted-foreground text-center">{user.id}</TableCell>
                             <TableCell className="font-medium w-16 md:w-32 truncate">
-                                <Link href={`/dashboard/user-info/${user.username}`} className="hover:underline">
+                                <span className="text-white">
                                     {user.username}
-                                </Link>
+                                </span>
                             </TableCell>
                             <TableCell className="text-muted-foreground max-w-32 truncate">
                                 {user.email}

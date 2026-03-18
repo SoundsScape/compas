@@ -2,7 +2,7 @@ import { Article, PaginatedArticleResponse } from '../interfaces/article.interfa
 import { API_CONFIG } from '../config/api.config';
 import { apiClient } from '../api/apiClient';
 
-const ENDPOINT = API_CONFIG.endpoints.articles;
+const ARTICLE_ENDPOINT = API_CONFIG.endpoints.articles;
 
 /**
  * Obtener todos los artículos (sin paginación explícita para secciones generales)
@@ -10,7 +10,7 @@ const ENDPOINT = API_CONFIG.endpoints.articles;
 export async function getArticles(): Promise<Article[]> {
     try {
         // Pedimos un límite alto por defecto para asegurar que la Home tenga todos los puntos
-        const url = `${ENDPOINT}?limit=1000`;
+        const url = `${ARTICLE_ENDPOINT}?limit=1000`;
         const result = await apiClient<PaginatedArticleResponse>(url);
         return result.data || [];
     } catch (error) {
@@ -24,7 +24,7 @@ export async function getArticles(): Promise<Article[]> {
  */
 export async function getDashboardArticles(page: number = 1, limit: number = 10): Promise<PaginatedArticleResponse> {
     try {
-        const url = `${ENDPOINT}?page=${page}&limit=${limit}`;
+        const url = `${ARTICLE_ENDPOINT}?page=${page}&limit=${limit}`;
         return await apiClient<PaginatedArticleResponse>(url);
     } catch (error) {
         console.error('Error al obtener los artículos del dashboard (paginados): ', error);
@@ -37,10 +37,23 @@ export async function getDashboardArticles(page: number = 1, limit: number = 10)
  */
 export async function getMyArticles(page: number = 1, limit: number = 10): Promise<PaginatedArticleResponse> {
     try {
-        const url = `${ENDPOINT}/mine?page=${page}&limit=${limit}`;
+        const url = `${ARTICLE_ENDPOINT}/mine?page=${page}&limit=${limit}`;
         return await apiClient<PaginatedArticleResponse>(url);
     } catch (error) {
         console.error('Error al obtener mis artículos: ', error);
+        throw error;
+    }
+}
+
+/**
+ * Obtener los artículos de un usuario específico
+ */
+export async function getUserArticles(userId: number, page: number = 1, limit: number = 10): Promise<PaginatedArticleResponse> {
+    try {
+        const url = `${ARTICLE_ENDPOINT}?userId=${userId}&page=${page}&limit=${limit}`;
+        return await apiClient<PaginatedArticleResponse>(url);
+    } catch (error) {
+        console.error('Error al obtener los artículos del usuario: ', error);
         throw error;
     }
 }
@@ -50,7 +63,7 @@ export async function getMyArticles(page: number = 1, limit: number = 10): Promi
  */
 export async function getArticleById(id: number): Promise<Article> {
     try {
-        return await apiClient<Article>(`${ENDPOINT}/${id}`);
+        return await apiClient<Article>(`${ARTICLE_ENDPOINT}/${id}`);
     } catch (error) {
         console.error('Error al obtener el artículo: ', error);
         throw error;
@@ -64,7 +77,7 @@ export async function validateArticle(
     validated: boolean
 ): Promise<Article> {
     try {
-        return await apiClient<Article>(`${ENDPOINT}/${id}/validate`, {
+        return await apiClient<Article>(`${ARTICLE_ENDPOINT}/${id}/validate`, {
             method: 'PATCH',
             body: JSON.stringify({ validated }),
         });
@@ -79,7 +92,7 @@ export async function validateArticle(
  */
 export async function deleteArticle(id: number): Promise<{ message: string }> {
     try {
-        return await apiClient<{ message: string }>(`${ENDPOINT}/${id}`, {
+        return await apiClient<{ message: string }>(`${ARTICLE_ENDPOINT}/${id}`, {
             method: 'DELETE',
         });
     } catch (error) {
@@ -92,7 +105,7 @@ export async function deleteArticle(id: number): Promise<{ message: string }> {
  */
 export async function createArticle(formData: FormData): Promise<Article> {
     try {
-        return await apiClient<Article>(ENDPOINT, {
+        return await apiClient<Article>(ARTICLE_ENDPOINT, {
             method: 'POST',
             body: formData,
         });
@@ -107,7 +120,7 @@ export async function createArticle(formData: FormData): Promise<Article> {
  */
 export async function updateArticle(id: number, formData: FormData): Promise<Article> {
     try {
-        return await apiClient<Article>(`${ENDPOINT}/${id}`, {
+        return await apiClient<Article>(`${ARTICLE_ENDPOINT}/${id}`, {
             method: 'PUT',
             body: formData,
         });

@@ -23,6 +23,7 @@ export async function GET(req: NextRequest) {
         const { searchParams } = new URL(req.url);
         const page = parseInt(searchParams.get("page") || "1");
         const limit = parseInt(searchParams.get("limit") || "1000");
+        const userId = searchParams.get("userId");
 
         if (isNaN(page) || page < 1 || isNaN(limit) || limit < 1 || limit > 1000) {
             return NextResponse.json(
@@ -33,7 +34,13 @@ export async function GET(req: NextRequest) {
 
         const onlyValidated = !isAdmin;
 
-        const result = await ArticleService.getAllArticles(page, limit, onlyValidated);
+        let result;
+        if (userId) {
+            result = await ArticleService.getUserArticles(parseInt(userId), page, limit);
+        } else {
+            result = await ArticleService.getAllArticles(page, limit, onlyValidated);
+        }
+
         return NextResponse.json(result);
 
     } catch (error: any) {

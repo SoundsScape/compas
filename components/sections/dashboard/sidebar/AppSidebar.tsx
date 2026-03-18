@@ -91,14 +91,14 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             <SidebarHeader>
                 <SidebarMenu className="border-b border-border">
                     <SidebarMenuItem>
-                        <SidebarMenuButton className=" h-fit rounded-none py-6 hover:bg-transparent" asChild>
+                        <SidebarMenuButton className="h-fit rounded-none py-6 hover:bg-transparent" asChild>
                             <Link href="/home" className="w-full flex flex-col justify-center items-center gap-2">
                                 <Image
                                     src="/logo.png"
                                     alt="White Logo"
-                                    width={46}
-                                    height={46}
-                                    className="w-16 drop-shadow-[0px_0px_10px_rgba(0,0,0,0.9)] transition-all duration-500 hover:cursor-pointer hover:drop-shadow-[0px_0px_10px_rgba(255,255,255,0.9)]"
+                                    width={42}
+                                    height={42}
+                                    className="w-14 drop-shadow-[0px_0px_10px_rgba(0,0,0,0.9)] transition-all duration-500 hover:cursor-pointer hover:drop-shadow-[0px_0px_10px_rgba(255,255,255,0.9)]"
                                 />
                             </Link>
                         </SidebarMenuButton>

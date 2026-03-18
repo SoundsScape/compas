@@ -17,6 +17,18 @@ export async function getUsers(): Promise<User[]> {
 }
 
 /**
+ * Obtener un usuario por ID
+ */
+export async function getUserById(id: number): Promise<User> {
+    try {
+        return await apiClient<User>(`${USERS_ENDPOINT}/${id}`);
+    } catch (error) {
+        console.error('Error al obtener el usuario: ', error);
+        throw error;
+    }
+}
+
+/**
  * Crear un usuario
  */
 export async function createUser(userData: Partial<User>): Promise<User> {

@@ -38,9 +38,9 @@ export function ConfirmationModal({
                         {description}
                     </DialogDescription>
                 </DialogHeader>
-                <DialogFooter className="gap-2">
+                <DialogFooter className="gap-3">
                     <DialogClose asChild>
-                        <Button variant="ghost" className="cursor-pointer">Cancelar</Button>
+                        <Button variant="cancel">Cancelar</Button>
                     </DialogClose>
                     <Button
                         type="submit"

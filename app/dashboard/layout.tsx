@@ -32,7 +32,7 @@ export default function DashboardLayout({
                         </BreadcrumbList>
                     </Breadcrumb>
                 </header>
-                <div className="flex-1 flex flex-col p-8 min-w-0 from-primary to-background bg-radial to-65%">
+                <div className="flex-1 flex flex-col p-8 min-w-0 ">
                     {children}
                 </div>
             </SidebarInset>

@@ -3,10 +3,9 @@ import { Input } from '@/components/ui/input';
 import { Slider } from '@/components/ui/slider';
 import { formatYear } from '@/lib/utils/dateUtils';
 import { YearRangeSelectorProps } from '@/lib/interfaces/filters.interface';
+import { MAX_YEAR, MIN_YEAR } from '@/lib/constants/yearsRange';
 
 export function YearRangeSelector({
-    minYear,
-    maxYear,
     value,
     onChange,
     dateFormat,
@@ -22,41 +21,41 @@ export function YearRangeSelector({
             const absYear = Math.abs(year);
             return (
                 ((sign * Math.log(absYear + 1)) /
-                    Math.log(Math.abs(maxYear) + 1)) *
-                Math.abs(maxYear)
+                    Math.log(Math.abs(MAX_YEAR) + 1)) *
+                Math.abs(MAX_YEAR)
             );
         },
-        [maxYear]
+        [MAX_YEAR]
     );
 
     const fromLogarithmic = useCallback(
         (logValue: number): number => {
-            const calcLogMaxYear = toLogarithmic(maxYear);
-            const calcLogMinYear = toLogarithmic(minYear);
+            const calcLogMaxYear = toLogarithmic(MAX_YEAR);
+            const calcLogMinYear = toLogarithmic(MIN_YEAR);
             const tolerance = Math.abs(calcLogMaxYear - calcLogMinYear) * 0.01;
 
             if (Math.abs(logValue - calcLogMaxYear) <= tolerance)
-                return maxYear;
+                return MAX_YEAR;
             if (Math.abs(logValue - calcLogMinYear) <= tolerance)
-                return minYear;
+                return MIN_YEAR;
 
             const sign = logValue >= 0 ? 1 : -1;
             const absLogValue = Math.abs(logValue);
 
             const year = Math.round(
                 Math.exp(
-                    (absLogValue * Math.log(Math.abs(maxYear) + 1)) /
-                    Math.abs(maxYear)
+                    (absLogValue * Math.log(Math.abs(MAX_YEAR) + 1)) /
+                    Math.abs(MAX_YEAR)
                 ) - 1
             );
 
-            return Math.max(minYear, Math.min(maxYear, sign * year));
+            return Math.max(MIN_YEAR, Math.min(MAX_YEAR, sign * year));
         },
-        [maxYear, minYear, toLogarithmic]
+        [MAX_YEAR, MIN_YEAR, toLogarithmic]
     );
 
-    const logMinYear = toLogarithmic(minYear);
-    const logMaxYear = toLogarithmic(maxYear);
+    const logMinYear = toLogarithmic(MIN_YEAR);
+    const logMaxYear = toLogarithmic(MAX_YEAR);
 
     // Sincronizar slider y inputs cuando cambian los valores
     useEffect(() => {
@@ -98,11 +97,11 @@ export function YearRangeSelector({
         }
 
         if (isStart) {
-            val = Math.max(minYear, Math.min(val, value[1]));
+            val = Math.max(MIN_YEAR, Math.min(val, value[1]));
             setStartYear(val.toString());
             onChange([val, value[1]]);
         } else {
-            val = Math.max(value[0], Math.min(val, maxYear));
+            val = Math.max(value[0], Math.min(val, MAX_YEAR));
             setEndYear(val.toString());
             onChange([value[0], val]);
         }
@@ -113,7 +112,7 @@ export function YearRangeSelector({
     };
 
     return (
-        <div className="space-y-2">
+        <div className="space-y-1">
             <h3 className="text-xs font-semibold tracking-wider uppercase">
                 Rango Temporal
             </h3>
@@ -156,12 +155,12 @@ export function YearRangeSelector({
                     onValueCommit={handleSliderCommit}
                     className="cursor-pointer"
                 />
-                <div className="mt-4 flex justify-between">
+                <div className="mt-2.5 flex justify-between font-mono">
                     <span className="text-muted-foreground text-xs">
-                        {formatYear(parseInt(startYear) || minYear, dateFormat)}
+                        {MIN_YEAR}
                     </span>
                     <span className="text-muted-foreground text-xs">
-                        {formatYear(parseInt(endYear) || maxYear, dateFormat)}
+                        {MAX_YEAR}
                     </span>
                 </div>
             </div>

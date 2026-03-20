@@ -71,8 +71,8 @@ export function Navbar() {
     }, [modalAbierto]);
 
     return (
-        <nav className="fixed top-0 right-0 left-0 z-50 text-white">
-            <div className="from-primary via-primary/90 to-primary/20 relative mx-auto flex items-center justify-between bg-linear-to-b px-4 backdrop-blur-sm">
+        <nav className="bg-background/50 fixed top-0 right-0 left-0 z-50 text-white">
+            <div className="from-secondary to-primary/30 relative mx-auto flex items-center justify-between bg-linear-to-b px-4 backdrop-blur-lg">
                 <Link href="/home">
                     <Image
                         src="/logo.png"

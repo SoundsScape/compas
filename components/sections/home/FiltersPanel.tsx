@@ -9,8 +9,6 @@ export function FiltersPanel({
     filters,
     setFilters,
     setSelectedYearRange,
-    minYear,
-    maxYear,
     dateFormat,
 }: FiltersPanelProps) {
     return (
@@ -24,14 +22,14 @@ export function FiltersPanel({
                     filters={filters}
                     setFilters={setFilters}
                     setSelectedYearRange={setSelectedYearRange}
-                    minYear={minYear}
-                    maxYear={maxYear}
                     dateFormat={dateFormat}
                 />
             </div>
             <Button
                 onClick={() => setShowFilters(!showFilters)}
-                className={`hover:text-accent z-20 size-11`}
+                variant="control"
+                size="icon-lg"
+                className='bg-linear-to-bl'
             >
                 {showFilters ? (
                     <ChevronRight className="size-5.5" />

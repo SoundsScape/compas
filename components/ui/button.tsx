@@ -19,6 +19,8 @@ const buttonVariants = cva(
                     'bg-secondary/80 text-secondary-foreground hover:bg-secondary',
                 cancel:
                     'bg-white/10 text-secondary-foreground hover:bg-white/20',
+                control:
+                    'bg-linear-to-br from-primary to-secondary text-primary-foreground hover:bg-primary/90 hover:text-accent',
                 ghost: 'hover:text-accent dark:hover:bg-accent/50 p-0',
                 link: 'text-primary underline-offset-4 hover:underline',
                 filterActive:
@@ -30,7 +32,7 @@ const buttonVariants = cva(
                 default: 'h-9 px-4 py-2 has-[>svg]:px-3',
                 filter: 'h-auto rounded-sm px-2 py-1 text-xs',
                 sm: 'h-8 rounded-sm gap-1.5 px-3 has-[>svg]:px-2.5',
-                lg: 'h-10 rounded-md px-6 has-[>svg]:px-4',
+                lg: 'h-11 rounded-md px-6 has-[>svg]:px-4',
                 icon: 'size-9',
                 'icon-sm': 'size-8',
                 'icon-lg': 'size-10',

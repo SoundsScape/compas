@@ -10,6 +10,8 @@ import { GlobeControls } from '@/lib/interfaces/globe.interface';
 import { RightControls } from '@/components/sections/home/RightControls';
 import { FiltersPanel } from '@/components/sections/home/FiltersPanel';
 import ArticleModal from '@/components/shared/articles/ArticleModal';
+import { TimelinePanel } from '@/components/sections/home/TimelinePanel';
+import { MAX_YEAR, MIN_YEAR } from '@/lib/constants/yearsRange';
 
 // Importaciones de componentes
 // Al desactivar el SSR, se preveen fallos con librerías pesadas de mapas y 3D.
@@ -23,9 +25,6 @@ const HomeMap = dynamic(
         ssr: false,
     }
 );
-const Timeline = dynamic(() => import('@/components/sections/home/Timeline'), {
-    ssr: false,
-});
 
 const SettingsModal = dynamic(
     () =>
@@ -35,9 +34,6 @@ const SettingsModal = dynamic(
     { ssr: false }
 );
 
-const MIN_YEAR = -35000;
-const MAX_YEAR = parseInt(new Date().getFullYear().toLocaleString());
-
 export default function Home() {
     // Custom hooks
     const { settings, setSettings, saveSettings } = useSettings();
@@ -46,6 +42,7 @@ export default function Home() {
 
     // Estados de UI puramente locales
     const [showFilters, setShowFilters] = useState(false);
+    const [showTimeline, setShowTimeline] = useState(false);
     const [showMap, setShowMap] = useState(false);
     const [showSettings, setShowSettings] = useState(false);
     const [isPaused, setIsPaused] = useState(false);
@@ -95,8 +92,6 @@ export default function Home() {
                             filters={filters}
                             setFilters={setFilters}
                             setSelectedYearRange={setSelectedYearRange}
-                            minYear={MIN_YEAR}
-                            maxYear={MAX_YEAR}
                             showFilters={showFilters}
                             setShowFilters={setShowFilters}
                             dateFormat={settings.display.dateFormat as any}
@@ -110,12 +105,12 @@ export default function Home() {
                     />
 
                     {settings.display.showTimeline && (
-                        <Timeline
+                        <TimelinePanel
                             selectedYearRange={selectedYearRange}
                             setSelectedYearRange={setSelectedYearRange}
-                            minYear={MIN_YEAR}
-                            maxYear={MAX_YEAR}
                             dateFormat={settings.display.dateFormat as any}
+                            showTimeline={showTimeline}
+                            setShowTimeline={setShowTimeline}
                         />
                     )}
                 </div>

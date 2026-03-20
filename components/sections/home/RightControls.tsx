@@ -23,7 +23,8 @@ export function RightControls({
             <div className="pointer-events-auto z-20">
                 <Button
                     onClick={handleSettingsClick}
-                    className="hover:text-accent size-11"
+                    variant="control"
+                    size="icon-lg"
                 >
                     <Settings className="size-5.5" />
                 </Button>

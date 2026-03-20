@@ -46,25 +46,24 @@ export function SettingsModal({
                 }}
                 onClick={e => e.stopPropagation()}
             >
-                <div className="bg-background/80 border-border/50 pointer-events-auto flex flex-col overflow-y-auto rounded-md border shadow-lg backdrop-blur-md">
-                    <div className="bg-primary/90 border-border/10 flex shrink-0 items-center justify-between border-b px-4 py-2">
-                        <div className="text-primary-foreground flex items-center gap-2">
-                            <span className="text-lg font-semibold tracking-wider">
-                                Configuración
-                            </span>
-                        </div>
-                        <button
+                <div className="bg-background/80 pointer-events-auto flex flex-col overflow-y-auto rounded-md border shadow-lg backdrop-blur-md">
+                    <div className="bg-linear-to-br from-primary to-secondary flex shrink-0 items-center justify-between border-b pl-4 pr-1.5 py-1">
+                        <span className="text-md font-semibold">
+                            Configuración
+                        </span>
+                        <Button
                             onClick={onClose}
-                            className="text-primary-foreground/90 cursor-pointer rounded-md p-1 transition-colors hover:bg-white/10 hover:text-accent"
+                            variant="ghost"
+                            size="icon-sm"
                         >
-                            <X className="h-5 w-5" />
-                        </button>
+                            <X className="size-5" />
+                        </Button>
                     </div>
                     <div className="bg-primary/30 flex min-h-0 flex-1 flex-col gap-3 p-4 space-y-3">
                         {/* Ajustes del mundo */}
-                        <section className="space-y-3">
+                        <section className="space-y-2">
                             <div className="flex items-center justify-between">
-                                <h3 className="text-xs uppercase font-semibold tracking-wider">
+                                <h3 className="text-xs uppercase font-semibold">
                                     Globo terrestre
                                 </h3>
                                 <Button
@@ -77,7 +76,7 @@ export function SettingsModal({
                                 </Button>
                             </div>
 
-                            <div className="space-y-6">
+                            <div>
                                 <label
                                     htmlFor="rotationSpeed"
                                     className="mb-2 block text-sm text-muted-foreground"
@@ -104,7 +103,7 @@ export function SettingsModal({
                                         }
                                         className="w-full cursor-pointer accent-accent/80"
                                     />
-                                    <span className="w-12 text-sm text-muted-foreground">
+                                    <span className="w-12 text-xs text-muted-foreground font-mono">
                                         {settings.visual.rotationSpeed.toFixed(
                                             4
                                         )}
@@ -115,8 +114,8 @@ export function SettingsModal({
 
                         {/* Ajustes de visualización */}
                         <section>
-                            <div className="mb-3 flex items-center justify-between">
-                                <h3 className="text-xs uppercase font-semibold tracking-wider">
+                            <div className="flex items-center justify-between mb-1">
+                                <h3 className="text-xs uppercase font-semibold">
                                     Elementos Visibles
                                 </h3>
                                 <Button
@@ -128,7 +127,7 @@ export function SettingsModal({
                                     Default
                                 </Button>
                             </div>
-                            <div className="space-y-4 rounded-md bg-background/50 p-4">
+                            <div className="space-y-2 rounded-md bg-background/50 p-3">
                                 <div className="flex items-center gap-3">
                                     <input
                                         type="checkbox"
@@ -223,13 +222,14 @@ export function SettingsModal({
                                     </label>
                                 </div>
                             </div>
-
                         </section>
+
+                        {/* Ajustes de visualización */}
                         <section>
-                            <span className="text-xs uppercase font-semibold tracking-wider">
+                            <span className="text-xs uppercase font-semibold">
                                 Formato de fechas
                             </span>
-                            <div className="flex gap-4 bg-background/50 p-4 rounded-md mt-3">
+                            <div className="flex gap-4 bg-background/50 p-3 rounded-md mt-2">
                                 <label className="flex items-center gap-2">
                                     <input
                                         type="radio"

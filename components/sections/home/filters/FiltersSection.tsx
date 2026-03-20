@@ -17,7 +17,7 @@ export function FiltersSection({
     toggleFilter,
 }: FiltersSectionProps) {
     return (
-        <div className="custom-scrollbar flex-1 overflow-y-auto">
+        <div className="custom-scrollbar flex-1 overflow-y-auto pr-2">
             <Accordion
                 type="multiple"
                 defaultValue={['etapas', 'eventos', 'regiones']}

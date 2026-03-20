@@ -9,6 +9,7 @@ import { YearRangeSelector } from './filters/YearRangeSelector';
 import { ActiveFiltersChips } from './filters/ActiveFiltersChips';
 import { FiltersSection } from './filters/FiltersSection';
 import { FiltersProps } from '@/lib/interfaces/filters.interface';
+import { MAX_YEAR, MIN_YEAR } from '@/lib/constants/yearsRange';
 
 const categories = getAllHistoricalPeriodNames();
 
@@ -26,8 +27,6 @@ export default function Filters({
     filters,
     setFilters,
     setSelectedYearRange,
-    minYear,
-    maxYear,
     dateFormat,
 }: FiltersProps) {
     const [tags, setTags] = useState<Tag[]>([]);
@@ -65,12 +64,12 @@ export default function Filters({
     const clearFilters = () => {
         setFilters({
             search: '',
-            yearRange: [minYear, maxYear],
+            yearRange: [MIN_YEAR, MAX_YEAR],
             categories: [],
             eventTypes: [],
             regions: [],
         });
-        setSelectedYearRange([minYear, maxYear]);
+        setSelectedYearRange([MIN_YEAR, MAX_YEAR]);
     };
 
     const handleYearRangeChange = (range: [number, number]) => {
@@ -94,12 +93,12 @@ export default function Filters({
     ];
 
     return (
-        <div className="bg-background/80 border-border/50 pointer-events-auto flex h-[calc(100vh-120px)] w-[280px] flex-col overflow-y-auto rounded-md border shadow-lg backdrop-blur-md lg:w-xs 2xl:w-sm 2xl:overflow-hidden">
+        <div className="bg-background/80 pointer-events-auto flex h-[calc(100vh-120px)] w-[280px] flex-col overflow-y-auto rounded-md border shadow-lg backdrop-blur-xl lg:w-xs 2xl:w-sm 2xl:overflow-hidden">
             {/* Header */}
-            <div className="bg-primary/90 border-border/10 flex shrink-0 items-center justify-between border-b px-4 py-2">
+            <div className="bg-linear-to-br from-primary to-secondary flex shrink-0 items-center justify-between border-b px-4 py-2">
                 <div className="text-primary-foreground flex items-center gap-2">
                     <Filter className="h-4 w-4" />
-                    <span className="text-lg font-semibold tracking-wider">
+                    <span className="text-md font-semibold tracking-wider">
                         Filtros
                     </span>
                 </div>
@@ -114,9 +113,9 @@ export default function Filters({
             </div>
 
             {/* Main Content Area */}
-            <div className="bg-primary/30 flex min-h-0 flex-1 flex-col gap-3 p-4">
+            <div className="bg-primary/10 flex min-h-0 flex-1 flex-col gap-3 p-4 pr-2">
                 {/* Search & Year Range */}
-                <div className="border-border/10 shrink-0 space-y-4 border-b">
+                <div className="shrink-0 space-y-4 pr-2">
                     {/* Search */}
                     <div className="relative">
                         <Input
@@ -129,15 +128,13 @@ export default function Filters({
                                     search: e.target.value,
                                 }))
                             }
-                            className="bg-background/50 border-input/50 h-9 pl-9"
+                            className="bg-background h-9 pl-9 "
                         />
                         <Search className="text-muted-foreground absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2" />
                     </div>
 
                     {/* Year Range */}
                     <YearRangeSelector
-                        minYear={minYear}
-                        maxYear={maxYear}
                         value={filters.yearRange}
                         onChange={handleYearRangeChange}
                         dateFormat={dateFormat}

@@ -18,13 +18,13 @@ export default function ArticleCard({ article, setIsModalOpen }: ArticleCardProp
     const summary = article.templates?.[0]?.text_areas?.[0]?.content || 'Sin contenido disponible';
 
     return (
-        <Card className='group relative overflow-hidden py-8 px-3 border-none'>
+        <Card className='group relative overflow-hidden lg:py-8 lg:px-3 border-none'>
             <div className="absolute inset-0 bg-radial-[at_top_left] from-secondary/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
             <div className="absolute -bottom-52 -right-44 w-96 aspect-square rounded-full border-none
                         flex gap-2 px-32 py-36 text-xs cursor-pointer bg-secondary/60 text-accent 
                         group-hover:scale-150 lg:group-hover:scale-145 2xl:group-hover:scale-155 group-hover:bg-secondary transition-all duration-300"></div>
             <CardHeader className='z-10'>
-                <CardTitle className="text-2xl font-bold mb-3 bg-clip-text text-transparent bg-linear-to-r from-white to-white  group-hover:from-accent group-hover:via-white group-hover:to-white/70 transition-colors duration-300">
+                <CardTitle className="text-xl lg:text-2xl font-bold mb-3 bg-clip-text text-transparent bg-linear-to-r from-white to-white  group-hover:from-accent group-hover:via-white group-hover:to-white/70 transition-colors duration-300">
                     {article.titulo}
                 </CardTitle>
                 <div className="flex justify-between items-start gap-4">

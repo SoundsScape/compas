@@ -3,7 +3,15 @@ import { getArticles } from '@/lib/services/articleService';
 import { Article } from '@/lib/interfaces/article.interface';
 import { getHistoricalPeriod } from '@/lib/utils/historicalPeriods';
 
-export function useArticles(filters: any) {
+export interface ArticleFilters {
+    search: string;
+    yearRange: [number, number];
+    categories: string[];
+    eventTypes: string[];
+    regions: string[];
+}
+
+export function useArticles(filters: ArticleFilters) {
     const [articles, setArticles] = useState<Article[]>([]);
     const [loading, setLoading] = useState(true);
 
@@ -33,17 +41,20 @@ export function useArticles(filters: any) {
                 return false;
 
             // Filtro por búsqueda de texto
-            if (
-                filters.search &&
-                !article.titulo
+            if (filters.search) {
+                const searchLower = filters.search.toLowerCase();
+                const matchesTitle = article.titulo.toLowerCase().includes(searchLower);
+                const matchesAuthorName = article.nombre_autor?.toLowerCase().includes(searchLower) || false;
+                const matchesAuthorSurname = article.apellidos_autor?.toLowerCase().includes(searchLower) || false;
+                const matchesContent = (article.templates?.[0]?.text_areas?.[0]?.content || '')
                     .toLowerCase()
-                    .includes(filters.search.toLowerCase()) &&
-                !(article.templates?.[0]?.text_areas?.[0]?.content || '')
-                    .toLowerCase()
-                    .includes(filters.search.toLowerCase())
-            ) {
-                return false;
+                    .includes(searchLower);
+
+                if (!matchesTitle && !matchesAuthorName && !matchesAuthorSurname && !matchesContent) {
+                    return false;
+                }
             }
+
             // Filtro por categoría (período histórico)
             if (
                 filters.categories.length > 0 &&

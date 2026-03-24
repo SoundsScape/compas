@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Shield, Plus, Loader2 } from "lucide-react"
 import { getRoles, deleteRole } from "@/lib/services/roleService"
 import DashboardPagination from "@/components/shared/Pagination"
+import DashboardHeader from "@/components/sections/dashboard/DashboardHeader"
 
 export default function RolesDashboardPage() {
     const [roles, setRoles] = useState<RoleData[]>([])
@@ -83,7 +84,11 @@ export default function RolesDashboardPage() {
     return (
         <div className="flex flex-col gap-9 min-w-0">
 
-            <div className="flex justify-between items-center">
+            <div className="flex flex-col justify-between items-start gap-8">
+                <DashboardHeader
+                    title="Roles"
+                    description="Gestiona los roles de tus usuarios"
+                />
                 <Button onClick={handleCreate}>
                     <Plus className="size-5" />
                     Crear Rol

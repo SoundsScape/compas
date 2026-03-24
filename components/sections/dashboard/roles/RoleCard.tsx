@@ -14,8 +14,8 @@ interface RoleCardProps {
 
 export default function RoleCard({ role, onEdit, onDelete }: RoleCardProps) {
     return (
-        <div className="group relative flex flex-col p-6 rounded-md border bg-linear-to-br from-primary to-primary/20 backdrop-blur-md hover:bg-primary/50 hover:border-muted hover:shadow-xl hover:shadow-primary/5 transition-all duration-300 overflow-hidden">
-            <div className="absolute inset-0 bg-radial-[at_top_left] from-secondary/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
+        <div className="group relative flex flex-col p-6 rounded-md border border-l-6 border-muted hover:border-secondary bg-linear-to-l from-primary to-primary/20 backdrop-blur-md hover:bg-primary/50 transition-all duration-300 overflow-hidden">
+            <div className="absolute inset-0 bg-radial-[at_top_right] from-secondary/60 via-transparent to-transparent hover:border-accent border opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
 
             <div className="flex justify-between items-start mb-4">
                 <div className="flex items-center gap-3">
@@ -51,11 +51,11 @@ export default function RoleCard({ role, onEdit, onDelete }: RoleCardProps) {
                     description="¿Estás seguro de que quieres eliminar este rol? Esta acción no se puede deshacer."
                     onConfirm={() => onDelete(role.id)}
                 >
-                    <Button variant="ghost" className="border border-red-500/40 text-red-500/90 bg-red-500/10 rounded-sm hover:text-red-500 hover:bg-red-400/20 transition-colors z-10" title="Eliminar Rol">
+                    <Button variant="ghost" size="sm" className="border border-red-500/40 text-red-500/90 bg-red-500/10 rounded-sm hover:text-red-500 hover:bg-red-400/20 transition-colors z-10" title="Eliminar Rol">
                         <Trash2 className="size-4" /> Eliminar
                     </Button>
                 </ConfirmationModal>
-                <Button variant="secondary" onClick={() => onEdit(role)} className="" title="Editar Rol">
+                <Button variant="secondary" size="sm" onClick={() => onEdit(role)} className="" title="Editar Rol">
                     <Edit className="size-4" /> Editar
                 </Button>
             </div>

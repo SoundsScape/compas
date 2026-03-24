@@ -11,6 +11,7 @@ import { Tag } from "@/lib/interfaces/tag.interface"
 import DashboardPagination from "@/components/shared/Pagination"
 import { toast } from "sonner"
 import DashboardHeader from "@/components/sections/dashboard/DashboardHeader"
+import Loader from "@/components/shared/Loader"
 
 export default function TagsDashboardPage() {
     const [tags, setTags] = useState<Tag[]>([])
@@ -70,14 +71,6 @@ export default function TagsDashboardPage() {
         return tags.slice((currentPage - 1) * limit, currentPage * limit)
     }, [tags, currentPage, limit])
 
-    if (loading && tags.length === 0) {
-        return (
-            <div className="flex h-[60vh] items-center justify-center">
-                <Loader2 className="size-8 animate-spin text-accent" />
-            </div>
-        )
-    }
-
     const totalPages = Math.ceil(totalItems / limit)
 
     return (
@@ -104,9 +97,7 @@ export default function TagsDashboardPage() {
             </div>
 
             {loading ? (
-                <div className="flex h-[30vh] items-center justify-center w-full">
-                    <Loader2 className="size-8 animate-spin text-primary" />
-                </div>
+                <Loader />
             ) : mappedTags.length > 0 ? (
                 <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4">
                     {mappedTags.map(tag => (

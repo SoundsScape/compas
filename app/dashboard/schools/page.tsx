@@ -10,6 +10,7 @@ import { SchoolResponseObject } from "@/lib/interfaces/school.interface"
 import DashboardPagination from "@/components/shared/Pagination"
 import { toast } from "sonner"
 import DashboardHeader from "@/components/sections/dashboard/DashboardHeader"
+import Loader from "@/components/shared/Loader"
 
 export default function SchoolsDashboardPage() {
     const [schools, setSchools] = useState<SchoolResponseObject[]>([])
@@ -68,14 +69,6 @@ export default function SchoolsDashboardPage() {
         return schools.slice((currentPage - 1) * limit, currentPage * limit)
     }, [schools, currentPage, limit])
 
-    if (loading && schools.length === 0) {
-        return (
-            <div className="flex h-[60vh] items-center justify-center">
-                <Loader2 className="size-8 animate-spin text-accent" />
-            </div>
-        )
-    }
-
     const totalPages = Math.ceil(totalItems / limit)
 
     return (
@@ -97,9 +90,7 @@ export default function SchoolsDashboardPage() {
             </div>
 
             {loading ? (
-                <div className="flex h-[30vh] items-center justify-center w-full bg-background/20 rounded-md">
-                    <Loader2 className="size-8 animate-spin text-primary" />
-                </div>
+                <Loader />
             ) : mappedSchools.length > 0 ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-6">
                     {mappedSchools.map(school => (

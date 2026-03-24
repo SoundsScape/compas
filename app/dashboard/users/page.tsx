@@ -10,6 +10,7 @@ import { User } from "@/lib/interfaces/user.interface"
 import DashboardPagination from "@/components/shared/Pagination"
 import UserModal from "@/components/sections/dashboard/users/UserModal"
 import DashboardHeader from "@/components/sections/dashboard/DashboardHeader"
+import Loader from "@/components/shared/Loader"
 
 export default function UsersDashboardPage() {
     const [users, setUsers] = useState<User[]>([])
@@ -79,14 +80,6 @@ export default function UsersDashboardPage() {
         }))
     }, [users, currentPage, limit])
 
-    if (loading) {
-        return (
-            <div className="flex h-[60vh] items-center justify-center">
-                <Loader2 className="size-8 animate-spin text-accent" />
-            </div>
-        )
-    }
-
     const totalPages = Math.ceil(totalItems / limit)
 
     return (
@@ -131,11 +124,15 @@ export default function UsersDashboardPage() {
                 )}
             </div>
             <div className="min-w-0">
+                {loading ? (
+                    <Loader />
+                ) : (
                 <UsersTable
-                    users={mappedUsers}
-                    onEdit={handleEdit}
-                    onDeleteSuccess={fetchUsers}
+                    users = { mappedUsers }
+                    onEdit = { handleEdit }
+                    onDeleteSuccess = { fetchUsers }
                 />
+            )}
             </div>
             <UserModal
                 isOpen={isModalOpen}

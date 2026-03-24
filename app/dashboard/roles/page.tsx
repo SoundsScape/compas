@@ -4,10 +4,11 @@ import { useState, useEffect, useMemo } from "react"
 import RoleCard from "@/components/sections/dashboard/roles/RoleCard"
 import RoleModal, { RoleData } from "@/components/sections/dashboard/roles/RoleModal"
 import { Button } from "@/components/ui/button"
-import { Shield, Plus, Loader2 } from "lucide-react"
+import { Shield, Plus } from "lucide-react"
 import { getRoles, deleteRole } from "@/lib/services/roleService"
 import DashboardPagination from "@/components/shared/Pagination"
 import DashboardHeader from "@/components/sections/dashboard/DashboardHeader"
+import Loader from "@/components/shared/Loader"
 
 export default function RolesDashboardPage() {
     const [roles, setRoles] = useState<RoleData[]>([])
@@ -71,14 +72,6 @@ export default function RolesDashboardPage() {
         return roles.slice((currentPage - 1) * limit, currentPage * limit)
     }, [roles, currentPage, limit])
 
-    if (loading && roles.length === 0) {
-        return (
-            <div className="flex h-[60vh] items-center justify-center">
-                <Loader2 className="size-8 animate-spin text-accent" />
-            </div>
-        )
-    }
-
     const totalPages = Math.ceil(totalItems / limit)
 
     return (
@@ -103,9 +96,7 @@ export default function RolesDashboardPage() {
             </div>
 
             {loading ? (
-                <div className="flex h-[30vh] items-center justify-center w-full bg-background/20 rounded-xl">
-                    <Loader2 className="size-8 animate-spin text-primary" />
-                </div>
+                <Loader />
             ) : mappedRoles.length > 0 ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-6">
                     {mappedRoles.map(role => (

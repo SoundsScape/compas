@@ -9,6 +9,7 @@ import { Article } from "@/lib/interfaces/article.interface"
 import DashboardPagination from "@/components/shared/Pagination"
 import ArticleModal from "@/components/shared/articles/ArticleModal"
 import Link from "next/link"
+import Loader from "@/components/shared/Loader"
 
 export default function MyArticles() {
     const [articles, setArticles] = useState<Article[]>([])
@@ -94,14 +95,6 @@ export default function MyArticles() {
         }))
     }, [articles])
 
-    if (loading && isFirstLoad) {
-        return (
-            <div className="flex h-[60vh] items-center justify-center">
-                <Loader2 className="size-8 animate-spin text-accent" />
-            </div>
-        )
-    }
-
     const totalPages = Math.ceil(totalItems / limit);
 
     return (
@@ -137,13 +130,17 @@ export default function MyArticles() {
                 )}
             </div>
             <div className="min-w-0">
-                <ArticlesTable
-                    articles={mappedArticles}
-                    setIsModalOpen={setIsModalOpen}
-                    onDeleteSuccess={() => fetchArticles(currentPage)}
-                    userRole={userRole}
-                    isLoading={loading}
-                />
+                {loading && isFirstLoad ? (
+                    <Loader />
+                ) : (
+                    <ArticlesTable
+                        articles={mappedArticles}
+                        setIsModalOpen={setIsModalOpen}
+                        onDeleteSuccess={() => fetchArticles(currentPage)}
+                        userRole={userRole}
+                        isLoading={loading}
+                    />
+                )}
             </div>
             <ArticleModal
                 isModalOpen={isModalOpen}

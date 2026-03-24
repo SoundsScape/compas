@@ -10,6 +10,7 @@ import DashboardPagination from "@/components/shared/Pagination"
 import ArticleModal from "@/components/shared/articles/ArticleModal"
 import Link from "next/link"
 import DashboardHeader from "@/components/sections/dashboard/DashboardHeader"
+import Loader from "@/components/shared/Loader"
 
 export default function ArticlesPage() {
     const [articles, setArticles] = useState<Article[]>([])
@@ -91,14 +92,6 @@ export default function ArticlesPage() {
         }))
     }, [articles])
 
-    if (loading && isFirstLoad) {
-        return (
-            <div className="flex h-[60vh] items-center justify-center">
-                <Loader2 className="size-8 animate-spin text-accent" />
-            </div>
-        )
-    }
-
     const totalPages = Math.ceil(totalItems / limit);
 
     return (
@@ -143,6 +136,9 @@ export default function ArticlesPage() {
                 )}
             </div>
             <div className="min-w-0">
+                {loading && isFirstLoad ? (
+                    <Loader />
+                ) : (
                 <ArticlesTable
                     articles={mappedArticles}
                     setIsModalOpen={setIsModalOpen}
@@ -150,6 +146,7 @@ export default function ArticlesPage() {
                     userRole={userRole}
                     isLoading={loading}
                 />
+                )}
             </div>
             <ArticleModal
                 isModalOpen={isModalOpen}

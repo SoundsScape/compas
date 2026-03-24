@@ -27,7 +27,7 @@ export default function DashboardPagination({ currentPage, totalPages, onPageCha
                                 e.preventDefault()
                                 if (currentPage > 1) onPageChange(currentPage - 1)
                             }}
-                            className={currentPage === 1 ? "pointer-events-none opacity-50" : "cursor-pointer hover:bg-primary hover:text-primary-foreground"}
+                            className={currentPage === 1 ? "pointer-events-none opacity-50" : "cursor-pointer hover:bg-secondary hover:text-secondary-foreground"}
                         />
                     </PaginationItem>
 
@@ -47,7 +47,7 @@ export default function DashboardPagination({ currentPage, totalPages, onPageCha
                                             e.preventDefault()
                                             onPageChange(pageNumber)
                                         }}
-                                        className={`cursor-pointer ${currentPage === pageNumber ? "bg-accent text-accent-foreground" : "hover:bg-primary hover:text-primary-foreground"}`}
+                                        className={`cursor-pointer ${currentPage === pageNumber ? "bg-accent text-accent-foreground" : "hover:bg-secondary hover:text-secondary-foreground"}`}
                                     >
                                         {pageNumber}
                                     </PaginationLink>
@@ -80,7 +80,7 @@ export default function DashboardPagination({ currentPage, totalPages, onPageCha
                                 e.preventDefault()
                                 if (currentPage < totalPages) onPageChange(currentPage + 1)
                             }}
-                            className={currentPage === totalPages ? "pointer-events-none opacity-50" : "cursor-pointer hover:bg-primary hover:text-primary-foreground"}
+                            className={currentPage === totalPages ? "pointer-events-none opacity-50" : "cursor-pointer hover:bg-secondary hover:text-secondary-foreground"}
                         />
                     </PaginationItem>
                 </PaginationContent>

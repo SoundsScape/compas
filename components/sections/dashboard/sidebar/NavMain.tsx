@@ -27,7 +27,7 @@ export function NavMain({
     const pathname = usePathname()
 
     return (
-        <SidebarGroup className="">
+        <SidebarGroup className="pt-3">
             <SidebarGroupLabel className="mb-1">{label}</SidebarGroupLabel>
             <SidebarMenu>
                 {items.map((item) => {
@@ -45,7 +45,7 @@ export function NavMain({
                     )
                 })}
             </SidebarMenu>
-            <Separator className="border-b border-border mt-3" />
+            <Separator className="mt-3" />
         </SidebarGroup>
     )
 }

@@ -12,11 +12,13 @@ import {
     SidebarMenuButton,
     SidebarMenuItem,
     SidebarRail,
+    SidebarTrigger,
 } from "@/components/ui/sidebar"
 import { NavMain } from "./NavMain"
 import { NavUser } from "./NavUser"
 import Link from "next/link"
 import { useEffect } from "react";
+import { Separator } from "@/components/ui/separator";
 
 const data = {
     navItems: [
@@ -63,6 +65,12 @@ const data = {
             url: "/home",
             icon: Globe,
             roles: ["student", "teacher", "admin", "superadmin"]
+        },
+        {
+            title: "Artículos Públicos",
+            url: "/articles",
+            icon: FileText,
+            roles: ["student", "teacher", "admin", "superadmin"]
         }
     ]
 }
@@ -88,23 +96,25 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
     return (
         <Sidebar collapsible="icon" {...props}>
+            <SidebarTrigger className="absolute -right-9 top-2 z-50 md:flex hidden" />
             <SidebarHeader>
-                <SidebarMenu className="border-b border-border">
-                    <SidebarMenuItem>
+                <SidebarMenu>
+                    <SidebarMenuItem className="group-data-[collapsible=icon]:py-6">
                         <SidebarMenuButton className="h-fit rounded-none py-6 hover:bg-transparent" asChild>
-                            <Link href="/home" className="w-full flex flex-col justify-center items-center gap-2">
+                            <Link href="/home" className="w-full flex flex-col justify-center items-center group-data-[collapsible=icon]:overflow-visible">
                                 <Image
                                     src="/logo.png"
-                                    alt="White Logo"
+                                    alt="Logo"
                                     width={42}
                                     height={42}
-                                    className="w-14 drop-shadow-[0px_0px_10px_rgba(0,0,0,0.9)] transition-all duration-500 hover:cursor-pointer hover:drop-shadow-[0px_0px_10px_rgba(255,255,255,0.9)]"
+                                    className="w-14 group-data-[collapsible=icon]:w-10 group-data-[collapsible=icon]:max-w-none drop-shadow-[0px_0px_10px_rgba(0,0,0,0.9)] transition-all duration-500 hover:cursor-pointer hover:drop-shadow-[0px_0px_10px_rgba(255,255,255,0.9)]"
                                 />
                             </Link>
                         </SidebarMenuButton>
                     </SidebarMenuItem>
                 </SidebarMenu>
             </SidebarHeader>
+            <Separator />
             <SidebarContent>
                 {filteredNavMain.length > 0 && (
                     <NavMain label="Gestión" items={filteredNavMain} />
@@ -113,7 +123,8 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                     <NavMain label="Sistema" items={filteredSystem} />
                 )}
             </SidebarContent>
-            <SidebarFooter className="border-t border-border p-0">
+            <Separator />
+            <SidebarFooter>
                 <NavUser />
             </SidebarFooter>
             <SidebarRail />

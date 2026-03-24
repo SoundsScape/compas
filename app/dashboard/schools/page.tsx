@@ -9,6 +9,7 @@ import { getSchools, deleteSchool } from "@/lib/services/schoolService"
 import { SchoolResponseObject } from "@/lib/interfaces/school.interface"
 import DashboardPagination from "@/components/shared/Pagination"
 import { toast } from "sonner"
+import DashboardHeader from "@/components/sections/dashboard/DashboardHeader"
 
 export default function SchoolsDashboardPage() {
     const [schools, setSchools] = useState<SchoolResponseObject[]>([])
@@ -80,7 +81,8 @@ export default function SchoolsDashboardPage() {
     return (
         <div className="flex flex-col gap-9 min-w-0">
 
-            <div className="flex justify-between items-center">
+            <div className="flex flex-col justify-between items-start gap-8">
+                <DashboardHeader title="Escuelas" description="Gestiona los centros educativos. Crea, edita o elimina centros educativos." />
                 <Button onClick={handleCreate} >
                     <Plus className="size-5" />
                     Registrar Centro

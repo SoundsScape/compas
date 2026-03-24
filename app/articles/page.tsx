@@ -66,7 +66,7 @@ export default function ArticlesPage() {
                     <div className=''>
                         <Link
                             href="/articles/new"
-                            className='group inline-flex items-center justify-center gap-2 w-44 bg-accent text-accent-foreground font-bold px-3 py-2 rounded-sm hover:-translate-y-1 hover:shadow-[0_0_20px_rgba(255,237,0,0.3)] transition-all duration-300'
+                            className='group inline-flex items-center justify-center gap-2 w-44 bg-accent text-accent-foreground font-medium px-3 py-2 rounded-sm hover:-translate-y-1 hover:shadow-[0_0_20px_rgba(255,237,0,0.3)] transition-all duration-300'
                         >
                             <Plus className='size-5 group-hover:rotate-90 transition-transform duration-300' />
                             Crear Artículo

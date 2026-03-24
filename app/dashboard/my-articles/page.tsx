@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useMemo } from "react"
 import { StatsCard } from "@/components/sections/dashboard/StatsCard"
-import { ArticlesTable } from "@/components/sections/dashboard/ArticlesTable"
+import { ArticlesTable } from "@/components/sections/dashboard/articles/ArticlesTable"
 import { FileText, CheckCircle2, Clock, Plus, Loader2 } from "lucide-react"
 import { getMyArticles } from "@/lib/services/articleService"
 import { Article } from "@/lib/interfaces/article.interface"

@@ -30,7 +30,7 @@ export function UsersTable({ users, onEdit, onDeleteSuccess }: UsersTableProps) 
     return (
         <div className="relative rounded-md border bg-background/80 backdrop-blur-xl overflow-x-auto custom-scrollbar w-full">
             <Table >
-                <TableHeader className="h-16 text-xl bg-linear-to-r from-primary to-transparent">
+                <TableHeader className="h-12 text-lg bg-linear-to-r from-secondary to-primary">
                     <TableRow className="hover:bg-transparent border">
                         <TableHead className="text-center w-16">ID</TableHead>
                         <TableHead className="w-16 md:w-32 truncate">Usuario</TableHead>

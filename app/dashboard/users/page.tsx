@@ -2,13 +2,14 @@
 
 import { useState, useEffect, useMemo } from "react"
 import { StatsCard } from "@/components/sections/dashboard/StatsCard"
-import { UsersTable } from "@/components/sections/dashboard/UsersTable"
+import { UsersTable } from "@/components/sections/dashboard/users/UsersTable"
 import { Button } from "@/components/ui/button"
 import { Users, UserCheck, GraduationCap, Plus, Loader2 } from "lucide-react"
 import { getUsers } from "@/lib/services/userService"
 import { User } from "@/lib/interfaces/user.interface"
 import DashboardPagination from "@/components/shared/Pagination"
-import UserModal from "@/components/features/dashboard/UserModal"
+import UserModal from "@/components/sections/dashboard/users/UserModal"
+import DashboardHeader from "@/components/sections/dashboard/DashboardHeader"
 
 export default function UsersDashboardPage() {
     const [users, setUsers] = useState<User[]>([])
@@ -89,29 +90,34 @@ export default function UsersDashboardPage() {
     const totalPages = Math.ceil(totalItems / limit)
 
     return (
-        <div className="flex flex-col gap-9 min-w-0">
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                <StatsCard
-                    title="Total de Usuarios"
-                    value={stats.total}
-                    icon={Users}
+        <div className="flex flex-col gap-6 xl:gap-8 min-w-0 bg-radial to-75% from-primary to-background relative">
+            <div className="flex flex-col gap-5 xl:gap-8">
+                <DashboardHeader
+                    title="Usuarios"
+                    description="Gestiona los usuarios del sistema. Crea, edita o elimina usuarios."
                 />
-                <StatsCard
-                    title="Profesores Activos"
-                    value={stats.teachers}
-                    icon={UserCheck}
-                />
-                <StatsCard
-                    title="Alumnos Activos"
-                    value={stats.students}
-                    icon={GraduationCap}
-                />
-            </div>
+                <div className="w-full grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-6">
+                    <StatsCard
+                        title="Total de Usuarios"
+                        value={stats.total}
+                        icon={Users}
+                    />
+                    <StatsCard
+                        title="Profesores Activos"
+                        value={stats.teachers}
+                        icon={UserCheck}
+                    />
+                    <StatsCard
+                        title="Alumnos Activos"
+                        value={stats.students}
+                        icon={GraduationCap}
+                    />
+                </div>
 
+            </div>
             <div className="flex justify-between items-center">
                 <Button
                     onClick={handleCreate}
-                    className='inline-flex items-center gap-2 bg-accent text-accent-foreground font-medium px-4 py-2 rounded-md'
                 >
                     <Plus className="size-5" />
                     Crear Usuario
@@ -124,7 +130,6 @@ export default function UsersDashboardPage() {
                     />
                 )}
             </div>
-
             <div className="min-w-0">
                 <UsersTable
                     users={mappedUsers}
@@ -132,7 +137,6 @@ export default function UsersDashboardPage() {
                     onDeleteSuccess={fetchUsers}
                 />
             </div>
-
             <UserModal
                 isOpen={isModalOpen}
                 onClose={() => setIsModalOpen(false)}

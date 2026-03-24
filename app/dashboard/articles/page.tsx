@@ -108,35 +108,32 @@ export default function ArticlesPage() {
                     title="Todos los Artículos"
                     description="Aquí puedes ver todos los artículos registrados en el sistema."
                 />
-                <div className="flex flex-col xl:flex-row justify-between items-end k gap-6">
-                    <div>
-                        <Link href="/articles/new"
-                            className='group inline-flex items-center justify-center gap-2 w-44 bg-accent text-accent-foreground font-medium px-3 py-2 rounded-sm hover:-translate-y-1 hover:shadow-[0_0_20px_rgba(255,237,0,0.3)] transition-all duration-300'
-                        >
-                            <Plus className='size-5 group-hover:rotate-90 transition-transform duration-300' />
-                            Crear Artículo
-                        </Link>
-                    </div>
-                    <div className="w-full xl:max-w-3/5 grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-6">
-                        <StatsCard
-                            title="Total"
-                            value={stats.total}
-                            icon={FileText}
-                        />
-                        <StatsCard
-                            title="Validados"
-                            value={stats.validated}
-                            icon={CheckCircle2}
-                        />
-                        <StatsCard
-                            title="Pendientes"
-                            value={stats.pending}
-                            icon={Clock}
-                        />
-                    </div>
+
+                <div className="w-full grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-6">
+                    <StatsCard
+                        title="Total"
+                        value={stats.total}
+                        icon={FileText}
+                    />
+                    <StatsCard
+                        title="Validados"
+                        value={stats.validated}
+                        icon={CheckCircle2}
+                    />
+                    <StatsCard
+                        title="Pendientes"
+                        value={stats.pending}
+                        icon={Clock}
+                    />
                 </div>
             </div>
-            <div className="flex justify-end items-center">
+            <div className="flex justify-between items-center">
+                <Link href="/articles/new"
+                    className='group inline-flex items-center justify-center gap-2 w-44 bg-accent text-accent-foreground font-medium px-3 py-2 rounded-sm hover:-translate-y-1 hover:shadow-[0_0_20px_rgba(255,237,0,0.3)] transition-all duration-300'
+                >
+                    <Plus className='size-5 group-hover:rotate-90 transition-transform duration-300' />
+                    Crear Artículo
+                </Link>
                 {totalItems > 0 && (
                     <DashboardPagination
                         currentPage={currentPage}

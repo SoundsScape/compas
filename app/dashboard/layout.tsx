@@ -21,18 +21,8 @@ export default function DashboardLayout({
         <SidebarProvider>
             <AppSidebar />
             <SidebarInset className="min-w-0">
-                <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
-                    <SidebarTrigger className="-ml-1" />
-                    <Separator orientation="vertical" className="mr-2 h-4" />
-                    <Breadcrumb>
-                        <BreadcrumbList>
-                            <BreadcrumbItem>
-                                <BreadcrumbPage>Panel de Control</BreadcrumbPage>
-                            </BreadcrumbItem>
-                        </BreadcrumbList>
-                    </Breadcrumb>
-                </header>
-                <div className="flex-1 flex flex-col p-8 min-w-0 ">
+                <SidebarTrigger className="lg:hidden absolute top-4 left-4 z-50 bg-background border shadow-md" />
+                <div className="flex-1 flex flex-col p-6 md:p-8 lg:p-12 min-w-0 ">
                     {children}
                 </div>
             </SidebarInset>

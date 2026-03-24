@@ -13,8 +13,8 @@ interface SchoolCardProps {
 
 export default function SchoolCard({ school, onEdit, onDelete }: SchoolCardProps) {
     return (
-        <div className="group relative flex flex-col p-6 rounded-md border bg-linear-to-br from-primary to-primary/20 backdrop-blur-md hover:bg-primary/50 hover:border-muted hover:shadow-xl hover:shadow-primary/5 transition-all duration-300 overflow-hidden">
-            <div className="absolute inset-0 bg-radial-[at_top_left] from-secondary/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
+        <div className="group relative flex flex-col p-6 rounded-md border bg-linear-to-b from-secondary/80 to-background border-b-6 border-muted hover:border-secondary backdrop-blur-md hover:bg-primary/50 hover:shadow-xl hover:shadow-primary/5 transition-all duration-300 overflow-hidden">
+            <div className="absolute inset-0 bg-radial-[at_top_left] from-secondary via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
             <ConfirmationModal
                 title="Eliminar Centro"
                 action="Eliminar"
@@ -27,7 +27,7 @@ export default function SchoolCard({ school, onEdit, onDelete }: SchoolCardProps
             </ConfirmationModal>
             <div className="flex justify-between items-start mb-4 relative">
                 <div className="flex items-start gap-3">
-                    <div className="p-3 rounded-md bg-muted/50 text-accent border shadow-inner group-hover:scale-110 group-hover:bg-primary/80 transition-transform duration-300">
+                    <div className="p-3 rounded-md bg-muted/50 text-accent border shadow-inner group-hover:scale-110 group-hover:bg-primary/50 transition-transform duration-300">
                         <School className="size-6" />
                     </div>
                     <div className="flex flex-col">

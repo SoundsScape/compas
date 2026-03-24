@@ -2,13 +2,14 @@
 
 import { useState, useEffect, useMemo } from "react"
 import { StatsCard } from "@/components/sections/dashboard/StatsCard"
-import { ArticlesTable } from "@/components/sections/dashboard/ArticlesTable"
+import { ArticlesTable } from "@/components/sections/dashboard/articles/ArticlesTable"
 import { FileText, CheckCircle2, Clock, Plus, Loader2 } from "lucide-react"
 import { getDashboardArticles } from "@/lib/services/articleService"
 import { Article } from "@/lib/interfaces/article.interface"
 import DashboardPagination from "@/components/shared/Pagination"
 import ArticleModal from "@/components/shared/articles/ArticleModal"
 import Link from "next/link"
+import DashboardHeader from "@/components/sections/dashboard/DashboardHeader"
 
 export default function ArticlesPage() {
     const [articles, setArticles] = useState<Article[]>([])
@@ -101,29 +102,41 @@ export default function ArticlesPage() {
     const totalPages = Math.ceil(totalItems / limit);
 
     return (
-        <div className="flex flex-col gap-9 min-w-0">
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                <StatsCard
-                    title="Total de Artículos"
-                    value={stats.total}
-                    icon={FileText}
+        <div className="flex flex-col gap-6 xl:gap-8 min-w-0 bg-radial to-75% from-primary to-background relative">
+            <div className="flex flex-col gap-3 xl:gap-8">
+                <DashboardHeader
+                    title="Todos los Artículos"
+                    description="Aquí puedes ver todos los artículos registrados en el sistema."
                 />
-                <StatsCard
-                    title="Artículos Validados"
-                    value={stats.validated}
-                    icon={CheckCircle2}
-                />
-                <StatsCard
-                    title="Pendientes de Validación"
-                    value={stats.pending}
-                    icon={Clock}
-                />
+                <div className="flex flex-col xl:flex-row justify-between items-end k gap-6">
+                    <div>
+                        <Link href="/articles/new"
+                            className='group inline-flex items-center justify-center gap-2 w-44 bg-accent text-accent-foreground font-medium px-3 py-2 rounded-sm hover:-translate-y-1 hover:shadow-[0_0_20px_rgba(255,237,0,0.3)] transition-all duration-300'
+                        >
+                            <Plus className='size-5 group-hover:rotate-90 transition-transform duration-300' />
+                            Crear Artículo
+                        </Link>
+                    </div>
+                    <div className="w-full xl:max-w-3/5 grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-6">
+                        <StatsCard
+                            title="Total"
+                            value={stats.total}
+                            icon={FileText}
+                        />
+                        <StatsCard
+                            title="Validados"
+                            value={stats.validated}
+                            icon={CheckCircle2}
+                        />
+                        <StatsCard
+                            title="Pendientes"
+                            value={stats.pending}
+                            icon={Clock}
+                        />
+                    </div>
+                </div>
             </div>
-            <div className="flex justify-between items-center">
-                <Link href="/articles/new" className='inline-flex items-center gap-2 bg-accent text-accent-foreground font-medium px-4 py-2 rounded-md'>
-                    <Plus className="size-5" />
-                    Crear Artículo
-                </Link>
+            <div className="flex justify-end items-center">
                 {totalItems > 0 && (
                     <DashboardPagination
                         currentPage={currentPage}

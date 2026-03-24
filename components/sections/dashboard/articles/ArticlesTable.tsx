@@ -30,9 +30,9 @@ interface ArticlesTableProps {
 
 export function ArticlesTable({ articles, setIsModalOpen, onDeleteSuccess, userRole, isLoading }: ArticlesTableProps) {
     return (
-        <div className={`rounded-md border bg-background/80 backdrop-blur-xl overflow-x-auto custom-scrollbar w-full transition-opacity duration-300 ${isLoading ? 'opacity-50' : 'opacity-100'}`}>
+        <div className={`rounded-md border overflow-x-auto custom-scrollbar w-full transition-opacity duration-300 ${isLoading ? 'opacity-50' : 'opacity-100'}`}>
             <Table>
-                <TableHeader className="h-16 text-xl bg-linear-to-r from-primary to-transparent">
+                <TableHeader className="h-12 text-lg bg-linear-to-r from-secondary to-primary">
                     <TableRow className="hover:bg-transparent border">
                         <TableHead className="text-center">ID</TableHead>
                         <TableHead>Título</TableHead>
@@ -45,9 +45,9 @@ export function ArticlesTable({ articles, setIsModalOpen, onDeleteSuccess, userR
                 </TableHeader>
                 <TableBody>
                     {articles.map((article) => (
-                        <TableRow key={article.id} className="border hover:from-background hover:via-primary/80 hover:to-background hover:bg-linear-to-b transition-colors text-nowrap">
+                        <TableRow key={article.id} className="border hover:from-background/70 hover:via-primary/80 hover:to-background/70 hover:bg-linear-to-b transition-colors text-nowrap">
                             <TableCell className="text-muted-foreground text-center">{article.id}</TableCell>
-                            <TableCell className="font-medium truncate">
+                            <TableCell className="truncate">
                                 <p className="max-w-48 md:max-w-full whitespace-normal line-clamp-2">{article.title}</p>
                             </TableCell>
                             <TableCell className="text-muted-foreground">
@@ -66,8 +66,8 @@ export function ArticlesTable({ articles, setIsModalOpen, onDeleteSuccess, userR
                                     {article.status}
                                 </Badge>
                             </TableCell>
-                            <TableCell className="text-muted-foreground text-center max-w-24">{article.date}</TableCell>
-                            <TableCell className="text-right w-[180px]">
+                            <TableCell className="text-muted-foreground text-center max-w-20">{article.date}</TableCell>
+                            <TableCell className="text-right w-[160px]">
                                 <div className="flex justify-end gap-2">
                                     <Button
                                         onClick={e => {
@@ -75,10 +75,10 @@ export function ArticlesTable({ articles, setIsModalOpen, onDeleteSuccess, userR
                                             setIsModalOpen(true);
                                             sessionStorage.setItem('articleId', article.id.toString());
                                         }}
-                                        size="sm"
-                                        variant="secondary"
+                                        size="filter"
+                                        variant="outline"
                                     >
-                                        <Eye className="size-4" />
+                                        <Eye className="size-3.5" />
                                         Ver
                                     </Button>
                                     <ActionsMenu

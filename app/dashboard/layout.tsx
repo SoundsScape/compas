@@ -1,12 +1,5 @@
 import { AppSidebar } from "@/components/sections/dashboard/sidebar/AppSidebar"
 import {
-    Breadcrumb,
-    BreadcrumbItem,
-    BreadcrumbList,
-    BreadcrumbPage,
-} from "@/components/ui/breadcrumb"
-import { Separator } from "@/components/ui/separator"
-import {
     SidebarInset,
     SidebarProvider,
     SidebarTrigger,

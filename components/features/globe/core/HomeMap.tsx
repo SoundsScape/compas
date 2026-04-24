@@ -9,7 +9,6 @@ import dynamic from 'next/dynamic';
 import { useEffect, useState } from 'react';
 import { LatLngBoundsLiteral } from 'leaflet';
 import L from 'leaflet';
-import 'leaflet/dist/leaflet.css';
 import MapMarker from '../markers/MapMarker';
 import { useArticles } from '@/lib/hooks/useArticles';
 import { HomeMapProps } from '@/lib/interfaces/globe.interface';

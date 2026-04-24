@@ -12,9 +12,19 @@ import { X } from 'lucide-react';
 import { useMapFloatingCard } from '@/lib/hooks/useMapFloatingCard';
 
 // Importaciones dinámicas para Leaflet (solo cliente)
-const Marker = dynamic(() => import('react-leaflet').then(mod => mod.Marker), {
-    ssr: false,
-});
+const CircleMarker = dynamic(
+    () => import('react-leaflet').then(mod => mod.CircleMarker),
+    {
+        ssr: false,
+    }
+);
+
+// const MAP_MARKER_FILL = '#ffed00';
+// const MAP_MARKER_STROKE = '#423e02';
+
+const MAP_MARKER_FILL = '#ff2d2d';
+const MAP_MARKER_STROKE = '#ffffff';
+const MAP_MARKER_RADIUS = 7;
 
 interface MapMarkerProps {
     article: Article;
@@ -37,8 +47,15 @@ export default function MapMarker({
 
     return (
         <>
-            <Marker
-                position={markerPosition}
+            <CircleMarker
+                center={markerPosition}
+                radius={MAP_MARKER_RADIUS}
+                pathOptions={{
+                    fillColor: MAP_MARKER_FILL,
+                    color: MAP_MARKER_STROKE,
+                    weight: 1,
+                    fillOpacity: 1,
+                }}
                 eventHandlers={{
                     click: openCard,
                 }}

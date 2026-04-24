@@ -13,7 +13,7 @@ export function TimelinePanel({
 }: TimelinePanelProps) {
     return (
         <div
-            className={`pointer-events-auto fixed bottom-6 left-1/2 z-10 w-[45%] ml-6 -translate-x-1/2 max-w-3xl items-start gap-1 transition-all duration-300 hidden xl:flex print:hidden ${showTimeline ? 'translate-y-24' : ''}`}
+            className={`pointer-events-auto fixed bottom-4 left-1/2 z-10 w-[45%] ml-6 -translate-x-1/2 max-w-3xl items-start gap-1 transition-all duration-300 hidden xl:flex print:hidden ${showTimeline ? 'translate-y-24' : ''}`}
         >
             <div
                 className={`transition-all duration-400 flex-1 ${showTimeline ? 'opacity-0' : 'opacity-100'}`}

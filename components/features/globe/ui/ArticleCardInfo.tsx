@@ -72,7 +72,7 @@ export function ArticleCardInfo({
                     sessionStorage.setItem('articleId', article.id.toString());
                     onOpenModal?.();
                 }}
-                className="flex w-fit items-center gap-2 px-2 py-1 text-sm text-blue-600 select-none hover:text-blue-800"
+                className="flex w-fit cursor-pointer items-center gap-2 px-2 py-1 text-sm text-blue-600 select-none hover:text-blue-800"
             >
                 Ver más <ExternalLink className="h-4 w-4" />
             </button>

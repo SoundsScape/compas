@@ -7,6 +7,7 @@ import { X } from 'lucide-react';
 import { Article } from '@/lib/interfaces/article.interface';
 import { useRef } from 'react';
 import { ArticleCardInfo } from './ArticleCardInfo';
+import { useViewportClamp } from '@/lib/hooks/useViewportClamp';
 
 interface ArticlePopupProps {
     article: Article;
@@ -25,11 +26,22 @@ export function ArticlePopup({
     dateFormat,
 }: ArticlePopupProps) {
     const popupRef = useRef<HTMLDivElement>(null);
+    const { clampRef, clampTransform, isClampReady } = useViewportClamp({
+        topPadding: 92,
+        bottomPadding: 24,
+    });
 
     return (
         <div
-            ref={popupRef}
-            className={`w-xs -translate-x-1/4 transform rounded-lg bg-white p-5 shadow-sm backdrop-blur-md select-none ${className}`}
+            ref={node => {
+                popupRef.current = node;
+                clampRef.current = node;
+            }}
+            className={`w-[min(86vw,20rem)] rounded-lg bg-white p-5 shadow-sm backdrop-blur-md select-none ${className}`}
+            style={{
+                transform: clampTransform,
+                visibility: isClampReady ? 'visible' : 'hidden',
+            }}
             onClick={e => e.stopPropagation()}
             onPointerOver={e => e.stopPropagation()}
             onWheel={e => e.stopPropagation()}

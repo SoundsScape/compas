@@ -9,6 +9,7 @@ import { formatYear } from '@/lib/utils/dateUtils';
 import { limitWords } from '@/lib/utils/textUtils';
 import { MarkerInfo } from '@/lib/interfaces/globe.interface';
 import { ArticlePopup } from './ArticlePopup';
+import { useViewportClamp } from '@/lib/hooks/useViewportClamp';
 
 interface ClusterPopupProps {
     markers: MarkerInfo[];
@@ -29,6 +30,10 @@ export function ClusterPopup({
         null
     );
     const scrollRef = useRef<HTMLDivElement>(null);
+    const { clampRef, clampTransform, isClampReady } = useViewportClamp({
+        topPadding: 92,
+        bottomPadding: 24,
+    });
 
     const handleWheel = (e: React.WheelEvent) => {
         e.stopPropagation();
@@ -38,7 +43,12 @@ export function ClusterPopup({
         <>
             {activeMarkerIndex === null ? (
                 <div
-                    className="w-full -translate-x-1/4 transform rounded-lg bg-white/90 p-4 shadow-lg backdrop-blur-md select-none"
+                    ref={clampRef}
+                    className="w-[min(86vw,20rem)] rounded-lg bg-white/90 p-4 shadow-lg backdrop-blur-md select-none"
+                    style={{
+                        transform: clampTransform,
+                        visibility: isClampReady ? 'visible' : 'hidden',
+                    }}
                     onClick={e => e.stopPropagation()}
                     onPointerOver={e => {
                         e.stopPropagation();
@@ -103,7 +113,7 @@ export function ClusterPopup({
                         dateFormat={dateFormat}
                     />
                     <button
-                        className="absolute top-4 -left-14 z-20 cursor-pointer text-gray-500 hover:text-gray-800"
+                        className="absolute top-4 left-2 z-20 cursor-pointer text-gray-500 hover:text-gray-800"
                         onClick={e => {
                             e.stopPropagation();
                             setActiveMarkerIndex(null);

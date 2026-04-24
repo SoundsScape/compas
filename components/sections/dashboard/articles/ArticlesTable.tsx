@@ -72,8 +72,8 @@ export function ArticlesTable({ articles, setIsModalOpen, onDeleteSuccess, userR
                                     <Button
                                         onClick={e => {
                                             e.stopPropagation();
-                                            setIsModalOpen(true);
                                             sessionStorage.setItem('articleId', article.id.toString());
+                                            setIsModalOpen(true);
                                         }}
                                         size="filter"
                                         variant="outline"

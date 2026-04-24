@@ -62,8 +62,8 @@ export default function ArticleCard({ article, setIsModalOpen }: ArticleCardProp
                     <Button
                         onClick={e => {
                             e.stopPropagation();
-                            setIsModalOpen(true);
                             sessionStorage.setItem('articleId', article.id.toString());
+                            setIsModalOpen(true);
                         }}
                         variant="ghost"
                         size="sm"

@@ -69,8 +69,8 @@ export function ArticleCardInfo({
             <button
                 onClick={e => {
                     e.stopPropagation();
-                    onOpenModal?.();
                     sessionStorage.setItem('articleId', article.id.toString());
+                    onOpenModal?.();
                 }}
                 className="flex w-fit items-center gap-2 px-2 py-1 text-sm text-blue-600 select-none hover:text-blue-800"
             >

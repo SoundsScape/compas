@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Settings as SettingsType } from '@/lib/interfaces/rightPanel.interface';
-import { DEFAULT_SETTINGS } from '@/lib/utils/defaultSettings';
+import { DEFAULT_SETTINGS } from '@/lib/constants/defaultSettings';
 
 export function useSettings() {
     const [settings, setSettings] = useState<SettingsType>(DEFAULT_SETTINGS);

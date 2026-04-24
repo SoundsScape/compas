@@ -1,6 +1,7 @@
 import { SettingsModalProps, Settings } from '@/lib/interfaces/rightPanel.interface';
 import { X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { MIN_SPEED, MAX_SPEED, STEP } from '@/lib/constants/defaultSettings';
 
 export function SettingsModal({
     isOpen,
@@ -86,9 +87,9 @@ export function SettingsModal({
                                 <div className="flex items-center gap-4">
                                     <input
                                         type="range"
-                                        min="0"
-                                        max="0.005"
-                                        step="0.0001"
+                                        min={MIN_SPEED}
+                                        max={MAX_SPEED}
+                                        step={STEP}
                                         value={settings.visual.rotationSpeed}
                                         onChange={e =>
                                             onSettingsChange({

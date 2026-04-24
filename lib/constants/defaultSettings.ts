@@ -2,7 +2,7 @@ import { Settings as SettingsType } from '@/lib/interfaces/rightPanel.interface'
 
 export const DEFAULT_SETTINGS: SettingsType = {
     visual: {
-        rotationSpeed: 0.001,
+        rotationSpeed: 0.00089,
         showEffects: true,
         clusterThreshold: 0.05,
     },
@@ -14,3 +14,7 @@ export const DEFAULT_SETTINGS: SettingsType = {
         showCameraButtons: true,
     },
 };
+
+export const MIN_SPEED = 0;
+export const MAX_SPEED = 0.004;
+export const STEP = 0.0001;

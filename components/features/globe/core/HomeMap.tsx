@@ -95,7 +95,7 @@ export default function HomeMap({
                     // attribution='&copy; OpenStreetMap France'
                     />
                     {mapReady &&
-                        articles.map((article, index) => (
+                        articles.map(article => (
                             <MapMarker
                                 key={article.id}
                                 article={article}

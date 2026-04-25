@@ -34,6 +34,7 @@ export function Globe({
     const lastUpdateTimeRef = useRef(0);
     const { camera } = useThree();
     const [cameraDistance, setCameraDistance] = useState<number>(3.5);
+    const entryProgressRef = useRef(0);
 
     // 1. Cálculo del umbral dinámico (necesario para el hook)
     const dynamicClusterThreshold = useMemo(() => {
@@ -74,6 +75,18 @@ export function Globe({
     useFrame(() => {
         if (!globeRef.current) return;
 
+        if (!loading && entryProgressRef.current < 1) {
+            entryProgressRef.current = Math.min(
+                1,
+                entryProgressRef.current + 0.045
+            );
+            const eased = 1 - Math.pow(1 - entryProgressRef.current, 3);
+            const scale = 0.85 + (1 - 0.85) * eased;
+            globeRef.current.scale.setScalar(scale);
+        } else if (!loading) {
+            globeRef.current.scale.setScalar(1);
+        }
+
         // Rotación suave del globo
         rotationSpeedRef.current +=
             (targetSpeedRef.current - rotationSpeedRef.current) * 0.05;
@@ -105,7 +118,13 @@ export function Globe({
 
     // 6. Gestión del Loading
     useEffect(() => {
-        if (texturesLoaded && !articlesLoading) setLoading(false);
+        if (texturesLoaded && !articlesLoading) {
+            entryProgressRef.current = 0;
+            if (globeRef.current) {
+                globeRef.current.scale.setScalar(0.85);
+            }
+            setLoading(false);
+        }
     }, [texturesLoaded, articlesLoading]);
 
     return (

@@ -24,6 +24,7 @@ export interface Settings {
 }
 
 export interface SettingsModalProps {
+    isMap2d: boolean;
     isOpen: boolean;
     onClose: () => void;
     settings: Settings;

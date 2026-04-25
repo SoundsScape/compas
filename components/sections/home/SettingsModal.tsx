@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { MIN_SPEED, MAX_SPEED, STEP } from '@/lib/constants/defaultSettings';
 
 export function SettingsModal({
+    isMap2d,
     isOpen,
     onClose,
     settings,
@@ -77,7 +78,9 @@ export function SettingsModal({
                                 </Button>
                             </div>
 
-                            <div>
+                            <div
+                                className={`${isMap2d ? 'opacity-35 select-none pointer-events-none' : 'opacity-100'}`}
+                            >
                                 <label
                                     htmlFor="rotationSpeed"
                                     className="mb-2 block text-sm text-muted-foreground"
@@ -90,6 +93,7 @@ export function SettingsModal({
                                         min={MIN_SPEED}
                                         max={MAX_SPEED}
                                         step={STEP}
+                                        disabled={isMap2d}
                                         value={settings.visual.rotationSpeed}
                                         onChange={e =>
                                             onSettingsChange({
@@ -102,7 +106,7 @@ export function SettingsModal({
                                                 },
                                             })
                                         }
-                                        className="w-full cursor-pointer accent-accent/80"
+                                        className={`w-full accent-accent/80 ${isMap2d ? 'cursor-not-allowed' : 'cursor-pointer'}`}
                                     />
                                     <span className="w-12 text-xs text-muted-foreground font-mono">
                                         {settings.visual.rotationSpeed.toFixed(

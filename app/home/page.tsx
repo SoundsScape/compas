@@ -116,6 +116,7 @@ export default function Home() {
                 </div>
 
                 <SettingsModal
+                    isMap2d={showMap}
                     isOpen={showSettings}
                     onClose={() => setShowSettings(false)}
                     settings={settings}

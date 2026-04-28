@@ -61,7 +61,9 @@ export default function Home() {
 
     return (
         <ProtectedRoute>
-            <div className="from-primary to-background relative h-screen w-full bg-radial to-65%">
+            <div className={`from-primary to-background relative h-screen w-full bg-radial to-65% transition-all duration-300
+                    ${showTimeline ? 'mt-8':'mt-8 xl:mt-0'}
+                `}>
                 {showMap ? (
                     <HomeMap
                         filters={filters}

@@ -1,6 +1,6 @@
 'use client';
 import { useState, useEffect, useRef } from 'react';
-import { Home, BookOpen, User, LayoutDashboard } from 'lucide-react';
+import { Home, BookOpen, User, LayoutDashboard, LogOut } from 'lucide-react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
@@ -119,25 +119,21 @@ export function Navbar() {
                                 initial={{ opacity: 0, y: -40 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 exit={{ opacity: 0, y: -20 }}
-                                className="absolute top-9 right-5 w-48 rounded-sm text-white shadow-lg"
+                                className="absolute top-9 right-5 w-48 rounded-sm text-sm backdrop text-white shadow-lg"
                             >
-                                <div className="flex h-full w-full flex-col rounded-sm bg-linear-to-b from-background/90 to-primary/90 p-2 backdrop-blur-sm">
+                                <div className="flex h-full w-full flex-col rounded-sm bg-linear-to-b from-background to-secondary p-2">
                                     <Link
-                                        className="cursor-pointer rounded px-6 py-2 hover:bg-primary"
+                                        className="flex items-center cursor-pointer rounded px-4 py-2 hover:drop-shadow-[0px_0px_10px_rgba(255,255,255,0.7)]"
                                         href="/home/user-info/${username}"
                                     >
+                                        <User className="mr-2 h-4 w-4"/>
                                         Perfil
                                     </Link>
-                                    <Link
-                                        className="cursor-pointer rounded px-6 py-2 hover:bg-primary"
-                                        href="/home/configuracion"
-                                    >
-                                        Configuración
-                                    </Link>
                                     <button
-                                        className="cursor-pointer rounded px-6 py-2 text-left hover:bg-primary"
+                                        className="flex items-center cursor-pointer rounded px-4 py-2 text-left hover:drop-shadow-[0px_0px_10px_rgba(255,255,255,0.7)]"
                                         onClick={cerrarSesion}
                                     >
+                                        <LogOut className="mr-2 h-4 w-4" />
                                         Cerrar sesión
                                     </button>
                                 </div>

@@ -11,6 +11,7 @@ export function TimelinePanel({
     showTimeline,
     setShowTimeline,
 }: TimelinePanelProps) {
+    console.log(showTimeline);
     return (
         <div
             className={`pointer-events-auto fixed bottom-4 left-1/2 z-10 w-[45%] ml-6 -translate-x-1/2 max-w-3xl items-start gap-1 transition-all duration-300 hidden xl:flex print:hidden ${showTimeline ? 'translate-y-24' : ''}`}

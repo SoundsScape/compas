@@ -13,7 +13,7 @@ export default function DashboardLayout({
     return (
         <SidebarProvider>
             <AppSidebar />
-            <SidebarInset className="min-w-0">
+            <SidebarInset className="min-w-0 overflow-y-auto h-screen">
                 <SidebarTrigger className="lg:hidden absolute top-4 left-4 z-50 bg-background border shadow-md" />
                 <div className="flex-1 flex flex-col p-6 md:p-8 lg:p-12 min-w-0 ">
                     {children}

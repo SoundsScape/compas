@@ -47,7 +47,7 @@ export default function ArticlesPage() {
     );
 
     return (
-        <div className='min-h-screen flex relative'>
+        <div className='h-screen overflow-y-auto flex relative'>
             <div className='flex-1 pt-28 px-6 md:px-6'>
                 <div className='max-w-7xl mx-auto mb-6 lg:mb-9 flex flex-col lg:flex-row md:items-end justify-between gap-6'>
                     <div className='space-y-2 w-full'>
